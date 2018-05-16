@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:tjse="http://www.tjse.jus.br/jsf/components">
+	
+	<p:dialog header="#{bundle.pesquisarRegistro}" widgetVar="varDlgPesqCliente" width="800" height="500"
+		resizable="false" showEffect="fade" dynamic="true" appendTo="@(body)" closeOnEscape="true" closable="true" 
+		hideEffect="fade" modal="true" draggable="false" id="dlgPesqCliente">
+		<h:form id="formbusca" prependId="false">
+			<p:panel>
+				<p:messages closable="true" globalOnly="true" id="msgDlg" />
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel styleClass="OutputLabelCampo" for="CodigoPesq" value="#{bundle.codigo}" />
+					<p:inputNumber id="CodigoPesq" size="6" maxlength="6" decimalPlaces="0"
+					 thousandSeparator=" " decimalSeparator=" " value="#{chamadaBean.codPesquisa}">
+					</p:inputNumber>
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like">
+					<h:outputLabel styleClass="OutputLabelCampo" for="nomePesq" value="#{bundle.cliente_nome}" />
+					<p:inputText id="nomePesq" maxlength="100" size="30" value="#{chamadaBean.nomePesquisa}" />
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<p:commandButton icon="ui-icon ui-icon-search" value="#{bundle.pesquisarRegistro}" update="@form, tbPesquisa"
+					actionListener="#{chamadaBean.pesquisarClienteDialog}" />
+				</h:panelGroup>
+				<div class="clear"></div>
+			</p:panel>
+			<p:dataTable tableStyle="table-layout:auto;width: 100%;" id="tbPesquisa" name="tbPesquisa" var="cliente"
+				value="#{chamadaBean.listaClientesDialog}"			
+				style="text-align: center;" emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true" rows="10">
+
+				<p:column >
+					<f:facet name="header">
+						<h:outputText value="#{bundle.codigo}"
+							styleClass="cabecalhoDataTable" />
+					</f:facet>
+					<h:outputText value="#{cliente.codigo}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header" >
+						<h:outputText value="#{bundle.cliente_nome}" />
+					</f:facet>
+					<div style="text-align: left;">
+						<h:outputText value="#{cliente.nome}"/>
+					</div>
+				</p:column>
+				<p:column>
+					<p:commandLink update=":formConsulta, :msgs"  ajax="true" actionListener="#{chamadaBean.vincularCliente(cliente)}" 
+						process="@this,:formConsulta" title="#{bundle.associar}" immediate="false" oncomplete="PF('varDlgPesqCliente').hide()">
+						<h:graphicImage url="/resources/vincular.png" style="border-style: none" />
+					
+					</p:commandLink>
+
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+	
+</ui:composition>

@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="#{bundle.local_cadastroTitulo}" />
+	<ui:param name="headerConteudo" value="#{bundle.local_cadastroTitulo}" />
+	<ui:param name="bean" value="#{localBean}" />
+		<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{localBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro">
+
+			<p:panel id="panelCadastro">
+
+				<h:panelGroup id="pngDescricao" styleClass="p_like">
+					<p:outputLabel value="#{bundle.local_nome}:" for="nome"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="nome" required="true" size="80"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.local_nome}"
+						value="#{localBean.local.nome}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngCep" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_cep}:" for="cep"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputMask mask="99999-999" value="#{localBean.cep}" id="cep"
+							required="true"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_cep}">
+							<p:ajax event="blur" update="pngEstado, pngBairro, pngLogradouro"
+								listener="#{localBean.validarCep}" />
+						</p:inputMask>
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngEstado" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_estado}:" for="estado"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="estado" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_estado}"
+							value="#{localBean.local.estado}" />
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngBairro" styleClass="p_like">
+
+						<p:outputLabel value="#{bundle.cliente_cidade}:" for="cidade"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="cidade" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_cidade}"
+							value="#{localBean.local.cidade}" />
+
+						<p:outputLabel value="#{bundle.cliente_bairro}:" for="bairro"
+							styleClass="OutputLabelCampo"
+							style="margin-left:128px;margin-right:-40px;" />
+						<p:inputText id="bairro" required="true" size="30"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_bairro}"
+							value="#{localBean.local.bairro}" />
+
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngLogradouro" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_logradouro}:"
+							for="logradouro" styleClass="OutputLabelCampo"
+							style="width:120px;" />
+						<p:inputText id="logradouro" required="true" size="65"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_logradouro}"
+							value="#{localBean.local.logradouro}" />
+
+						<p:outputLabel value="#{bundle.cliente_numero}:" for="numero"
+							styleClass="OutputLabelCampo"
+							style="margin-left:20px;margin-right:-40px;" />
+						<p:inputText id="numero" size="10"
+							value="#{localBean.local.numero}" />
+
+					</h:panelGroup>
+
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngComplemento" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_complemento}:"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="complemento" size="90"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_complemento}"
+							value="#{localBean.local.complemento}" />
+
+					</h:panelGroup>
+				
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="Salvar" id="btnSalvar"
+						action="#{localBean.salvarLocal}"  style="margin-right:10px;"
+						update="formCadastro, msgs, conteudo">
+					</p:commandButton>
+					<p:button value="#{bundle.voltarTela}"
+						outcome="consultarLocal.proj"
+						icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

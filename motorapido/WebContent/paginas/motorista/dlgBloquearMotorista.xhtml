@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:tjse="http://www.tjse.jus.br/jsf/components">
+
+	<p:dialog header="#{bundle.bloquear_motorista}"
+		widgetVar="varDlgBloquearMoto" width="600" height="220" 
+		resizable="false" showEffect="fade" dynamic="true" appendTo="@(body)"
+		closeOnEscape="true" closable="true" hideEffect="fade" modal="true"
+		draggable="false" id="dlgBloquearMoto">
+		<h:form id="formbusca" prependId="false">
+			<p:panel>
+				<p:messages closable="true" globalOnly="true" id="msgDlg" />
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel styleClass="OutputLabelCampo" for="dtInicio"
+						value="Início" />
+					<p:calendar id="dtInicio" mindate="#{motoristaBean.dataDeHoje()}"
+						value="#{motoristaBean.dataInicioBloqueio}" showOn="button"
+						pattern="dd/MM/yyyy HH:mm">
+						<p:ajax event="change" update="dtFinal"></p:ajax>
+					</p:calendar>
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel styleClass="OutputLabelCampo" for="dtFinal"
+						value="Final" />
+					<p:calendar id="dtFinal" disabled="#{motoristaBean.dataInicioBloqueio eq null}"
+						mindate="#{motoristaBean.dataInicioBloqueio}"
+						value="#{motoristaBean.dataFinalBloqueio}" showOn="button"
+						pattern="dd/MM/yyyy HH:mm">
+					</p:calendar>
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel styleClass="OutputLabelCampo" for="motivo"
+						value="Motivo" />
+					<p:inputTextarea id="motivo" rows="6" cols="50" autoResize="false"
+						value="#{motoristaBean.motivoBloqueio}">
+					</p:inputTextarea>
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<p:commandButton icon="ui-icon ui-icon-disk"
+						value="#{bundle.salvarRegistro}" update="@form, tbMotoristas"
+						actionListener="#{motoristaBean.bloquearMotorista}" />
+				</h:panelGroup>
+				<div class="clear"></div>
+			</p:panel>
+
+		</h:form>
+		<p:ajax event="close" listener="#{motoristaBean.limparDlgBloqueio}"></p:ajax>
+	</p:dialog>
+
+</ui:composition>

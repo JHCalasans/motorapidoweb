@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="#{bundle.funcionario_consultarTitulo}" />
+	<ui:param name="headerConteudo" value="#{bundle.funcionario_consultarTitulo}" />
+	<ui:param name="bean" value="#{funcionarioBean}" />
+	 <f:metadata>
+		<f:event type="preRenderView"
+			listener="#{funcionarioBean.verificaSessaoValida}" />
+	</f:metadata> 
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formConsulta">
+
+			<p:panel id="panelPesquisa">
+
+				<h:panelGroup id="pngNome" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_nome}:" for="nome"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="nome"  size="80"
+						value="#{funcionarioBean.nomePesquisa}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				
+					<h:panelGroup id="pngCpf" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_cpf}:" for="cpf"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="cpf"  size="20"
+						mask="999.999.999-99"
+						value="#{funcionarioBean.cpfPesquisa}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="#{bundle.pesquisarRegistro}"
+						id="btnPesquisar" actionListener="#{funcionarioBean.pesquisarFuncionario}"
+						style="margin-right: 10px;" update="formConsulta, msgs, conteudo">
+					</p:commandButton>
+					<p:button value="#{bundle.novoRegistro}" id="btnNovo"
+						outcome="cadastrarFuncionario.proj">
+					</p:button>
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup>
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbFuncionarios" var="funcionario" value="#{funcionarioBean.listaFuncionarios}"
+					rows="10" style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" paginator="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+					<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Funcionários
+			   			 </f:facet>
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.funcionario_nome}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbNome" value="#{funcionario.nome}">
+
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.funcionario_login}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbLogin" value="#{funcionario.login}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.funcionario_cpf}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbCPF"	value="#{funcionario.cpf}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.funcionario_situacao}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbSituacao"
+							value="#{funcionario.ativo == 'S' ? 'Ativo' : 'Inativo'}">
+
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.funcionario_perfil}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbPerfil"
+							value="#{funcionario.perfil.descricao}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:60px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.operacoes}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:commandLink title="Editar" immediate="true"
+						action="#{funcionarioBean.navegarAlteracao(funcionario.codigo)}">
+						<h:graphicImage url="/resources/edit.png"
+							style="border-style: none" />
+					</h:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGroup>
+
+		</h:form>
+
+		
+	</ui:define>
+</ui:composition>
+</html>

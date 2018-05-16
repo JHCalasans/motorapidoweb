@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="#{bundle.cliente_alterarTitulo}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.cliente_alterarTitulo}" />
+
+	<ui:param name="bean" value="#{clienteBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{clienteBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro">
+			<p:panel id="panelCadastro">
+
+				<h:panelGroup id="pngNome" styleClass="p_like">
+					<p:outputLabel value="#{bundle.cliente_nome}:" for="nome"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="nome" required="true" size="80"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_nome}"
+						value="#{clienteBean.cliente.nome}" />
+
+				</h:panelGroup>
+				
+					<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngCel" styleClass="p_like">
+					<p:outputLabel value="#{bundle.cliente_celular}:" for="celular"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="celular" required="true" size="24"
+						mask="(99)99999-9999"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_celular}"
+						value="#{clienteBean.cliente.celular}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngEmail" styleClass="p_like">
+					<p:outputLabel value="#{bundle.cliente_email}:" for="email"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="email" required="true" size="24"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_email}"
+						value="#{clienteBean.cliente.email}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="Salvar" id="btnSalvar"
+						action="#{clienteBean.alterarCliente}"
+						update="formCadastro, msgs, conteudo">
+					</p:commandButton>
+					<p:button value="#{bundle.voltarTela}" id="btnVoltar"
+						outcome="consultarCliente.proj"
+						style="margin-left:10px">
+					</p:button>
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

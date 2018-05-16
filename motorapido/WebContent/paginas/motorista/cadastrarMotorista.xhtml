@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina"
+		value="#{bundle.motorista_cadastroTitulo}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.motorista_cadastroTitulo}" />
+	<ui:param name="msgSalvar" value="#{motoristaBean.msgSalvar}" />
+	<ui:param name="bean" value="#{motoristaBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{motoristaBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro">
+
+			<h3 align="center">Dados Pessoais</h3>
+
+
+			<br />
+			<div class="clear"></div>
+			<p:panel id="panelCadastro">
+
+				<h:panelGroup id="pngNome" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_nome}:" for="nome"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="nome" required="true" size="80"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_nome}"
+						value="#{motoristaBean.motorista.nome}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngCpf" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_cpf}:" for="cpf"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="cpf" required="true" size="20"
+						mask="999.999.999-99"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_cpf}"
+						value="#{motoristaBean.motorista.cpf}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngIdentidade" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_identidade}:"
+						for="identidade" styleClass="OutputLabelCampo"
+						style="width:120px;" />
+					<p:inputNumber id="identidade" required="true" size="20"
+						decimalPlaces="0" decimalSeparator="" thousandSeparator=""
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_identidade}"
+						value="#{motoristaBean.motorista.identidade}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngNascimento" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_dataNascimento}:"
+						for="dtNascimento" styleClass="OutputLabelCampo"
+						style="width:120px;" />
+					<p:calendar id="dtNascimento" required="true" size="20"
+						pattern="dd/MM/yyyy"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_dataNascimento}"
+						value="#{motoristaBean.motorista.dataNascimento}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngFoto" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_foto}:"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:fileUpload id="fuIcone" label="#{bundle.selecione}"
+						value="#{motoristaBean.foto}" cancelLabel="#{bundle.cancelar}"
+						styleClass="upload" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+						multiple="false" sizeLimit="1000000" mode="advanced"
+						skinSimple="true" auto="true" update=":msgs,pgIcone"
+						fileUploadListener="#{motoristaBean.fileUploadAction}"
+						fileLimitMessage="Tamanho do arquivo excedido"
+						invalidFileMessage="Tipo de arquivo não suportado">
+					</p:fileUpload>
+
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pgIcone" styleClass="p_like">
+					<p:outputLabel value="" for="giIcone" styleClass="OutputLabelCampo"
+						style="width:120px" />
+					<p:graphicImage id="giIcone" cache="false"
+						style="border-style: solid; border-width: 3px; border-color: #101466;"
+						value="#{motoristaBean.streamFoto}" width="90px" height="90px"
+						stream="false" />
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+
+				<hr></hr>
+
+				<h3 align="center">Endereço</h3>
+
+
+				<br />
+				<div class="clear"></div>
+				<p:outputPanel id="panelEndereco" layout="block">
+					<h:panelGroup id="pngCep" styleClass="p_like">
+						<p:outputLabel value="#{bundle.motorista_cep}:" for="cep"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputMask mask="99999-999" value="#{motoristaBean.cep}"
+							id="cep" required="true"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_cep}">
+							<p:ajax event="blur" update="panelEndereco"
+								listener="#{motoristaBean.validarCep}" />
+						</p:inputMask>
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngEstado" styleClass="p_like">
+						<p:outputLabel value="#{bundle.motorista_estado}:" for="estado"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="estado" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_estado}"
+							value="#{motoristaBean.motorista.estadoResidencia}" />
+
+
+
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngBairro" styleClass="p_like">
+
+						<p:outputLabel value="#{bundle.motorista_cidade}:" for="cidade"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="cidade" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_cidade}"
+							value="#{motoristaBean.motorista.cidadeResidencia}" />
+
+						<p:outputLabel value="#{bundle.motorista_bairro}:" for="bairro"
+							styleClass="OutputLabelCampo"
+							style="margin-left:128px;margin-right:-40px;" />
+						<p:inputText id="bairro" required="true" size="30"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_bairro}"
+							value="#{motoristaBean.motorista.bairro}" />
+
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<div class="clear"></div>
+					<h:panelGroup id="pngLogradouro" styleClass="p_like">
+						<p:outputLabel value="#{bundle.motorista_logradouro}:"
+							for="logradouro" styleClass="OutputLabelCampo"
+							style="width:120px;" />
+						<p:inputText id="logradouro" required="true" size="90"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_logradouro}"
+							value="#{motoristaBean.motorista.logradouro}" />
+
+					</h:panelGroup>
+				</p:outputPanel>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngComprovante" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_comprovante}:"
+						for="comprovante" title="Comprovante de Residência"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+
+					<p:fileUpload id="criminais" label="#{bundle.selecione}"
+						value="#{motoristaBean.motorista.comprovanteResidencia}"
+						cancelLabel="#{bundle.cancelar}" styleClass="upload"
+						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
+						mode="advanced" skinSimple="true" auto="true"
+						update=":msgs,pgIcone"
+						fileUploadListener="#{motoristaBean.comprovanteResidencialUploadAction}"
+						fileLimitMessage="Tamanho do arquivo excedido"
+						invalidFileMessage="Tipo de arquivo não suportado">
+					</p:fileUpload>
+				
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<hr></hr>
+
+				<h3 align="center">Contato / Financeiro</h3>
+
+
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngCel" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_celular}:" for="celular"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="celular" required="true" size="24"
+						mask="(99)99999-9999"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_celular}"
+						value="#{motoristaBean.motorista.celular}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngEmail" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_email}:" for="email"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="email" required="true" size="24"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_email}"
+						value="#{motoristaBean.motorista.email}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngBanco" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_banco}:" for="banco"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="banco" var="banco" required="true"
+						value="#{motoristaBean.motorista.banco}" style="width:123px;">
+
+						<f:selectItem itemLabel="Banco do Brasil"
+							itemValue="Banco do Brasil" />
+						<f:selectItem itemLabel="Banese" itemValue="Banese" />
+						<f:selectItem itemLabel="Bradesco" itemValue="Bradesco" />
+						<f:selectItem itemLabel="Caixa" itemValue="Caixa" />
+						<f:selectItem itemLabel="Itaú" itemValue="Itaú" />
+						<f:selectItem itemLabel="Santander" itemValue="Santander" />
+
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngAgencia" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_agencia}:" for="agencia"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="agencia" required="true" size="24"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_agencia}"
+						value="#{motoristaBean.motorista.agencia}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngConta" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_conta}:" for="conta"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputNumber id="conta" required="true" size="24"
+						decimalPlaces="0" thousandSeparator="" decimalSeparator=""
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_conta}"
+						value="#{motoristaBean.motorista.conta}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<hr></hr>
+				<h3 align="center">Dados para Empresa</h3>
+
+
+				<br />
+				<div class="clear"></div>
+
+
+
+				<h:panelGroup id="pngCnh" styleClass="p_like">
+
+					<div class="clear"></div>
+					<p:outputLabel value="#{bundle.motorista_cnh}:" for="cnh"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputNumber id="cnh" required="true" size="20"
+						thousandSeparator="" decimalPlaces="0" decimalSeparator=""
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_cnh}"
+						maxlength="10" value="#{motoristaBean.motorista.cnh}" />
+
+				</h:panelGroup>
+
+
+				<h:panelGroup id="pngVencimentoCnh" styleClass="p_like">
+
+					<div class="clear"></div>
+					<p:outputLabel value="#{bundle.motorista_vencimentoCNH}:"
+						for="vencimentoCnh" styleClass="OutputLabelCampo"
+						style="width:120px;" />
+					<p:calendar id="vencimentoCnh" required="true" size="20"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_vencimentoCNH}"
+						value="#{motoristaBean.motorista.dataVencimentoCNH}" />
+
+				</h:panelGroup>
+
+				<h:panelGroup id="pngCriminais" styleClass="p_like">
+
+					<div class="clear"></div>
+					<p:outputLabel value="#{bundle.motorista_documentosCriminais}:"
+						for="criminais" styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:fileUpload id="criminais" label="#{bundle.selecione}"
+						value="#{motoristaBean.motorista.docCriminais}"
+						cancelLabel="#{bundle.cancelar}" styleClass="upload"
+						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
+						mode="advanced" skinSimple="true" auto="true"
+						update=":msgs,pgIcone"
+						fileUploadListener="#{motoristaBean.DocCriminaisUploadAction}"
+						fileLimitMessage="Tamanho do arquivo excedido"
+						invalidFileMessage="Tipo de arquivo não suportado">
+					</p:fileUpload>
+
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="Salvar" id="btnSalvar"
+						actionListener="#{motoristaBean.salvarMotorista}"
+						update="formCadastro, msgs, conteudo, dlgSucesso1">
+					</p:commandButton>
+
+					<p:button value="#{bundle.voltarTela}" id="btnVoltar"
+						outcome="consultarMotorista.proj?faces-redirect=true&amp;consultaParam=true"
+						style="margin-left:10px">
+					</p:button>
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

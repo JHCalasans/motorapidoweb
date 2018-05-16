@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="#{bundle.veiculo_cadastroTitulo}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.veiculo_cadastroTitulo}" />
+	<ui:param name="bean" value="#{veiculoBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{veiculoBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro"
+			enctype="multipart/form-data">
+
+			<p:panel id="panelCadastro">
+
+				<h:panelGroup id="pngMotorista" styleClass="p_like">
+					<p:outputLabel value="Motorista:" styleClass="OutputLabelCampo"
+						style="width:120px;" />
+					<p:outputLabel value="#{veiculoBean.motorista.nome}"
+						styleClass="OutputLabelValor" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngTipoVeiculo" styleClass="p_like">
+					<p:outputLabel value="#{bundle.veiculo_tipo}:" for="slcTipoVeiculo"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="slcTipoVeiculo" required="true"
+						style="width:120px" value="#{veiculoBean.tipoVeiculo}"
+						converter="tipoVeiculoConverter">
+						<f:selectItems value="#{veiculoBean.listaTiposVeiculos}"
+							var="tipoVeiculo" itemLabel="#{tipoVeiculo.descricao}"
+							itemValue="#{tipoVeiculo}" />
+						<p:ajax event="change" update="pngFabricante, pngModelo"
+							listener="#{veiculoBean.atualizaTipoVeiculo}"></p:ajax>
+
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pnCategoria" styleClass="p_like">
+					<p:outputLabel value="#{bundle.veiculo_categoria}:" for="slcCategoria"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="slcCategoria" required="true"
+						converter="modeloConverter" value="#{veiculoBean.veiculo.categoria}"
+						style="width:120px">
+					<f:selectItem itemValue="A" itemLabel="Alto"></f:selectItem>
+						<f:selectItem itemValue="B" itemLabel="Baixo"></f:selectItem>
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngFabricante" styleClass="p_like">
+					<p:outputLabel value="#{bundle.veiculo_fabricante}:"
+						for="slcFabricante" styleClass="OutputLabelCampo"
+						style="width:120px;" />
+					<p:selectOneMenu id="slcFabricante" required="true"
+						style="width:120px" value="#{veiculoBean.fabricante}"
+						converter="fabricanteConverter">
+						<f:selectItems value="#{veiculoBean.listaFabricantes}"
+							var="fabricante" itemLabel="#{fabricante.descricao}"
+							itemValue="#{fabricante}" />
+						<p:ajax event="change" update="pngModelo"
+							listener="#{veiculoBean.atualizaFabricante}"></p:ajax>
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngModelo" styleClass="p_like">
+					<p:outputLabel value="#{bundle.veiculo_modelo}:" for="slcModelo"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="slcModelo" required="true"
+						converter="modeloConverter" value="#{veiculoBean.modelo}"
+						style="width:120px">
+						<f:selectItems value="#{veiculoBean.listaModelos}" var="modelo"
+							itemLabel="#{modelo.descricao}" itemValue="#{modelo}" />
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngCor" styleClass="p_like">
+					<p:outputLabel value="#{bundle.veiculo_cor}:" for="slcCor"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="slcCor" required="true"
+						value="#{veiculoBean.veiculo.cor}" style="width:120px">
+						<f:selectItem itemValue="Amarelo" itemLabel="Amarelo"></f:selectItem>
+						<f:selectItem itemValue="Azul" itemLabel="Azul"></f:selectItem>
+						<f:selectItem itemValue="Branco" itemLabel="Branco"></f:selectItem>
+						<f:selectItem itemValue="Cinza" itemLabel="Cinza"></f:selectItem>
+						<f:selectItem itemValue="Prata" itemLabel="Prata"></f:selectItem>
+						<f:selectItem itemValue="Preto" itemLabel="Preto"></f:selectItem>
+						<f:selectItem itemValue="Verde" itemLabel="Verde"></f:selectItem>
+						<f:selectItem itemValue="Vermelho" itemLabel="Vermelho"></f:selectItem>
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngChassi" styleClass="p_like">
+					<p:outputLabel value="#{bundle.veiculo_chassi}:" for="chassi"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="chassi" size="21" required="true"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.veiculo_chassi}"
+						value="#{veiculoBean.veiculo.chassi}" mask="***.******.**.******"
+						style="text-transform:uppercase" />
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngPlaca" styleClass="p_like">
+					<p:outputLabel value="#{bundle.veiculo_placa}:" for="placa"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="placa" size="19" required="true"
+						style="text-transform:uppercase"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.veiculo_placa}"
+						value="#{veiculoBean.veiculo.placa}" mask="aaa-9999" />
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngDocumento" styleClass="p_like">
+
+					<div class="clear"></div>
+					<p:outputLabel value="#{bundle.veiculo_documento}:" for="documento"
+						styleClass="OutputLabelCampo" style="width:120px;" />	
+						
+					
+
+					<p:fileUpload id="documento" label="#{bundle.selecione}"
+						value="#{veiculoBean.veiculo.documento}" required="true"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.veiculo_documento}"
+						cancelLabel="#{bundle.cancelar}" styleClass="upload" fileLimit="1"
+						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
+						mode="advanced" skinSimple="true" auto="true"
+						fileUploadListener="#{veiculoBean.documentoUploadAction}"
+						fileLimitMessage="Tamanho do arquivo excedido" update="pgNmDoc"
+						invalidFileMessage="Tipo de arquivo não suportado">
+					</p:fileUpload>
+
+
+				</h:panelGroup>
+				<br />
+
+				<div class="clear"></div>
+				<h:panelGroup id="pgNmDoc" styleClass="p_like">
+					<p:outputLabel value="#{veiculoBean.documento.fileName}"
+						styleClass="OutputLabelValor" style="margin-left:120px" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="Salvar" id="btnSalvar"
+						actionListener="#{veiculoBean.salvarVeiculo}"
+						style="margin-right:10px;" update="formCadastro, msgs, conteudo">
+					</p:commandButton>
+
+					<p:button value="#{bundle.voltarTela}"
+						outcome="/paginas/motorista/consultarMotorista.proj?faces-redirect=true&amp;consultaParam=true"
+						icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+		
+			<br />
+			<div class="clear"></div>
+			<p:panel id="panelConsulta">
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup>
+					
+					<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+						id="tbVeiculos" var="veiculo"
+						value="#{veiculoBean.listaVeiculosMotorista}" rows="10"
+						style="text-align: center; max-width:100%" first="0"
+						paginatorAlwaysVisible="false" paginator="true"
+						emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+						<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Veículos Cadastrados do Motorista
+			   			 </f:facet>
+						<p:column style="width:130px">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.veiculo_tipo}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText id="tbTipo"
+								value="#{veiculo.modelo.tipoVeiculo.descricao}">
+							</h:outputText>
+						</p:column>
+
+						<p:column style="width:130px">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.veiculo_fabricante}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText id="tbFabricante"
+								value="#{veiculo.modelo.fabricante.descricao}">
+							</h:outputText>
+						</p:column>
+
+						<p:column style="width:130px">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.veiculo_cor}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText id="tbCor" value="#{veiculo.cor}">
+
+							</h:outputText>
+						</p:column>
+
+						<p:column style="width:130px">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.veiculo_placa}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText id="tbPlaca" value="#{veiculo.placa}">
+
+							</h:outputText>
+						</p:column>
+
+						<p:column style="width:80px">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.operacoes}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:commandLink title="Excluir" immediate="true"
+								style="margin-left:10px;"
+								action="#{veiculoBean.abrirExcluir(veiculo)}">
+								<h:graphicImage url="/resources/delete.png"
+									style="border-style: none" />
+							</h:commandLink>
+							<h:commandLink title="Documentos" immediate="true"
+								style="margin-left:10px;"
+								action="#{veiculoBean.downloadDocumentos(veiculo)}">
+								<h:graphicImage url="/resources/pdf.png"
+									style="border-style: none" />
+							</h:commandLink>
+						</p:column>
+					</p:dataTable>
+				</h:panelGroup>
+			</p:panel>
+		</h:form>
+
+		<!-- CONFIRMACAO DELETE -->
+		<p:dialog header="Excluir Registro" widgetVar="dlConfirmDelete"
+			id="dlConfirmDelete" modal="true" dynamic="true" width="470">
+			<h:form id="formDelete" prependId="false">
+				<p:panel>
+					<h:panelGroup styleClass="p_like" layout="block"
+						style="text-align:center;">
+
+						<b><p:outputLabel value="Deseja realmente excluir o registro?" /></b>
+					</h:panelGroup>
+					<br></br>
+					<br></br>
+					<div class="clear"></div>
+					<h:panelGroup layout="block" style="text-align: center;">
+						<p:commandButton process="@this" id="btSim"
+							style="margin-left: 13px" value="#{bundle.sim}"
+							onclick="PF('dlConfirmDelete').hide()"
+							update="formCadastro, msgs, conteudo"
+							actionListener="#{veiculoBean.excluirVeiculo}" />
+						<p:commandButton process="@this" id="btNao"
+							style="margin-left: 13px" value="#{bundle.nao}"
+							oncomplete="PF('dlConfirmDelete').hide()" />
+					</h:panelGroup>
+
+					<br></br>
+					<div class="clear"></div>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+		<!-- CONFIRMACAO DELETE -->
+	</ui:define>
+</ui:composition>
+</html>

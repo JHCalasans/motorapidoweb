@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina"
+		value="#{bundle.funcionario_alterarTitulo}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.funcionario_alterarTitulo}" />
+	<ui:param name="bean" value="#{funcionarioBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{funcionarioBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro">
+
+			<h3 align="center">Dados Pessoais</h3>
+
+
+
+			<br />
+			<div class="clear"></div>
+			<p:panel id="panelCadastro">
+
+				<h:panelGroup id="pngNome" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_nome}:" for="nome"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="nome" required="true" size="80"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_nome}"
+						value="#{funcionarioBean.funcionario.nome}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngCpf" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_cpf}:" for="cpf"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="cpf" required="true" size="20"
+						mask="999.999.999-99"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cpf}"
+						value="#{funcionarioBean.funcionario.cpf}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngIdentidade" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_identidade}:"
+						for="identidade" styleClass="OutputLabelCampo"
+						style="width:120px;" />
+					<p:inputNumber id="identidade" required="true" size="20"
+						decimalPlaces="0" decimalSeparator="" thousandSeparator=""
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_identidade}"
+						value="#{funcionarioBean.funcionario.identidade}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngNascimento" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_dataNascimento}:"
+						for="dtNascimento" styleClass="OutputLabelCampo"
+						style="width:120px;" />
+					<p:calendar id="dtNascimento" required="true" size="20"
+						pattern="dd/MM/yyyy"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_dataNascimento}"
+						value="#{funcionarioBean.funcionario.dataNascimento}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngFoto" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_foto}:"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:fileUpload id="fuIcone" label="#{bundle.selecione}"
+						value="#{funcionarioBean.foto}"
+						cancelLabel="#{bundle.cancelar}" styleClass="upload"
+						allowTypes="/(\.|\/)(gif|jpe?g|png)$/" multiple="false"
+						sizeLimit="1000000" mode="advanced" skinSimple="true" auto="true"
+						update=":msgs,pgIcone"
+						fileUploadListener="#{funcionarioBean.fileUploadAction}"
+						fileLimitMessage="Tamanho do arquivo excedido"
+						invalidFileMessage="Tipo de arquivo não suportado">
+					</p:fileUpload>
+
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pgIcone" styleClass="p_like">
+					<p:outputLabel value="" for="giIcone" styleClass="OutputLabelCampo"
+						style="width:120px" />
+					<p:graphicImage id="giIcone" cache="false"
+						style="border-style: solid; border-width: 3px; border-color: #101466;"
+						value="#{funcionarioBean.streamFoto}" width="90px" height="90px"
+						stream="false" />
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+
+				<hr></hr>
+
+				<h3 align="center">Endereço</h3>
+
+
+				<br />
+				<div class="clear"></div>
+				<p:outputPanel id="panelEndereco" layout="block">
+					<h:panelGroup id="pngCep" styleClass="p_like">
+						<p:outputLabel value="#{bundle.funcionario_cep}:" for="cep"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputMask mask="99999-999" value="#{funcionarioBean.cep}"
+							id="cep" required="true"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cep}">
+							<p:ajax event="blur" update="panelEndereco"
+								listener="#{funcionarioBean.validarCep}" />
+						</p:inputMask>
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngEstado" styleClass="p_like">
+						<p:outputLabel value="#{bundle.funcionario_estado}:" for="estado"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="estado" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_estado}"
+							value="#{funcionarioBean.funcionario.estadoResidencia}" />
+
+
+
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngBairro" styleClass="p_like">
+
+						<p:outputLabel value="#{bundle.funcionario_cidade}:" for="cidade"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="cidade" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cidade}"
+							value="#{funcionarioBean.funcionario.cidadeResidencia}" />
+
+						<p:outputLabel value="#{bundle.funcionario_bairro}:" for="bairro"
+							styleClass="OutputLabelCampo"
+							style="margin-left:128px;margin-right:-40px;" />
+						<p:inputText id="bairro" required="true" size="30"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_bairro}"
+							value="#{funcionarioBean.funcionario.bairro}" />
+
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<div class="clear"></div>
+					<h:panelGroup id="pngLogradouro" styleClass="p_like">
+						<p:outputLabel value="#{bundle.funcionario_logradouro}:"
+							for="logradouro" styleClass="OutputLabelCampo"
+							style="width:120px;" />
+						<p:inputText id="logradouro" required="true" size="90"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_logradouro}"
+							value="#{funcionarioBean.funcionario.logradouro}" />
+
+					</h:panelGroup>
+				</p:outputPanel>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngComprovante" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_comprovante}:"
+						for="comprovante" title="Comprovante de Residência"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="comprovante" var="banco" required="true"
+						value="#{funcionarioBean.funcionario.comprovanteResidencial}"
+						style="width:125px;">
+
+						<f:selectItem itemLabel="Não Entregue" itemValue="N" />
+						<f:selectItem itemLabel="Entregue" itemValue="S" />
+
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<hr></hr>
+
+				<h3 align="center">Contato / Financeiro</h3>
+
+
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngCel" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_celular}:" for="celular"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="celular" required="true" size="24"
+						mask="(99)99999-9999"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_celular}"
+						value="#{funcionarioBean.funcionario.celular}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngEmail" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_email}:" for="email"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="email" required="true" size="24"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_email}"
+						value="#{funcionarioBean.funcionario.email}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngBanco" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_banco}:" for="banco"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="banco" var="banco" required="true"
+						value="#{funcionarioBean.funcionario.banco}" style="width:123px;">
+
+						<f:selectItem itemLabel="Banco do Brasil"
+							itemValue="Banco do Brasil" />
+						<f:selectItem itemLabel="Banese" itemValue="Banese" />
+						<f:selectItem itemLabel="Bradesco" itemValue="Bradesco" />
+						<f:selectItem itemLabel="Caixa" itemValue="Caixa" />
+						<f:selectItem itemLabel="Itaú" itemValue="Itaú" />
+						<f:selectItem itemLabel="Santander" itemValue="Santander" />
+
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngAgencia" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_agencia}:" for="agencia"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="agencia" required="true" size="24"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_agencia}"
+						value="#{funcionarioBean.funcionario.agencia}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngConta" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_conta}:" for="conta"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputNumber id="conta" required="true" size="24"
+						decimalPlaces="0" thousandSeparator="" decimalSeparator=""
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_conta}"
+						value="#{funcionarioBean.funcionario.conta}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				<hr></hr>
+				<h3 align="center">Dados para Empresa</h3>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngAcesso" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_perfil}:" for="perfil"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="perfil" required="true"
+						value="#{funcionarioBean.codPerfil}">
+						<f:selectItems value="#{funcionarioBean.listaPerfis}"
+							itemLabel="#{perfil.descricao}" itemValue="#{perfil.codigo}"
+							var="perfil" />
+						<p:ajax event="change" ></p:ajax>
+
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngLogin" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_login}:" for="login"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="login" required="true" size="20"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_login}"
+						value="#{funcionarioBean.funcionario.login}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+				
+				<h:panelGroup id="pngAtivo" styleClass="p_like">
+					<p:outputLabel value="#{bundle.funcionario_situacao}:" for="slcSituacao"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="slcSituacao" var="banco" required="true"
+						value="#{funcionarioBean.funcionario.ativo}" style="width:123px;">
+
+						<f:selectItem itemLabel="Ativo"	itemValue="S" />
+						<f:selectItem itemLabel="Inativo" itemValue="N" />
+
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="Salvar" id="btnSalvar"
+						actionListener="#{funcionarioBean.alterarFuncionario}"
+						update="formCadastro, msgs, conteudo">
+					</p:commandButton>
+					
+					<p:button value="#{bundle.voltarTela}" id="btnVoltar"
+						outcome="consultarFuncionario.proj?faces-redirect=true&amp;consultaParam=true" style="margin-left:10px">
+					</p:button>
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="#{bundle.posicaoArea_titulo}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.posicaoArea_titulo}" />
+	<ui:param name="bean" value="#{veiculoBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{posicaoAreaBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+
+
+		<h:form prependId="false" id="formConsulta">
+
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup>
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbVeiculos" var="veiculo"
+					value="#{veiculoBean.listaVeiculosMotorista}" rows="10"
+					style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" paginator="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+					<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Veículos
+			   			 </f:facet>
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.veiculo_tipo}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbTipo"
+							value="#{veiculo.modelo.tipoVeiculo.descricao}">
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.veiculo_fabricante}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbFabricante"
+							value="#{veiculo.modelo.fabricante.descricao}">
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.veiculo_cor}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbCor" value="#{veiculo.cor}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.veiculo_placa}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbPlaca" value="#{veiculo.placa}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:80px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.operacoes}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:commandLink title="Excluir" immediate="true"
+							style="margin-left:10px;">
+							<h:graphicImage url="/resources/delete.png"
+								style="border-style: none" />
+						</h:commandLink>
+						<h:commandLink title="Documentos" immediate="true"
+							style="margin-left:10px;">
+							<h:graphicImage url="/resources/pdf.png"
+								style="border-style: none" />
+						</h:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGroup>
+
+			<br />
+			<div class="clear"></div>
+			
+			<h:panelGroup styleClass="p_like buttonPosition">
+
+				<p:button value="#{bundle.voltarTela}" id="btnVoltar"
+					outcome="../motorista/consultarMotorista.proj?faces-redirect=true&amp;consultaParam=true"
+					>
+				</p:button>
+				<p:button value="#{bundle.novoRegistro}" id="btnNovo" style="margin-left:10px"
+					outcome="cadastrarVeiculo.proj?faces-redirect=true&amp;codMotorista=#{veiculoBean.motorista.codigo}">
+				</p:button>
+			</h:panelGroup>
+
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="#{bundle.perfil_consultarTitulo}" />
+	<ui:param name="headerConteudo" value="#{bundle.perfil_consultarTitulo}" />
+	<ui:param name="bean" value="#{perfilBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{perfilBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro">
+
+			<p:panel id="panelCadastro">
+
+				<h:panelGroup id="pngDescricao" styleClass="p_like">
+					<p:outputLabel value="#{bundle.perfil_descricao}:"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="descricao" size="80"
+						value="#{perfilBean.perfil.descricao}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngAcesso" styleClass="p_like">
+					<p:outputLabel value="#{bundle.perfil_acessaSistema}:" for="acesso"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="acesso" value="#{perfilBean.acesso}" style="width:60px;">
+						<f:selectItem itemLabel="Todos" itemValue="" />
+						<f:selectItem itemLabel="Sim" itemValue="S" />
+						<f:selectItem itemLabel="Não" itemValue="N" />
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngAtivo" styleClass="p_like">
+					<p:outputLabel value="#{bundle.perfil_situacao}:" for="situacao"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:selectOneMenu id="situacao" value="#{perfilBean.ativo}">
+						<f:selectItem itemLabel="Todos" itemValue="" />
+						<f:selectItem itemLabel="Ativo" itemValue="S" />
+						<f:selectItem itemLabel="Inativo" itemValue="N" />
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="#{bundle.pesquisarRegistro}"
+						id="btnPesquisar" actionListener="#{perfilBean.pesquisarPerfil}"
+						style="margin-right: 10px;" update="formCadastro, msgs, conteudo">
+					</p:commandButton>
+					<p:button value="#{bundle.novoRegistro}" id="btnNovo"
+						outcome="cadastrarPerfil.proj">
+					</p:button>
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup>
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbPerfis" var="perfil" value="#{perfilBean.listaPerfil}"
+					rows="10" style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" paginator="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+					<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Perfis
+			   			 </f:facet>
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.perfil_descricao}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbDescricao" value="#{perfil.descricao}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.perfil_acessaSistema}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbAcesso"
+							value="#{perfil.acessaSistema == 'S' ? 'Sim' : 'Não'}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.perfil_situacao}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbSituacao"
+							value="#{perfil.ativo == 'S' ? 'Ativo' : 'Inativo'}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:80px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.operacoes}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:commandLink title="Editar" immediate="true"
+							action="#{perfilBean.navegarAlteracao(perfil.codigo)}">
+							<h:graphicImage url="/resources/edit.png"
+								style="border-style: none" />
+						</h:commandLink>
+						
+						<h:commandLink title="Menus" immediate="true"
+							action="#{perfilBean.navegarVinculoMenus(perfil.codigo)}">
+							<h:graphicImage url="/resources/vinculos.png"
+								style="border-style: none; margin-left:15px" />
+						</h:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGroup>
+
+		</h:form>
+
+		
+	</ui:define>
+</ui:composition>
+</html>

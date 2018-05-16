@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<f:facet name="first">
+
+		<meta http-equiv="Cache-Control"
+			content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+
+	</f:facet>
+
+
+
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+
+
+	<ui:param name="tituloPagina" value="#{bundle.area_cadastroTitulo}" />
+	<ui:param name="headerConteudo" value="#{bundle.area_cadastroTitulo}" />
+	<ui:param name="bean" value="#{areaBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{areaBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro">
+
+			<p:panel id="panelCadastro">
+
+				<br />
+				<div class="clear"></div>
+
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;" id="tbArea"
+					var="area" value="#{areaBean.listaArea}" rows="10"
+					style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" paginator="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+					<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Áreas
+			   			 </f:facet>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="Nome" styleClass="cabecalhoDataTable" />
+						</f:facet>
+
+
+						<h:outputText id="tbNome" value="#{area.area.descricao}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:10%;text-align:center;">
+						<f:facet name="header">
+							<h:outputText value="Cor" styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<p:lightBox
+							style="opacity: 0.5;background:#{area.area.cor};width:80%;height:10px;margin-left:10%"></p:lightBox>
+					</p:column>
+
+					<p:column style="width:20%;text-align:center;">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.operacoes}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:commandLink title="Editar" immediate="true"
+							action="#{areaBean.abrirAlterar(area.area)}">
+							<h:graphicImage url="/resources/edit.png"
+								style="border-style: none" />
+						</h:commandLink>
+						<h:commandLink title="Remover" immediate="true"
+							style="margin-left:10px;"
+							action="#{areaBean.abrirExcluir(area.area)}">
+							<h:graphicImage url="/resources/delete.png"
+								style="border-style: none" />
+						</h:commandLink>
+
+					</p:column>
+
+
+				</p:dataTable>
+
+				<br />
+				<div class="clear"></div>
+
+				<p:gmap id="gmap" center="#{areaBean.coordenadas}" zoom="14" 
+					type="terrain" model="#{areaBean.mapModel}" widgetVar="map"
+					style="width:100%;height:400px" >
+					
+					<p:ajax event="pointSelect" listener="#{areaBean.addMarker}"
+						update="gmap" ></p:ajax>
+					<p:ajax event="overlaySelect" 
+						listener="#{areaBean.marcadorSelecionado}" update="gmap" />
+
+				</p:gmap>
+
+				<br />
+				<div class="clear"></div>
+
+			</p:panel>
+		</h:form>
+
+		<p:dialog widgetVar="dlgArea" showEffect="fade" resizable="false"
+			styleClass="dialogBox" closable="false" header="Salvar área">
+			<h:form prependId="false">
+				<h:panelGrid columns="2">
+					<h:form>
+						<h:panelGroup styleClass="p_like">
+							<p:outputLabel value="Nome área :" for="inptNome"
+								style="width:125px;" />
+
+							<p:inputText value="#{areaBean.area.descricao}" required="true"
+								id="inptNome" size="20"
+								requiredMessage="Campo Obrigatório: Nome área!"
+								style="font-size:15px; color:gray;margin-right:20px" />
+
+						</h:panelGroup>
+						<br></br>
+						<div class="clear"></div>
+						<h:panelGroup styleClass="p_like">
+							<p:outputLabel value="Cor :" style="width:125px;" />
+
+							<p:colorPicker value="#{areaBean.area.cor}" />
+
+						</h:panelGroup>
+
+						<br></br>
+						<div class="clear"></div>
+
+					</h:form>
+					<f:facet name="footer">
+						<div align="center" style="margin-top: 5px;">
+							<p:commandButton value="Confirmar"
+								actionListener="#{areaBean.salvarArea}"
+								update="formCadastro, msgs, conteudo" />
+							<p:commandButton value="Cancelar" onclick="PF('dlgArea').hide();"
+								immediate="true" style="margin-left:10px;" />
+						</div>
+					</f:facet>
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog widgetVar="dlgAlterarArea" showEffect="fade"
+			resizable="false" styleClass="dialogBox" closable="false"
+			header="Alterar área">
+			<h:form prependId="false">
+				<h:panelGrid columns="2">
+					<h:form>
+						<h:panelGroup styleClass="p_like">
+							<p:outputLabel value="Nome área :" for="inptNome"
+								style="width:125px;" />
+
+							<p:inputText value="#{areaBean.areaAlterar.descricao}"
+								required="true" id="inptNome" size="20"
+								requiredMessage="Campo Obrigatório: Nome área!"
+								style="font-size:15px; color:gray;margin-right:20px" />
+
+						</h:panelGroup>
+						<br></br>
+						<div class="clear"></div>
+						<h:panelGroup styleClass="p_like">
+							<p:outputLabel value="Cor :" style="width:125px;" />
+
+							<p:colorPicker value="#{areaBean.areaAlterar.corPura}" />
+
+						</h:panelGroup>
+
+						<br></br>
+						<div class="clear"></div>
+
+					</h:form>
+					<f:facet name="footer">
+						<div align="center" style="margin-top: 5px;">
+							<p:commandButton value="Confirmar"
+								actionListener="#{areaBean.alterarArea}"
+								update="formCadastro, msgs, conteudo" />
+							<p:commandButton value="Cancelar"
+								onclick="PF('dlgAlterarArea').hide();" immediate="true"
+								style="margin-left:10px;" />
+						</div>
+					</f:facet>
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- CONFIRMACAO DELETE -->
+		<p:dialog header="Excluir Registro" widgetVar="dlConfirmDelete"
+			id="dlConfirmDelete" modal="true" dynamic="true" width="470">
+			<h:form id="formDelete" prependId="false">
+				<p:panel>
+					<h:panelGroup styleClass="p_like" layout="block"
+						style="text-align:center;">
+
+						<b><p:outputLabel value="Deseja realmente excluir o registro?" /></b>
+					</h:panelGroup>
+					<br></br>
+					<br></br>
+					<div class="clear"></div>
+					<h:panelGroup layout="block" style="text-align: center;">
+						<p:commandButton process="@this" id="btSim"
+							style="margin-left: 13px" value="#{bundle.sim}"
+							onclick="PF('dlConfirmDelete').hide()"
+							update="formCadastro, msgs, conteudo"
+							actionListener="#{areaBean.excluirArea}" />
+						<p:commandButton process="@this" id="btNao"
+							style="margin-left: 13px" value="#{bundle.nao}"
+							oncomplete="PF('dlConfirmDelete').hide()" />
+					</h:panelGroup>
+
+					<br></br>
+					<div class="clear"></div>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+		<!-- CONFIRMACAO DELETE -->
+
+
+
+
+	</ui:define>
+</ui:composition>
+</html>

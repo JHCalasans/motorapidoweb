@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/meuPosto" reloadable="true" >
+	<Resource auth="Container" 
+		driverClassName="org.postgresql.Driver" 
+		logAbandoned="true" 
+		maxActive="3" 
+		maxIdle="3"
+		maxWait="10000" 
+		name="jdbc/postgresapp" 
+		password="d16082017" 
+		removeAbandoned="true" 
+		removeAbandonedTimeout="60" 
+		type="javax.sql.DataSource"
+		url="jdbc:postgresql://104.236.95.238:5432/diego" 
+		username="diego" />
+	<ResourceLink global="jdbc/postgresapp" 
+		name="jdbc/postgresapp" 
+		factory="org.apache.naming.factory.DataSourceLinkFactory" 
+		type="javax.sql.DataSource"
+		username="diego" 
+		password="d16082017"  />
+</Context>

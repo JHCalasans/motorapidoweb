@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina"
+		value="#{bundle.motorista_consultarTitulo}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.motorista_consultarTitulo}" />
+	<ui:param name="bean" value="#{motoristaBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{motoristaBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formConsulta">
+
+			<p:panel id="panelPesquisa">
+
+				<h:panelGroup id="pngNome" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_nome}:" for="nome"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="nome" size="80"
+						value="#{motoristaBean.nomePesquisa}" />
+
+				</h:panelGroup>
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup id="pngCpf" styleClass="p_like">
+					<p:outputLabel value="#{bundle.motorista_cpf}:" for="cpf"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputMask id="cpf" size="20" mask="999.999.999-99"
+						value="#{motoristaBean.cpfPesquisa}" />
+
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="#{bundle.pesquisarRegistro}"
+						id="btnPesquisar"
+						actionListener="#{motoristaBean.pesquisarMotorista}"
+						style="margin-right: 10px;" update="formConsulta, msgs, conteudo">
+					</p:commandButton>
+					<p:button value="#{bundle.novoRegistro}" id="btnNovo"
+						outcome="cadastrarMotorista.proj">
+					</p:button>
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup>
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbMotoristas" var="motorista"
+					value="#{motoristaBean.listaMotoristas}" rows="10"
+					style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" paginator="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+					<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Motoristas
+			   			 </f:facet>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="Prefixo"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbCod" value="MR - #{motorista.codigo}">
+
+						</h:outputText>
+					</p:column>
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.motorista_nome}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbNome" value="#{motorista.nome}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.motorista_cpf}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbCPF" value="#{motorista.cpf}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.motorista_situacao}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbSituacao"
+							value="#{motorista.ativo == 'S' ? (motorista.bloqueado == 'S' ? 'Ativo(Bloqueado)' : 'Ativo'): 'Inativo'}">
+
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:80px">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.operacoes}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:commandLink title="Veículos" immediate="true" 
+							action="#{motoristaBean.navegarVeiculos(motorista.codigo)}">
+							<h:graphicImage url="/resources/roda.png"
+								style="border-style: none" />
+						</h:commandLink>
+						<h:commandLink title="Editar" immediate="true"
+							style="margin-left:10px;"
+							action="#{motoristaBean.navegarAlteracao(motorista.codigo)}">
+							<h:graphicImage url="/resources/edit.png"
+								style="border-style: none" />
+						</h:commandLink>
+						<h:commandLink title="Doc. Criminais" immediate="true"
+							style="margin-left:10px;"
+							action="#{motoristaBean.downloadDocCriminais(motorista)}">
+							<h:graphicImage url="/resources/pdf.png"
+								style="border-style: none" />
+						</h:commandLink>
+						<h:commandLink title="Bloquear" immediate="true"
+							style="margin-left:10px;"
+							actionListener="#{motoristaBean.carregarMotoristaBloquear(motorista, true)}"
+							rendered="#{motorista.bloqueado eq 'N'}">
+							<h:graphicImage url="/resources/bloquear.png"
+								style="border-style: none" />
+						</h:commandLink>
+						<h:commandLink title="Desbloquear" immediate="true"
+							style="margin-left:10px;"
+							actionListener="#{motoristaBean.carregarMotoristaBloquear(motorista, false)}"
+							rendered="#{motorista.bloqueado eq 'S'}">
+							<h:graphicImage url="/resources/desbloquear.png"
+								style="border-style: none" />
+						</h:commandLink>
+
+					</p:column>
+				</p:dataTable>
+			</h:panelGroup>
+
+		</h:form>
+
+		<!-- CONFIRMACAO DESBLOQUEIO -->
+		<p:dialog header="Desbloquear Motorista"
+			widgetVar="vardlConfirmDesbloqueio" id="dlConfirmDesbloqueio"
+			modal="true" dynamic="true" width="470">
+			<h:form id="formDesbloqueio" prependId="false">
+				<p:panel>
+					<h:panelGroup styleClass="p_like" layout="block"
+						style="text-align:center;">
+
+						<b><p:outputLabel
+								value="Deseja realmente desbloquear o motorista?" /></b>
+					</h:panelGroup>
+					<br></br>
+					<br></br>
+					<div class="clear"></div>
+					<h:panelGroup layout="block" style="text-align: center;">
+						<p:commandButton process="@this" id="btSim"
+							style="margin-left: 13px" value="#{bundle.sim}"
+							onclick="PF('vardlConfirmDesbloqueio').hide()"
+							update="formConsulta, msgs, conteudo"
+							actionListener="#{motoristaBean.desbloquearMotorista}" />
+						<p:commandButton process="@this" id="btNao"
+							style="margin-left: 13px" value="#{bundle.nao}"
+							oncomplete="PF('vardlConfirmDesbloqueio').hide()" />
+					</h:panelGroup>
+
+					<br></br>
+					<div class="clear"></div>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+		<!-- CONFIRMACAO DESBLOQUEIO-->
+
+		<ui:include src="/paginas/motorista/dlgBloquearMotorista.xhtml">
+			<ui:param name="bean" value="#{motoristaBean}" />
+		</ui:include>
+
+	</ui:define>
+</ui:composition>
+</html>

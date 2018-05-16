@@ -1,0 +1,175 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:tjse="http://www.tjse.jus.br/jsf/components">
+
+	<p:dialog header="#{bundle.pesquisarRegistro}"
+		widgetVar="varDlgPesqEndereco" width="800" height="500"
+		resizable="false" showEffect="fade" dynamic="true" appendTo="@(body)"
+		closeOnEscape="true" closable="true" hideEffect="fade" modal="true"
+		draggable="false" id="dlgPesqEndereco">
+		<h:form id="formbuscaEnd" prependId="false">
+
+
+			<p:messages closable="true" globalOnly="true" id="msgDlgEnd" />
+			<p:tabView >
+				<p:ajax event="tabChange" listener="#{chamadaBean.alterarTab}" />
+
+				<p:tab title="Endereços Do Cliente" rendered="#{!chamadaBean.isDestino}">
+					<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+						id="tbPesquisa" name="tbPesquisa" var="endereco"
+						value="#{chamadaBean.enderecosDoCliente}"
+						style="text-align: center;"
+						emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+						rows="10">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_cidade}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText value="#{endereco.cidade}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_bairro}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{endereco.bairro}" />
+							</div>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_logradouro}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{endereco.logradouro}" />
+							</div>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_numero}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{endereco.numero}" />
+							</div>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_complemento}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{endereco.complemento}" />
+							</div>
+						</p:column>
+						<p:column>
+							<p:commandLink update=":formConsulta, :msgs" ajax="true"
+								actionListener="#{chamadaBean.vincularEnderecoCliente(endereco)}"
+								process="@this,:formConsulta" title="#{bundle.associar}" 
+								immediate="false" oncomplete="PF('varDlgPesqEndereco').hide()">
+								<h:graphicImage url="/resources/vincular.png"
+									style="border-style: none" />
+
+							</p:commandLink>
+
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Outros Locais Cadastrados">
+					<p:panel>
+						<h:panelGroup styleClass="p_like">
+							<h:outputLabel styleClass="OutputLabelCampo" for="nomePesq"
+								value="#{bundle.cliente_nome}" />
+							<p:inputText id="nomePesq" maxlength="100" size="30"
+								value="#{chamadaBean.nomeLocalPesquisa}" />
+						</h:panelGroup>
+						<div class="clear"></div>
+						<h:panelGroup styleClass="p_like buttonPosition">
+							<p:commandButton icon="ui-icon ui-icon-search"
+								value="#{bundle.pesquisarRegistro}" update="@form, tbPesquisa"
+								actionListener="#{chamadaBean.pesquisarLocalDialog}" />
+						</h:panelGroup>
+						<div class="clear"></div>
+					</p:panel>
+					<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+						id="tbPesquisaLocal" name="tbPesquisaLocal" var="local"
+						value="#{chamadaBean.locais}" style="text-align: center;"
+						emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+						rows="10">
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_nome}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{local.nome}" />
+							</div>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_cidade}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText value="#{local.cidade}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_bairro}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{local.bairro}" />
+							</div>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_logradouro}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{local.logradouro}" />
+							</div>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_numero}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{local.numero}" />
+							</div>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_complemento}" />
+							</f:facet>
+							<div style="text-align: left;">
+								<h:outputText value="#{local.complemento}" />
+							</div>
+						</p:column>
+						<p:column>
+
+							<p:commandLink update=":formConsulta, :msgs" ajax="true"
+								actionListener="#{chamadaBean.vincularLocal(local)}"
+								process="@this,:formConsulta" title="#{bundle.associar}"
+								immediate="false" oncomplete="PF('varDlgPesqEndereco').hide()">
+								<h:graphicImage url="/resources/vincular.png"
+									style="border-style: none" />
+
+							</p:commandLink>
+
+						</p:column>
+					</p:dataTable>
+
+				</p:tab>
+
+			</p:tabView>
+
+
+
+
+
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

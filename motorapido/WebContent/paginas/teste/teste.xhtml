@@ -1,0 +1,72 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Login Projeto</title>
+		<meta http-equiv="Cache-Control"
+			content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+	</f:facet>
+
+	<f:facet name="last">
+		<!--[if lt IE 9]>
+		<h:outputScript library="js" name="html5.js" />
+		<![endif]-->
+		<h:outputScript library="js" name="translations.js" />
+		<h:outputScript library="js" name="wiOpen.js" />
+		<h:outputScript library="js" name="util.js" />
+		<h:outputScript library="javax.faces" name="jsf.js" />
+		<link type="text/css" rel="stylesheet"
+			href="#{request.contextPath}/resources/css/estilo.css" />
+		<link rel="shortcut icon" type="image/x-icon"
+			href="#{request.contextPath}/resources/favicon.ico" />
+	</f:facet>
+
+
+
+</h:head>
+<h:body>
+	<p:ajaxStatus>
+		<f:facet name="start">
+			<h:panelGroup>
+				<div class="ui-widget-overlay"
+					style="z-index: 4500; position: fixed;" />
+				<p:panel id="panelAjaxStart" styleClass="panelAjax"
+					style="background-color: white; position: fixed;">
+
+					<h:panelGrid id="pgAjaxLoader" columns="1"
+						style="position: static; background-color: FFFF66;border: none;">
+						<strong> <span
+							style="font-size: 10pt; font-family: Arial; color: black;">Processando
+								...</span>
+						</strong>
+						<h:graphicImage value="/resources/ajax-loader.gif" />
+
+					</h:panelGrid>
+				</p:panel>
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="complete">
+			<h:outputLabel value="" />
+		</f:facet>
+	</p:ajaxStatus>
+
+	<p:messages id="messages" autoUpdate="true" closable="true" />
+	<p:growl id="growl" autoUpdate="true" closable="true"></p:growl>
+
+
+	<h:form id="formCad">
+
+	</h:form>
+</h:body>
+</html>

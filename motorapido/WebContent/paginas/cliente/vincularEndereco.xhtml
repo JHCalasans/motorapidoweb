@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina"
+		value="#{bundle.cliente_adicionarEndereco}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.cliente_adicionarEndereco}" />
+	<ui:param name="bean" value="#{clienteBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{clienteBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formConsulta">
+
+			<p:panel id="panelCadEndereco">
+
+				<h:panelGroup>
+
+					<h:panelGroup id="pngCliente" styleClass="p_like">
+						<p:outputLabel value="Cliente:" styleClass="OutputLabelCampo"
+							style="width:120px;" />
+						<p:outputLabel value="#{clienteBean.cliente.nome}"
+							styleClass="OutputLabelValor" />
+					</h:panelGroup>
+
+					<br />
+					<div class="clear"></div>
+					<h:panelGroup id="pngCep" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_cep}:" for="cep"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputMask mask="99999-999" value="#{clienteBean.cep}" id="cep"
+							required="true"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_cep}">
+							<p:ajax event="blur" update="pngEstado, pngBairro, pngLogradouro"
+								listener="#{clienteBean.validarCep}" />
+						</p:inputMask>
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngEstado" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_estado}:" for="estado"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="estado" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_estado}"
+							value="#{clienteBean.enderecoCliente.estado}" />
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngBairro" styleClass="p_like">
+
+						<p:outputLabel value="#{bundle.cliente_cidade}:" for="cidade"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="cidade" required="true" size="20"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_cidade}"
+							value="#{clienteBean.enderecoCliente.cidade}" />
+
+						<p:outputLabel value="#{bundle.cliente_bairro}:" for="bairro"
+							styleClass="OutputLabelCampo"
+							style="margin-left:128px;margin-right:-40px;" />
+						<p:inputText id="bairro" required="true" size="30"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_bairro}"
+							value="#{clienteBean.enderecoCliente.bairro}" />
+
+					</h:panelGroup>
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngLogradouro" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_logradouro}:"
+							for="logradouro" styleClass="OutputLabelCampo"
+							style="width:120px;" />
+						<p:inputText id="logradouro" required="true" size="65"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_logradouro}"
+							value="#{clienteBean.enderecoCliente.logradouro}" />
+
+						<p:outputLabel value="#{bundle.cliente_numero}:" for="numero"
+							styleClass="OutputLabelCampo"
+							style="margin-left:20px;margin-right:-40px;" />
+						<p:inputText id="numero" size="10"
+							value="#{clienteBean.enderecoCliente.numero}" />
+
+					</h:panelGroup>
+
+					<br />
+					<div class="clear"></div>
+
+					<h:panelGroup id="pngComplemento" styleClass="p_like">
+						<p:outputLabel value="#{bundle.cliente_complemento}:"
+							styleClass="OutputLabelCampo" style="width:120px;" />
+						<p:inputText id="complemento" size="90"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.cliente_complemento}"
+							value="#{clienteBean.enderecoCliente.complemento}" />
+
+					</h:panelGroup>
+
+					<div class="clear" />
+					<h:panelGroup styleClass="p_like buttonPosition">
+						<br></br>
+						<p:commandButton action="#{clienteBean.vincularEndereco}"
+							value="Adicionar" update=":msgs,:growl,formConsulta, tbEnderecos"
+							icon="ui-icon ui-icon-plus">
+						</p:commandButton>
+						<p:button value="#{bundle.voltarTela}" style="margin-left:15px;"
+							outcome="consultarCliente.tjse"
+							icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+					</h:panelGroup>
+					<div class="clear" />
+				</h:panelGroup>
+
+			</p:panel>
+
+			<p:panel id="panelVinculados" header="Endereços Vinculados">
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup>
+
+					<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+						id="tbEnderecos" var="endereco"
+						value="#{clienteBean.listaEnderecosCliente}"
+						style="text-align: center; max-width:100%" first="0"
+						paginatorAlwaysVisible="false" rowKey="#{endereco.codigo}"
+						emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+						rows="10">
+
+						<p:column sortBy="#{endereco.cep}">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_cep}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<div style="text-align: center;">
+								<h:outputText value="#{endereco.cep}" />
+							</div>
+						</p:column>
+
+						<p:column sortBy="#{endereco.estado}">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_estado}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<div style="text-align: center;">
+								<h:outputText value="#{endereco.estado}" />
+							</div>
+						</p:column>
+
+						<p:column sortBy="#{endereco.cidade}">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_cidade}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<div style="text-align: center;">
+								<h:outputText value="#{endereco.cidade}" />
+							</div>
+						</p:column>
+
+						<p:column sortBy="#{endereco.bairro}">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_bairro}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<div style="text-align: center;">
+								<h:outputText value="#{endereco.bairro}" />
+							</div>
+						</p:column>
+
+						<p:column sortBy="#{endereco.logradouro}">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.cliente_logradouro}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<div style="text-align: center;">
+								<h:outputText value="#{endereco.logradouro}" />
+							</div>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.operacoes}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:commandLink title="Remover" immediate="true" 
+								style="margin-left:10px;" actionListener="#{clienteBean.iniciarEnderecoRemocao(endereco)}">
+								<h:graphicImage url="/resources/delete.png"
+									style="border-style: none" />
+							</h:commandLink>
+
+						</p:column>
+
+					</p:dataTable>
+				</h:panelGroup>
+
+
+
+			</p:panel>
+
+		</h:form>
+
+		<!-- CONFIRMACAO DELETE -->
+		<p:dialog header="Excluir Registro" widgetVar="dlConfirmDelete"
+			id="dlConfirmDelete" modal="true" dynamic="true" width="470">
+			<h:form id="formDelete" prependId="false">
+				<p:panel>
+					<h:panelGroup styleClass="p_like" layout="block"
+						style="text-align:center;">
+
+						<b><p:outputLabel value="Deseja realmente excluir o registro?" /></b>
+					</h:panelGroup>
+					<br></br>
+					<br></br>
+					<div class="clear"></div>
+					<h:panelGroup layout="block" style="text-align: center;">
+						<p:commandButton process="@this" id="btSim"
+							style="margin-left: 13px" value="#{bundle.sim}"
+							onclick="PF('dlConfirmDelete').hide()"
+							update="tbEnderecos, msgs"
+							actionListener="#{clienteBean.excluirEndereco}" />
+						<p:commandButton process="@this" id="btNao"
+							style="margin-left: 13px" value="#{bundle.nao}"
+							oncomplete="PF('dlConfirmDelete').hide()" />
+					</h:panelGroup>
+
+					<br></br>
+					<div class="clear"></div>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+		<!-- CONFIRMACAO DELETE -->
+
+
+	</ui:define>
+</ui:composition>
+</html>

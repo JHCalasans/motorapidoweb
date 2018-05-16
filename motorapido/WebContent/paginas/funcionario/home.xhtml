@@ -1,0 +1,231 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Meu Posto</title>
+		<meta http-equiv="Cache-Control"
+			content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+	</f:facet>
+
+	<f:facet name="last">
+		<!--[if lt IE 9]>
+		<h:outputScript library="js" name="html5.js" />
+		<![endif]-->
+		<h:outputScript library="js" name="translations.js" />
+		<h:outputScript library="js" name="wiOpen.js" />
+		<h:outputScript library="js" name="util.js" />
+		<h:outputScript library="javax.faces" name="jsf.js" />
+		<link type="text/css" rel="stylesheet"
+			href="#{request.contextPath}/resources/css/estilo.css" />
+		<link rel="shortcut icon" type="image/x-icon"
+			href="#{request.contextPath}/resources/favico.ico" />
+	</f:facet>
+
+</h:head>
+<h:body style="background:bisque;">
+
+	<p:ajaxStatus>
+		<f:facet name="start">
+			<h:panelGroup>
+				<div class="ui-widget-overlay"
+					style="z-index: 4500; position: fixed;" />
+				<p:panel id="panelAjaxStart" styleClass="panelAjax"
+					style="background-color: white; position: fixed;">
+
+					<h:panelGrid id="pgAjaxLoader" columns="1"
+						style="position: static; background-color: FFFF66;border: none;">
+						<strong> <span
+							style="font-size: 10pt; font-family: Arial; color: black;">Processando
+								...</span>
+						</strong>
+						<h:graphicImage value="/resources/ajax-loader.gif" />
+
+					</h:panelGrid>
+				</p:panel>
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="complete">
+			<h:outputLabel value="" />
+		</f:facet>
+	</p:ajaxStatus>
+
+	<p:messages id="messages" autoUpdate="true" closable="true" />
+	<p:growl id="growl" autoUpdate="true" closable="true"></p:growl>
+	<h:form id="formCad">
+
+		<h:panelGroup layout="block" style="text-align:center;">
+			<p:outputLabel value="Aplicativo meu Posto"
+				style="text-align:center;font-family:Charbroil;font-weight:700;font-size:62px"></p:outputLabel>
+			<h:graphicImage value="/resources/gota-circulo.png" height="100px"
+				style="position:relative;top:35px;" />
+
+		</h:panelGroup>
+		<br />
+
+		<div align="center">
+			<p:panel
+				style="background-image: url('/meuPosto/resources/prancheta.png') !important;
+				background-size: cover; background-color:bisque; border:none;
+			 text-align:center; width:620px;height:800px;">
+				<h:panelGroup layout="block">
+					<p:outputLabel value="DADOS DO POSTO"
+						style="position:relative;top:120px;font-size:30px;font-family:Charbroil;" />
+
+
+				</h:panelGroup>
+				<br />
+				<h:panelGroup layout="block"
+					style="position:relative;top:150px;margin-left:10px">
+					<p:outputLabel value="Posto :" for="nmPosto"
+						style=" font-size:20px;font-family:Charbroil; margin-right: 20px" />
+					<p:inputText styleClass="inputPrancheta" required="true"
+						value="#{meuPostoBean.posto.nome}" id="nmPosto"
+						style="font-size:15px; color:gray;"
+						requiredMessage="Campo Obrigatório: Nome do Posto!" size="40" />
+				</h:panelGroup>
+				<br />
+				<p:spacer height="30" width="0">
+				</p:spacer>
+				<h:panelGroup layout="block"
+					style="float:left;position:relative;top:150px; margin-left:83px;">
+					<p:outputLabel value="CNPJ :" for="inptCnpj"
+						style="font-size:20px;font-family:Charbroil;margin-right:22px;" />
+					<p:inputMask mask="99.999.999/9999-99" styleClass="inputPrancheta"
+						value="#{meuPostoBean.posto.cnpj}" id="inptCnpj" required="true"
+						requiredMessage="Campo Obrigatório: CNPJ!"
+						style="font-size:15px; color:gray;" size="18"></p:inputMask>
+					<p:outputLabel value="CEP :" for="inptCEP"
+						style="font-size:20px;font-family:Charbroil;margin-left:30px;margin-right:20px;" />
+					<p:inputMask mask="99999-999" styleClass="inputPrancheta" size="12"
+						required="true" value="#{meuPostoBean.cep}"
+						style="font-size:15px; color:gray;" id="inptCEP"
+						requiredMessage="Campo Obrigatório: CEP!">
+						<p:ajax event="blur" listener="#{meuPostoBean.validarCep}"
+							update=":growl, :messages,pngEstado , formCad"></p:ajax>
+					</p:inputMask>
+				</h:panelGroup>
+				<br />
+				<p:spacer height="30" width="0"></p:spacer>
+
+				<h:panelGroup layout="block" id="pngEstado"
+					style="float:left;position:relative;top:150px; margin-left:65px">
+
+					<p:outputLabel value="ESTADO :"
+						style="font-size:20px;font-family:Charbroil;margin-right:25px;" />
+
+					<p:inputText value="#{meuPostoBean.posto.estado}"
+						styleClass="inputPrancheta" placeholder="Obtido pelo CEP"
+						size="15" readonly="true"
+						style="font-size:15px; color:gray;margin-right:20px" />
+
+					<p:outputLabel value="CIDADE :"
+						style="font-size:20px;font-family:Charbroil;margin-right:20px;" />
+
+					<p:inputText value="#{meuPostoBean.posto.cidade}" size="14"
+						readonly="true" placeholder="Obtida pelo CEP"
+						styleClass="inputPrancheta" style="font-size:15px; color:gray;" />
+				</h:panelGroup>
+				<br />
+				<p:spacer height="50" width="0"></p:spacer>
+
+				<h:panelGroup layout="block" id="pnglogradouro"
+					style="float:left;position:relative;top:150px; margin-left:25px">
+
+					<p:outputLabel value="LOGRADOURO :"
+						style="font-size:20px;font-family:Charbroil;margin-right:25px;" />
+
+					<p:inputText value="#{meuPostoBean.posto.logradouro}"
+						styleClass="inputPrancheta" placeholder="Obtido pelo CEP"
+						size="40" readonly="true"
+						style="font-size:15px; color:gray;margin-right:20px" />
+
+				</h:panelGroup>
+				<br />
+				<p:spacer height="50" width="0"></p:spacer>
+
+				<h:panelGroup layout="block" id="pngBairro"
+					style="float:left;position:relative;top:150px; margin-left:70px">
+
+					<p:outputLabel value="BAIRRO :"
+						style="font-size:20px;font-family:Charbroil;margin-right:25px;" />
+
+					<p:inputText value="#{meuPostoBean.posto.bairro}"
+						styleClass="inputPrancheta" placeholder="Obtido pelo CEP"
+						size="20" readonly="true"
+						style="font-size:15px; color:gray;margin-right:20px" />
+
+					<p:outputLabel value="NÚMERO :"
+						style="font-size:20px;font-family:Charbroil;margin-right:20px;" />
+
+					<p:inputText value="#{meuPostoBean.posto.numero}" size="5"
+						styleClass="inputPrancheta" style="font-size:15px; color:gray;" />
+
+				</h:panelGroup>
+
+				<br />
+				<p:spacer height="50" width="0"></p:spacer>
+
+				<h:panelGroup layout="block" id="pngDistribuidora"
+					style="float:left;position:relative;top:150px; margin-left:22px">
+
+					<p:outputLabel value="DISTRIBUIDORA :"
+						style="font-size:20px;font-family:Charbroil;margin-right:25px;" />
+
+					<p:selectOneMenu id="slcDistribuidora" var="dist"
+						converter="distribuidoraConverter"
+						styleClass="selectDistribuidora"
+						value="#{meuPostoBean.distribuidora}" panelStyle="width:180px"
+						style="width:160px;border-color:brown;position:relative;top:5px;">
+
+						<f:selectItems value="#{meuPostoBean.listaDistribuidoras}"
+							var="distribuidora" itemLabel="#{distribuidora.descricao}"
+							itemValue="#{distribuidora}" />
+
+						<p:column style="width:20px;height:50px;border-color:brown;">
+							<p:graphicImage value="#{dist.streamedLogo}" stream="false"
+								cache="false" width="190%" style="margin-left:-10px;" />
+						</p:column>
+
+						<p:column style="text-align:center;border-color:brown;">
+							<h:outputText value="#{dist.descricao}" style="font-weight:700" />
+						</p:column>
+
+					</p:selectOneMenu>
+
+
+				</h:panelGroup>
+				<br />
+				<p:spacer height="150" width="0"></p:spacer>
+
+				<h:panelGroup layout="block"
+					style="float:center;position:relative;top:150px;">
+					<p:commandButton value="Salvar" update="formCad" id="btnCad"
+						styleClass="btnMeuPosto" actionListener="#{meuPostoBean.teste}"
+						style="text-align: center !important; padding: inherit !important;">
+					</p:commandButton>
+					<p:spacer width="20" height="0"></p:spacer>
+					<p:commandButton value="Excluir" update="formCad" id="btnExcluir"
+						styleClass="btnMeuPostoExcluir" 
+						style="text-align: center !important; padding: inherit !important;">
+					</p:commandButton>
+				</h:panelGroup>
+			</p:panel>
+		</div>
+		<br />
+
+	</h:form>
+
+</h:body>
+</html>

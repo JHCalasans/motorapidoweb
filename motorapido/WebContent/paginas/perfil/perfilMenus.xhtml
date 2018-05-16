@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina"
+		value="#{bundle.perfil_vincularMenus}" />
+	<ui:param name="headerConteudo"
+		value="#{bundle.perfil_vincularMenus}" />
+	<ui:param name="bean" value="#{perfilBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{perfilBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formConsulta">
+
+			<p:panel id="panelNaoVinculados" header="Menus Não Vinculados">		
+
+			<h:panelGroup >
+
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbMenusNaoVinculados" var="menu" 
+					value="#{perfilBean.listaMenusNaoVinculados}"
+					style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" rowKey="#{menu.codigo}"
+					selection="#{perfilBean.listaMenusSelecionados}"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+					rows="10">
+					<p:column selectionMode="multiple"
+						style="width:16px;text-align:center" />
+
+					<p:column sortBy="#{menu.nome}">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.menu_menu}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<div style="text-align: center;">
+							<h:outputText value="#{menu.nome}" />
+						</div>
+					</p:column>
+
+				
+					
+				</p:dataTable>
+				<div class="clear" />
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<br></br>
+					<p:commandButton action="#{perfilBean.vincularMenu}"
+						value="Adicionar" 
+						update=":msgs,:growl,formConsulta, tbMenusVinculados"
+						icon="ui-icon ui-icon-plus">
+					</p:commandButton>
+					<p:button value="#{bundle.voltarTela}" style="margin-left:15px;"
+						outcome="consultarPerfil.tjse"
+						icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+				</h:panelGroup>
+				<div class="clear" />
+			</h:panelGroup>
+			
+			</p:panel>
+			
+			<p:panel id="panelVinculados" header="Menus Vinculados">		
+
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup >
+
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbMenusVinculados" var="perfilMenu" 
+					value="#{perfilBean.listaMenusVinculados}"
+					style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" rowKey="#{perfilMenu.codigo}"
+					selection="#{perfilBean.listaMenusDesvincularSelecionados}"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+					rows="10">
+					<p:column selectionMode="multiple"
+						style="width:16px;text-align:center" />
+
+					<p:column sortBy="#{perfilMenu.menu.nome}">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.menu_menu}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<div style="text-align: center;">
+							<h:outputText value="#{perfilMenu.menu.nome}" />
+						</div>
+					</p:column>
+
+				
+					
+				</p:dataTable>
+				<div class="clear" />
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<br></br>
+					<p:commandButton action="#{perfilBean.desvincularMenu}"
+						value="Remover" 
+						update=":msgs,:growl,formConsulta, tbMenusNaoVinculados"
+						icon="ui-icon ui-icon-plus">
+					</p:commandButton>
+					<p:button value="#{bundle.voltarTela}" style="margin-left:15px;"
+						outcome="consultarPerfil.tjse"
+						icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+				</h:panelGroup>
+				<div class="clear" />
+			</h:panelGroup>
+			
+			</p:panel>
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>
+</html>
