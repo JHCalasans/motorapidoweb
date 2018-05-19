@@ -134,11 +134,13 @@ public class ChamadaBean extends SimpleController {
 			if(cliente == null)
 				throw new ExcecaoNegocio("Nenhum cliente selecionado");
 			
+			chamada.setCliente(getCliente());
 			ChamadaBO.getInstance().iniciarChamada(getChamada(), enderecoClienteOrigem, enderecoClienteDestino,
 					localOrigem, getFuncionarioLogado());
 			
 			limparCampos();
-			 addMsg(FacesMessage.SEVERITY_INFO, "Chamada cadastrada.");
+			atualizarChamadas();
+			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cadastrada.");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -146,11 +148,11 @@ public class ChamadaBean extends SimpleController {
 
 	public void limparCampos() {
 		cliente = null;
-		if(enderecoClienteOrigem != null){
-			enderecoClienteOrigem.setCidade("");
-			enderecoClienteOrigem.setComplemento("");
-		}
-		enderecoClienteDestino= new Local();
+		numCelPesquisa = "";
+		if(enderecoClienteOrigem != null)
+			enderecoClienteOrigem = new EnderecoCliente();
+		
+		enderecoClienteDestino = new Local();
 		//localOrigem = null;
 		chamada = new Chamada();
 		

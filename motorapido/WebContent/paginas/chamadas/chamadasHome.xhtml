@@ -297,7 +297,7 @@
 							<h:outputText value="Gerada" styleClass="cabecalhoDataTable" />
 						</f:facet>
 						<p:outputLabel value="#{chamada.dataCriacao}">
-							<f:convertDateTime pattern="dd/MM/yyyy HH:MM" />
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 						</p:outputLabel>
 					</p:column>
 
@@ -305,7 +305,7 @@
 						<f:facet name="header">
 							<h:outputText value="Telefone" styleClass="cabecalhoDataTable" />
 						</f:facet>
-						<h:outputText value="tee">
+						<h:outputText value="#{chamada.cliente.celular}">
 						</h:outputText>
 					</p:column>
 
@@ -313,7 +313,7 @@
 						<f:facet name="header">
 							<h:outputText value="Cliente" styleClass="cabecalhoDataTable" />
 						</f:facet>
-						<h:outputText value="teste">
+						<h:outputText value="#{chamada.cliente.nome}">
 						</h:outputText>
 					</p:column>
 
@@ -321,7 +321,7 @@
 						<f:facet name="header">
 							<h:outputText value="Endereço" styleClass="cabecalhoDataTable" />
 						</f:facet>
-						<h:outputText value="teste">
+						<h:outputText value="#{chamada.enderecoFormatado}">
 						</h:outputText>
 					</p:column>
 
@@ -329,7 +329,7 @@
 						<f:facet name="header">
 							<h:outputText value="Status" styleClass="cabecalhoDataTable" />
 						</f:facet>
-						<h:outputText value="teste">
+						<h:outputText value="#{chamada.situacaoChamada.descricao}">
 						</h:outputText>
 					</p:column>
 
