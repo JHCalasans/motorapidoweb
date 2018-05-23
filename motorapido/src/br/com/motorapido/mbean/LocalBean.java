@@ -2,6 +2,8 @@ package br.com.motorapido.mbean;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
+import java.text.Normalizer;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,8 +16,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.primefaces.event.map.PointSelectEvent;
+import org.primefaces.model.map.DefaultMapModel;
+import org.primefaces.model.map.MapModel;
+import org.primefaces.model.map.Marker;
+import org.primefaces.model.map.Polyline;
 
 import com.google.gson.Gson;
+import com.google.maps.model.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.excecao.MsgUtil;
@@ -43,7 +51,13 @@ public class LocalBean extends SimpleController {
 	private List<Local> listaLocais;
 
 	private Local localExcluir;
-	
+
+	private List<org.primefaces.model.map.LatLng> marcadores;
+
+	private MapModel mapModel;
+
+	private LatLng coordenadas;
+
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
@@ -52,28 +66,29 @@ public class LocalBean extends SimpleController {
 		try {
 			String codLocalStr = (String) getRequestParam("codLocal");
 			String cadSucesso = (String) getRequestParam("cadSucesso");
-			String cadastrar =  (String) getRequestParam("cadastroParam");
+			String cadastrar = (String) getRequestParam("cadastroParam");
 			String altSucesso = (String) getRequestParam("altSucesso");
 			if (codLocalStr != null) {
 				Integer codLocal = Integer.valueOf(codLocalStr);
 				carregarLocal(codLocal);
-				
-			} else if(cadastrar != null && (cadastrar.equals("true") || cadastrar.equals("true?"))) {
+				mapModel = new DefaultMapModel();
+			} else if (cadastrar != null && (cadastrar.equals("true") || cadastrar.equals("true?"))) {
 				local = new Local();
-
+				mapModel = new DefaultMapModel();
+				setCoordenadas(new LatLng(-10.938604, -37.064269));
 			} else {
-				 if(cadSucesso != null && (cadSucesso.equals("true") || cadSucesso.equals("true?")))
-					 addMsg(FacesMessage.SEVERITY_INFO, "Local cadastrado com sucesso.");
-				 if(altSucesso != null && (altSucesso.equals("true") || altSucesso.equals("true?")))
-					 addMsg(FacesMessage.SEVERITY_INFO, "Local alterado com sucesso.");
+				if (cadSucesso != null && (cadSucesso.equals("true") || cadSucesso.equals("true?")))
+					addMsg(FacesMessage.SEVERITY_INFO, "Local cadastrado com sucesso.");
+				if (altSucesso != null && (altSucesso.equals("true") || altSucesso.equals("true?")))
+					addMsg(FacesMessage.SEVERITY_INFO, "Local alterado com sucesso.");
 				pesquisarLocal();
 			}
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	public void carregarLocal(Integer codLocal){
+
+	public void carregarLocal(Integer codLocal) {
 		try {
 			local = LocalBO.getInstance().obterLocalById(codLocal);
 			cep = local.getCep();
@@ -81,19 +96,18 @@ public class LocalBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	
+
 	public String navegarAlteracao(int codLocal) {
 		String url = "alterarLocal.proj?faces-redirect=true&codLocal=" + codLocal;
 		return url;
 	}
-	
-	public void abrirExcluir(Local param){
+
+	public void abrirExcluir(Local param) {
 		localExcluir = param;
 		enviarJavascript("PF('dlConfirmDelete').show();");
 	}
-	
-	public void excluirLocal(){
+
+	public void excluirLocal() {
 		try {
 			LocalBO.getInstance().excluirLocal(localExcluir);
 			localExcluir = null;
@@ -103,8 +117,8 @@ public class LocalBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	public void pesquisarLocal(){
+
+	public void pesquisarLocal() {
 		try {
 			listaLocais = LocalBO.getInstance().obterLocal(nomePesquisa);
 		} catch (ExcecaoNegocio e) {
@@ -114,6 +128,8 @@ public class LocalBean extends SimpleController {
 
 	public String salvarLocal() {
 		try {
+			if(mapModel.getMarkers().isEmpty())
+				throw new ExcecaoNegocio("Favor indique um local correspondente ao endereço no mapa.");
 			LocalBO.getInstance().salvarLocal(getLocal());
 			String url = "consultarLocal.proj??faces-redirect=true&cadSucesso=true";
 			return url;
@@ -122,7 +138,7 @@ public class LocalBean extends SimpleController {
 		}
 		return "";
 	}
-	
+
 	public String alterarLocal() {
 		try {
 			LocalBO.getInstance().salvarLocal(getLocal());
@@ -165,7 +181,6 @@ public class LocalBean extends SimpleController {
 				this.getLocal().setLogradouro(end.getLogradouro());
 				this.getLocal().setBairro(end.getBairro());
 				buscarCoordenadas();
-
 				switch (end.getUf()) {
 				case "RO":
 					this.getLocal().setEstado("Rondônia");
@@ -259,7 +274,26 @@ public class LocalBean extends SimpleController {
 		}
 
 	}
-	
+	/*
+	 * public static String removerAcentos(String str) { return
+	 * Normalizer.normalize(str,
+	 * Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""); }
+	 */
+
+	public void addMarker(PointSelectEvent event) {
+
+		try {
+			Marker marker = new Marker(event.getLatLng(), "Marcador");
+			getLocal().setLatitude(String.valueOf(marker.getLatlng().getLat()));
+			getLocal().setLongitude(String.valueOf(marker.getLatlng().getLng()));
+			coordenadas = new LatLng(marker.getLatlng().getLat(), marker.getLatlng().getLng());
+			getMapModel().getMarkers().clear();
+			getMapModel().addOverlay(marker);
+		} catch (Exception e) {
+		}
+
+	}
+
 	private void buscarCoordenadas() {
 
 		try {
@@ -271,6 +305,18 @@ public class LocalBean extends SimpleController {
 							+ "+BR&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo()))
 					.setHeader("accept", "application/json").build();
 
+			/*
+			 * HttpUriRequest requestCoordenadas = RequestBuilder.get() .setUri(
+			 * "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+			 * URLEncoder.encode(this.getLocal().getBairro(), "UTF-8") + "+" +
+			 * URLEncoder.encode(this.getLocal().getLogradouro(), "UTF-8") + "+"
+			 * + URLEncoder.encode(this.getLocal().getNumero(), "UTF-8") +
+			 * "+BR&key=" +
+			 * FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo()))
+			 * .setHeader("accept", "application/json").build();
+			 */
+
+			System.out.println(requestCoordenadas.getURI());
 			HttpResponse response;
 			response = httpClient.execute(requestCoordenadas);
 			if (response.getStatusLine().getStatusCode() != 200) {
@@ -286,8 +332,15 @@ public class LocalBean extends SimpleController {
 
 			Gson gson = new Gson();
 			CoordenadasGoogle coordGoogle = gson.fromJson(json, CoordenadasGoogle.class);
-			this.getLocal().setLatitude(String.valueOf(coordGoogle.getResults().get(0).getGeometry().getLocation().getLat()));
-			this.getLocal().setLongitude(String.valueOf(coordGoogle.getResults().get(0).getGeometry().getLocation().getLng()));
+			coordenadas = new LatLng(coordGoogle.getResults().get(0).getGeometry().getLocation().getLat(),
+					coordGoogle.getResults().get(0).getGeometry().getLocation().getLng());
+			/*
+			 * this.getLocal()
+			 * .setLatitude(String.valueOf(coordGoogle.getResults().get(0).
+			 * getGeometry().getLocation().getLat())); this.getLocal()
+			 * .setLongitude(String.valueOf(coordGoogle.getResults().get(0).
+			 * getGeometry().getLocation().getLng()));
+			 */
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -327,7 +380,7 @@ public class LocalBean extends SimpleController {
 	public void setListaLocais(List<Local> listaLocais) {
 		this.listaLocais = listaLocais;
 	}
-	
+
 	@Override
 	public String salvoSucesso() {
 		return null;
@@ -339,6 +392,30 @@ public class LocalBean extends SimpleController {
 
 	public void setLocalExcluir(Local localExcluir) {
 		this.localExcluir = localExcluir;
+	}
+
+	public List<org.primefaces.model.map.LatLng> getMarcadores() {
+		return marcadores;
+	}
+
+	public void setMarcadores(List<org.primefaces.model.map.LatLng> marcadores) {
+		this.marcadores = marcadores;
+	}
+
+	public MapModel getMapModel() {
+		return mapModel;
+	}
+
+	public void setMapModel(MapModel mapModel) {
+		this.mapModel = mapModel;
+	}
+
+	public LatLng getCoordenadas() {
+		return coordenadas;
+	}
+
+	public void setCoordenadas(LatLng coordenadas) {
+		this.coordenadas = coordenadas;
 	}
 
 }
