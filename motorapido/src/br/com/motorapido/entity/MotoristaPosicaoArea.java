@@ -50,6 +50,9 @@ public class MotoristaPosicaoArea extends Entidade{
 	@JoinColumn(name = "cod_motorista")
 	private Motorista motorista;
 	
+	@Column(name = "flg_ativo", nullable = false)
+	private String ativo;	
+	
 	@Override
 	public Serializable getIdentificador() {
 		return getCodigo();
@@ -93,6 +96,14 @@ public class MotoristaPosicaoArea extends Entidade{
 
 	public void setMotorista(Motorista motorista) {
 		this.motorista = motorista;
+	}
+
+	public String getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
 	}
 
 }
