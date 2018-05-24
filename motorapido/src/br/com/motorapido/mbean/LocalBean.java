@@ -70,8 +70,9 @@ public class LocalBean extends SimpleController {
 			String altSucesso = (String) getRequestParam("altSucesso");
 			if (codLocalStr != null) {
 				Integer codLocal = Integer.valueOf(codLocalStr);
-				carregarLocal(codLocal);
 				mapModel = new DefaultMapModel();
+				carregarLocal(codLocal);		
+				
 			} else if (cadastrar != null && (cadastrar.equals("true") || cadastrar.equals("true?"))) {
 				local = new Local();
 				mapModel = new DefaultMapModel();
@@ -92,6 +93,9 @@ public class LocalBean extends SimpleController {
 		try {
 			local = LocalBO.getInstance().obterLocalById(codLocal);
 			cep = local.getCep();
+			setCoordenadas(new LatLng(Double.parseDouble(local.getLatitude()), Double.parseDouble(local.getLongitude())));
+			Marker marker = new Marker(new org.primefaces.model.map.LatLng (getCoordenadas().lat, getCoordenadas().lng), "Marcador");
+			mapModel.addOverlay(marker);
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
