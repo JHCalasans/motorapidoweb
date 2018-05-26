@@ -126,6 +126,7 @@ public class AreaBO extends MotoRapidoBO {
 				}
 				coordenadasAreaUtil.getCoordenadas().add(new LatLng(coordenada.getLatitude(), coordenada.getLongitude()));
 			}
+			emUtil.commitTransaction(transaction);
 			return retorno;
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
@@ -135,5 +136,38 @@ public class AreaBO extends MotoRapidoBO {
 		}
 
 	}
+	
+	
+	@SuppressWarnings("static-access")
+	public List<CoordenadasAreaUtil> obterAreas(EntityManager em) throws ExcecaoNegocio {
+		
+		try {
+			ICoordenadasAreaDAO coordenadasAreaDAO = fabricaDAO.getPostgresCoordenadasAreaDAO();
+			List<CoordenadasArea> resultado = coordenadasAreaDAO.findAll(em, coordenadasAreaDAO.BY_AREA_ASC);
+			Integer ultimoCodigoArea = null;
+			CoordenadasAreaUtil coordenadasAreaUtil = new CoordenadasAreaUtil();
+			List<CoordenadasAreaUtil> retorno = new ArrayList<CoordenadasAreaUtil>();
+			for (CoordenadasArea coordenada : resultado) {
+				if (ultimoCodigoArea == null){
+					ultimoCodigoArea = coordenada.getArea().getCodigo();
+					coordenadasAreaUtil.setArea(coordenada.getArea());
+					retorno.add(coordenadasAreaUtil);
+				}else if (ultimoCodigoArea != coordenada.getArea().getCodigo()) {
+					 ultimoCodigoArea = coordenada.getArea().getCodigo();
+					 
+					 coordenadasAreaUtil = new CoordenadasAreaUtil();
+					 coordenadasAreaUtil.setArea(coordenada.getArea());
+					 retorno.add(coordenadasAreaUtil);
+				}
+				coordenadasAreaUtil.getCoordenadas().add(new LatLng(coordenada.getLatitude(), coordenada.getLongitude()));
+			}
+			return retorno;
+		} catch (Exception e) {			
+			throw new ExcecaoNegocio("Falha ao tentar obter áreas.", e);
+		}
+		
+
+	}
+
 
 }

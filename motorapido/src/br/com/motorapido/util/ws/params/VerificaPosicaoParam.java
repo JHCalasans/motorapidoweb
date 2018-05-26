@@ -1,4 +1,4 @@
-package br.com.motorapido.util.ws;
+package br.com.motorapido.util.ws.params;
 
 import java.io.Serializable;
 

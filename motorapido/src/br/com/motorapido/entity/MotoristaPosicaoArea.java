@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -20,7 +22,8 @@ import br.com.minhaLib.dao.Entidade;
 
 
 @Entity
-@Table(name = Perfil.nomeTabela, schema = Perfil.esquema, catalog = "diego")
+@Table(name = MotoristaPosicaoArea.nomeTabela, schema = MotoristaPosicaoArea.esquema, catalog = "diego")
+
 public class MotoristaPosicaoArea extends Entidade{
 
 	private static final long serialVersionUID = 629906485401895302L;

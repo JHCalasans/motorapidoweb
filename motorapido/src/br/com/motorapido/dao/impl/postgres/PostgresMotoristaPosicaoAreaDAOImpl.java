@@ -1,6 +1,8 @@
 package br.com.motorapido.dao.impl.postgres;
 
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import br.com.minhaLib.dao.CriterioOrdenacao;
 import br.com.minhaLib.dao.impl.GenericDAOImpl;
@@ -15,5 +17,20 @@ implements IMotoristaPosicaoAreaDAO{
 		super();
 		setOrdenacaoPadrao(new CriterioOrdenacao[] { BY_POS_ASC });
 	}
+
+	@Override
+	public Integer obterMaiorPosicaoArea(Integer codArea, EntityManager em) {
+		
+		Query sql = em.createNativeQuery("select max(mpa.posicao) from MotoristaPosicaoArea mpa where mpa.area.codigo = :codArea");
+		sql.setParameter("codArea", codArea);
+		//String sql = " select max(posicao) from diego.motorista_posicao_area where codArea = " + codArea;
+		
+		//Query q = em.createNativeQuery(sql);
+		
+		return  (Integer)sql.getSingleResult();
+	}
+	
+	
+	
 
 }

@@ -14,7 +14,7 @@ import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.util.ExcecoesUtil;
-import br.com.motorapido.util.ws.VerificaPosicaoParam;
+import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
 
 
 
@@ -65,6 +65,18 @@ public class MotoristaWS {
 		}catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar alterar disponibilidade").build();
+		}
+	}
+	
+	@POST
+	@Path("/buscarInformacoesBase")
+	public Response buscarInformacoesBase() {
+		try {
+			
+			return Response.status(Status.OK).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter informações da base").build();
 		}
 	}
 

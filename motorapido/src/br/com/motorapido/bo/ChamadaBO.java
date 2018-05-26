@@ -91,17 +91,7 @@ public class ChamadaBO extends MotoRapidoBO {
 	private void validarAreaDoChamado(double latitude, double longitude) throws ExcecaoNegocio {
 		Area areaOrigem = null;
 		List<CoordenadasAreaUtil> listaCoordAreas = AreaBO.getInstance().obterAreas();
-/*		for (CoordenadasAreaUtil area : listaCoordAreas) {
-			Polygon.Builder builder = Polygon.Builder();
-			for (LatLng coordenadas : area.getCoordenadas()){
-				builder.addVertex(new Point(coordenadas.getLat(), coordenadas.getLng()));		
-			}
-			Polygon poligono = builder.close().build();
-			if (poligono.contains(new Point(latitude, longitude))){
-				areaOrigem = area.getArea();
-				break;
-			}				
-		}*/
+
 		CoordenadaPontoUtil[] pontos;
 		for (CoordenadasAreaUtil area : listaCoordAreas) {
 			CoordenadaPontoUtil ponto = null;
@@ -119,8 +109,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			}				
 		}
 		if (areaOrigem == null)
-			throw new ExcecaoNegocio("Ponto de origem não está em nenhuma área cadastrada");
-		
+			throw new ExcecaoNegocio("Ponto de origem não está em nenhuma área cadastrada");		
 
 	}
 	
