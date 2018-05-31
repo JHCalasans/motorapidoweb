@@ -19,17 +19,17 @@ import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.PushNotificationUtil;
 
-public class MesagemFuncionarioBO extends MotoRapidoBO {
+public class MensagemFuncionarioBO extends MotoRapidoBO {
 	
-	private static MesagemFuncionarioBO instance;
+	private static MensagemFuncionarioBO instance;
 
-	private MesagemFuncionarioBO() {
+	private MensagemFuncionarioBO() {
 
 	}
 
-	public static MesagemFuncionarioBO getInstance() {
+	public static MensagemFuncionarioBO getInstance() {
 		if (instance == null)
-			instance = new MesagemFuncionarioBO();
+			instance = new MensagemFuncionarioBO();
 
 		return instance;
 	}
@@ -54,14 +54,12 @@ public class MesagemFuncionarioBO extends MotoRapidoBO {
 				mensagemFuncionarioMotorista.setMotorista(motorista);
 				mensagemFuncionarioMotoristaDAO.save(mensagemFuncionarioMotorista, em);
 				motoristaAparelho.setAtivo("S");
-				motoristaAparelho.setMotorista(motorista);
+				motoristaAparelho.setCodMotorista(motorista.getCodigo());
 				List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
 				if(lista != null && lista.size() > 0)
 					listaParaNotificacao.add(lista.get(0).getIdPush());
 				
-			}
-			
-			
+			}			
 			
 			
 			PushNotificationUtil.enviarNotificacaoPlayerId(FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em), 

@@ -93,8 +93,6 @@ public class Motorista extends Entidade{
 	@Column(name = "banco", nullable = true)
 	private String banco;
 	
-
-	
 	@Column(name = "email", nullable = true)
 	private String email;
 	
@@ -121,6 +119,10 @@ public class Motorista extends Entidade{
 	
 	@Transient
 	private String chaveServicos;
+	
+	@Transient
+	private String idPush;
+	
 	
 
 	@Override
@@ -409,5 +411,18 @@ public class Motorista extends Entidade{
 	public void setComprovanteResidencia(byte[] comprovanteResidencia) {
 		this.comprovanteResidencia = comprovanteResidencia;
 	}
+
+
+	public String getIdPush() {
+		return idPush;
+	}
+
+
+	public void setIdPush(String idPush) {
+		this.idPush = idPush;
+	}
+
+
+	
 
 }

@@ -8,10 +8,12 @@ import javax.persistence.EntityTransaction;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IBloqueioMotoristaDAO;
+import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.entity.BloqueioMotorista;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.MotoristaAparelho;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
@@ -88,19 +90,57 @@ public class MotoristaBO extends MotoRapidoBO {
 		EntityTransaction transaction = em.getTransaction();
 		
 		try {
+			String idPush = motorista.getIdPush();
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();			
+			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
 			motorista.setCodigo(null);
 			motorista.setDataCriacao(null);
 			motorista.setDataDesativacao(null);
 			motorista.setDataNascimento(null);
 			motorista.setDataVencimentoCNH(null);
 			List<Motorista> lista = motoristaDAO.findByExample(motorista, em);
-			emUtil.commitTransaction(transaction);
+			
+			MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
 			if(lista != null && lista.size() > 0){
 				motorista = lista.get(0);
+				
+				//Busca se aparelho já está cadastrado para alguém
+				motoristaAparelho.setIdPush(idPush);
+				List<MotoristaAparelho> listaAparelho = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
+				boolean achou = false;
+				if(listaAparelho != null && listaAparelho.size() > 0){
+					for(MotoristaAparelho motoAp : listaAparelho){
+						//Se estivesse cadastrado para este motorista seto para ativo
+						if(motoAp.getCodMotorista() == motorista.getCodigo()){
+							motoAp.setAtivo("S");
+							motoristaAparelhoDAO.save(motoAp, em);
+							achou = true;
+							break;
+						}//verifico se outros motoristas neste aparelho estão ativo e desativo eles nesse aparelho
+						else if (motoAp.getAtivo().equals("S")){
+							motoAp.setAtivo("N");
+							motoristaAparelhoDAO.save(motoAp, em);							
+						}
+					}
+					//Se o motorista que logou ainda não estava cadastrado nesse aparelho faço o cadastro
+					if(!achou){
+						motoristaAparelho.setCodMotorista(motorista.getCodigo());
+						motoristaAparelho.setAtivo("S");
+						motoristaAparelhoDAO.save(motoristaAparelho, em);	
+					}					
+				}//Se o aparelho ainda não estiver cadastrado faço o primeiro cadastro para este aparelho com este motorista
+				else{
+					motoristaAparelho.setCodMotorista(motorista.getCodigo());
+					motoristaAparelho.setAtivo("S");
+					motoristaAparelhoDAO.save(motoristaAparelho, em);	
+				}				
+					
+					
 				String chave = FuncoesUtil.getParam(ParametroEnum.CHAVE_SEGURANCA.getCodigo(), em);
 				motorista.setChaveServicos(JWTUtil.create(motorista.getLogin(), chave));
+				
+				emUtil.commitTransaction(transaction);
 			}else
 				throw new ExcecaoNegocio("Senha/Login incorreto(s)");
 			

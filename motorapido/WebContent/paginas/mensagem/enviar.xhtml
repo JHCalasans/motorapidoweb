@@ -71,17 +71,10 @@
 			<p:panel id="panelMensagem" header="Mensagem">
 
 				<h:panelGroup>
-					<p:textEditor widgetVar="editor" height="300" value="#{mensagemBean.mensagem.descricao}"
-						style="margin-bottom:10px" placeholder="Digite aqui a mensagem">
-						<f:facet name="toolbar">
-							<span class="ql-formats">
-								<button class="ql-bold"></button>
-								<button class="ql-italic"></button>
-								<button class="ql-underline"></button>
-							</span>
-							
-						</f:facet>
-					</p:textEditor>
+					<p:inputTextarea widgetVar="editor"  rows="15" value="#{mensagemBean.mensagem.descricao}"
+						style="margin-bottom:10px; width:99%" placeholder="Digite aqui a mensagem">
+						
+					</p:inputTextarea>
 
 				</h:panelGroup>
 

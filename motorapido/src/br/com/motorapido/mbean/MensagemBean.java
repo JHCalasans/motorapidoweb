@@ -3,9 +3,12 @@ package br.com.motorapido.mbean;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.bo.MensagemFuncionarioBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.entity.MensagemFuncionario;
 import br.com.motorapido.entity.Motorista;
@@ -44,7 +47,12 @@ public class MensagemBean  extends SimpleController {
 	
 	public void enviarMensagem(){
 		 mensagem.setFuncionario(getFuncionarioLogado());
-		 
+		 try {
+			MensagemFuncionarioBO.getInstance().salvarMensagem(getMensagem(), motoristasSelecionados);
+			addMsg(FacesMessage.SEVERITY_INFO, "Mensagem enviada com sucesso");
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
 		
 	}
 

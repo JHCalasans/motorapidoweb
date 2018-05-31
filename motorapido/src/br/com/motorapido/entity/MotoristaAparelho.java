@@ -4,12 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -31,16 +28,11 @@ public class MotoristaAparelho extends Entidade{
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "motorista_aparelho_cod_motorista_aparelho_seq")
 	private Integer codigo;
 
-	
-	@Column(name = "id_aparelho", nullable = false)
-	private String idAparelho;
-
 	@Column(name = "id_push_aparelho", nullable = true, length = 50)
 	private String idPush;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_motorista")
-	private Motorista motorista;
+	@Column(name = "cod_motorista", nullable = false)
+	private Integer codMotorista;
 	
 	@Column(name = "flg_ativo", nullable = false)
 	private String ativo;	
@@ -75,14 +67,7 @@ public class MotoristaAparelho extends Entidade{
 	}
 
 
-	public Motorista getMotorista() {
-		return motorista;
-	}
-
-
-	public void setMotorista(Motorista motorista) {
-		this.motorista = motorista;
-	}
+	
 
 
 	public String getIdPush() {
@@ -95,14 +80,15 @@ public class MotoristaAparelho extends Entidade{
 	}
 
 
-	public String getIdAparelho() {
-		return idAparelho;
+	public Integer getCodMotorista() {
+		return codMotorista;
 	}
 
 
-	public void setIdAparelho(String idAparelho) {
-		this.idAparelho = idAparelho;
+	public void setCodMotorista(Integer codMotorista) {
+		this.codMotorista = codMotorista;
 	}
+
 
 
 
