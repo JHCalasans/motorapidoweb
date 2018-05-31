@@ -24,7 +24,6 @@ import org.primefaces.model.UploadedFile;
 import com.google.gson.Gson;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
-import br.com.minhaLib.mbean.AbstractUsuarioLogadoBean;
 import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.bo.FuncionarioBO;
 import br.com.motorapido.bo.PerfilBO;
@@ -34,6 +33,7 @@ import br.com.motorapido.util.EnderecoCep;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.FuncoesUtil;
 
+@SuppressWarnings("deprecation")
 @ManagedBean(name = "funcionarioBean")
 @ViewScoped
 public class FuncionarioBean extends SimpleController {

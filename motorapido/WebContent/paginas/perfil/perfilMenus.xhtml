@@ -11,10 +11,8 @@
 	<meta http-equiv="Expires" content="0" />
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
-	<ui:param name="tituloPagina"
-		value="#{bundle.perfil_vincularMenus}" />
-	<ui:param name="headerConteudo"
-		value="#{bundle.perfil_vincularMenus}" />
+	<ui:param name="tituloPagina" value="#{bundle.perfil_vincularMenus}" />
+	<ui:param name="headerConteudo" value="#{bundle.perfil_vincularMenus}" />
 	<ui:param name="bean" value="#{perfilBean}" />
 	<f:metadata>
 		<f:event type="preRenderView"
@@ -24,96 +22,107 @@
 	<ui:define name="conteudo">
 		<h:form prependId="false" id="formConsulta">
 
-			<p:panel id="panelNaoVinculados" header="Menus Não Vinculados">		
-
-			<h:panelGroup >
-
-				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
-					id="tbMenusNaoVinculados" var="menu" 
-					value="#{perfilBean.listaMenusNaoVinculados}"
-					style="text-align: center; max-width:100%" first="0"
-					paginatorAlwaysVisible="false" rowKey="#{menu.codigo}"
-					selection="#{perfilBean.listaMenusSelecionados}"
-					emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
-					rows="10">
-					<p:column selectionMode="multiple"
-						style="width:16px;text-align:center" />
-
-					<p:column sortBy="#{menu.nome}">
-						<f:facet name="header">
-							<h:outputText value="#{bundle.menu_menu}"
-								styleClass="cabecalhoDataTable" />
-						</f:facet>
-						<div style="text-align: center;">
-							<h:outputText value="#{menu.nome}" />
-						</div>
-					</p:column>
-
-				
-					
-				</p:dataTable>
-				<div class="clear" />
-				<h:panelGroup styleClass="p_like buttonPosition">
-					<br></br>
-					<p:commandButton action="#{perfilBean.vincularMenu}"
-						value="Adicionar" 
-						update=":msgs,:growl,formConsulta, tbMenusVinculados"
-						icon="ui-icon ui-icon-plus">
-					</p:commandButton>
-					<p:button value="#{bundle.voltarTela}" style="margin-left:15px;"
-						outcome="consultarPerfil.tjse"
-						icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+			<p:panel id="panelPerfil">
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel value="Perfil:" styleClass="OutputLabelCampo"></p:outputLabel>
+					<p:outputLabel value="#{perfilBean.perfil.descricao}"
+						styleClass="OutputLabelValor"></p:outputLabel>
 				</h:panelGroup>
-				<div class="clear" />
-			</h:panelGroup>
-			
+				<br />
+				<div class="clear"></div>
 			</p:panel>
-			
-			<p:panel id="panelVinculados" header="Menus Vinculados">		
 
 			<br />
-			<div class="clear"></div>
-			<h:panelGroup >
+			<p:panel id="panelNaoVinculados" header="Menus Não Vinculados">
 
-				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
-					id="tbMenusVinculados" var="perfilMenu" 
-					value="#{perfilBean.listaMenusVinculados}"
-					style="text-align: center; max-width:100%" first="0"
-					paginatorAlwaysVisible="false" rowKey="#{perfilMenu.codigo}"
-					selection="#{perfilBean.listaMenusDesvincularSelecionados}"
-					emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
-					rows="10">
-					<p:column selectionMode="multiple"
-						style="width:16px;text-align:center" />
+				<h:panelGroup>
 
-					<p:column sortBy="#{perfilMenu.menu.nome}">
-						<f:facet name="header">
-							<h:outputText value="#{bundle.menu_menu}"
-								styleClass="cabecalhoDataTable" />
-						</f:facet>
-						<div style="text-align: center;">
-							<h:outputText value="#{perfilMenu.menu.nome}" />
-						</div>
-					</p:column>
+					<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+						id="tbMenusNaoVinculados" var="menu"
+						value="#{perfilBean.listaMenusNaoVinculados}"
+						style="text-align: center; max-width:100%" first="0"
+						paginatorAlwaysVisible="false" rowKey="#{menu.codigo}"
+						selection="#{perfilBean.listaMenusSelecionados}"
+						emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+						rows="10">
+						<p:column selectionMode="multiple"
+							style="width:16px;text-align:center" />
 
-				
-					
-				</p:dataTable>
-				<div class="clear" />
-				<h:panelGroup styleClass="p_like buttonPosition">
-					<br></br>
-					<p:commandButton action="#{perfilBean.desvincularMenu}"
-						value="Remover" 
-						update=":msgs,:growl,formConsulta, tbMenusNaoVinculados"
-						icon="ui-icon ui-icon-plus">
-					</p:commandButton>
-					<p:button value="#{bundle.voltarTela}" style="margin-left:15px;"
-						outcome="consultarPerfil.tjse"
-						icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+						<p:column sortBy="#{menu.nome}">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.menu_menu}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<div style="text-align: center;">
+								<h:outputText value="#{menu.nome}" />
+							</div>
+						</p:column>
+
+
+
+					</p:dataTable>
+					<div class="clear" />
+					<h:panelGroup styleClass="p_like buttonPosition">
+						<br></br>
+						<p:commandButton action="#{perfilBean.vincularMenu}"
+							value="Adicionar"
+							update=":msgs,:growl,formConsulta, tbMenusVinculados"
+							icon="ui-icon ui-icon-plus">
+						</p:commandButton>
+						<p:button value="#{bundle.voltarTela}" style="margin-left:15px;"
+							outcome="consultarPerfil.tjse"
+							icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+					</h:panelGroup>
+					<div class="clear" />
 				</h:panelGroup>
-				<div class="clear" />
-			</h:panelGroup>
-			
+
+			</p:panel>
+
+			<p:panel id="panelVinculados" header="Menus Vinculados">
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup>
+
+					<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+						id="tbMenusVinculados" var="perfilMenu"
+						value="#{perfilBean.listaMenusVinculados}"
+						style="text-align: center; max-width:100%" first="0"
+						paginatorAlwaysVisible="false" rowKey="#{perfilMenu.codigo}"
+						selection="#{perfilBean.listaMenusDesvincularSelecionados}"
+						emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+						rows="10">
+						<p:column selectionMode="multiple"
+							style="width:16px;text-align:center" />
+
+						<p:column sortBy="#{perfilMenu.menu.nome}">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.menu_menu}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<div style="text-align: center;">
+								<h:outputText value="#{perfilMenu.menu.nome}" />
+							</div>
+						</p:column>
+
+
+
+					</p:dataTable>
+					<div class="clear" />
+					<h:panelGroup styleClass="p_like buttonPosition">
+						<br></br>
+						<p:commandButton action="#{perfilBean.desvincularMenu}"
+							value="Remover"
+							update=":msgs,:growl,formConsulta, tbMenusNaoVinculados"
+							icon="ui-icon ui-icon-plus">
+						</p:commandButton>
+						<p:button value="#{bundle.voltarTela}" style="margin-left:15px;"
+							outcome="consultarPerfil.tjse"
+							icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+					</h:panelGroup>
+					<div class="clear" />
+				</h:panelGroup>
+
 			</p:panel>
 
 		</h:form>

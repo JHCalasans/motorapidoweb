@@ -41,6 +41,10 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 	private static PostgresEnderecoClienteDAOImpl postgresEnderecoClienteDAOImpl;
 	private static PostgresLocalDAOImpl postgresLocalDAOImpl;
 	private static PostgresBloqueioMotoristaDAOImpl postgresBloqueioMotoristaDAOImpl;
+	private static PostgresMensagemFuncionarioDAOImpl postgresMensagemFuncionarioDAOImpl;
+	private static PostgresMensagemFuncionarioMotoristaDAOImpl postgresMensagemFuncionarioMotoristaDAOImpl;
+	private static PostgresMensagemMotoristaFuncionarioDAOImpl postgresMensagemMotoristaFuncionarioDAOImpl;
+	private static PostgresMotoristaAparelhoDAOImpl postgresMotoristaAparelhoDAOImpl;
 
 	private PostgresFabricaDAOImpl() {
 
@@ -252,6 +256,37 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		return postgresBloqueioMotoristaDAOImpl;
 	}
 	
+	@Override
+	public PostgresMensagemFuncionarioDAOImpl getPostgresMensagemFuncionarioDAO() {
+		if (postgresMensagemFuncionarioDAOImpl == null) {
+			postgresMensagemFuncionarioDAOImpl = new PostgresMensagemFuncionarioDAOImpl();
+		}
+		return postgresMensagemFuncionarioDAOImpl;
+	}
+	
+	@Override
+	public PostgresMensagemFuncionarioMotoristaDAOImpl getPostgresMensagemFuncionarioMotoristaDAO() {
+		if (postgresMensagemFuncionarioMotoristaDAOImpl == null) {
+			postgresMensagemFuncionarioMotoristaDAOImpl = new PostgresMensagemFuncionarioMotoristaDAOImpl();
+		}
+		return postgresMensagemFuncionarioMotoristaDAOImpl;
+	}
+	
+	@Override
+	public PostgresMensagemMotoristaFuncionarioDAOImpl getPostgresMensagemMotoristaFuncionarioDAO() {
+		if (postgresMensagemMotoristaFuncionarioDAOImpl == null) {
+			postgresMensagemMotoristaFuncionarioDAOImpl = new PostgresMensagemMotoristaFuncionarioDAOImpl();
+		}
+		return postgresMensagemMotoristaFuncionarioDAOImpl;
+	}
+	
+	@Override
+	public PostgresMotoristaAparelhoDAOImpl getPostgresMotoristaAparelhoDAO() {
+		if (postgresMotoristaAparelhoDAOImpl == null) {
+			postgresMotoristaAparelhoDAOImpl = new PostgresMotoristaAparelhoDAOImpl();
+		}
+		return postgresMotoristaAparelhoDAOImpl;
+	}
 	
 	
 	
