@@ -41,7 +41,8 @@ public class MensagemFuncionarioMotorista extends Entidade{
 	@JoinColumn(name = "cod_mensagem_funcionario", nullable = false, referencedColumnName = "cod_mensagem_funcionario")
 	private MensagemFuncionario mensagemFuncionario;
 	
-
+	@Column(name = "flg_visualizada", nullable = false)
+	private String visualizada;
 	
 
 	@Override
@@ -88,6 +89,20 @@ public class MensagemFuncionarioMotorista extends Entidade{
 
 	public void setMensagemFuncionario(MensagemFuncionario mensagemFuncionario) {
 		this.mensagemFuncionario = mensagemFuncionario;
+	}
+
+
+
+
+	public String getVisualizada() {
+		return visualizada;
+	}
+
+
+
+
+	public void setVisualizada(String visualizada) {
+		this.visualizada = visualizada;
 	}
 
 }

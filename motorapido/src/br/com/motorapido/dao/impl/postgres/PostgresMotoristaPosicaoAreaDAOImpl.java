@@ -21,7 +21,7 @@ implements IMotoristaPosicaoAreaDAO{
 	@Override
 	public Integer obterMaiorPosicaoArea(Integer codArea, EntityManager em) {
 		
-		Query sql = em.createNativeQuery("select max(mpa.posicao) from MotoristaPosicaoArea mpa where mpa.area.codigo = :codArea");
+		Query sql = em.createNativeQuery("select max(posicao) from motorista_posicao_area  where cod_area = :codArea");
 		sql.setParameter("codArea", codArea);
 		//String sql = " select max(posicao) from diego.motorista_posicao_area where codArea = " + codArea;
 		

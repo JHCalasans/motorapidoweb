@@ -12,9 +12,13 @@ import javax.ws.rs.core.Response.Status;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.MotoristaBO;
+import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
+import br.com.motorapido.entity.MensagemFuncionarioMotorista;
 import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
+import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 
 
 
@@ -60,17 +64,44 @@ public class MotoristaWS {
 	@Path("/verificarPosicao")
 	public Response verificarPosicao(VerificaPosicaoParam param) {
 		try {
-			System.out.println(param.getLatitude() + " -- " + param.getLongitude());
+			MotoristaPosicaoArea motoPosicao = MotoristaPosicaoAreaBO.getInstance().obterPosicaoMotoristaArea(param);
+			RetornoVerificaPosicao retorno = new RetornoVerificaPosicao();
+			retorno.setAreaAtual(motoPosicao.getArea());
+			retorno.setPosicaoNaArea(motoPosicao.getPosicao());			
+			return Response.status(Status.OK).entity(retorno).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		}
+	}
+	
+	@POST
+	@Path("/aceitarChamada")
+	public Response aceitarChamada() {
+		try {
+			System.out.println("aceitarChamada");
 			return Response.status(Status.OK).build();
 		}catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar alterar disponibilidade").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar aceitar chamada").build();
 		}
 	}
 	
 	@POST
 	@Path("/buscarInformacoesBase")
 	public Response buscarInformacoesBase() {
+		try {
+			System.out.println("Chamou atualização");
+			return Response.status(Status.OK).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter informações da base").build();
+		}
+	}
+	
+	@POST
+	@Path("/atualizarMensagem")
+	public Response atualizarMensagem(MensagemFuncionarioMotorista mensagem) {
 		try {
 			
 			return Response.status(Status.OK).build();

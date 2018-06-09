@@ -52,6 +52,7 @@ public class MensagemFuncionarioBO extends MotoRapidoBO {
 				mensagemFuncionarioMotorista = new MensagemFuncionarioMotorista();
 				mensagemFuncionarioMotorista.setMensagemFuncionario(mensagem);
 				mensagemFuncionarioMotorista.setMotorista(motorista);
+				mensagemFuncionarioMotorista.setVisualizada("N");
 				mensagemFuncionarioMotoristaDAO.save(mensagemFuncionarioMotorista, em);
 				motoristaAparelho.setAtivo("S");
 				motoristaAparelho.setCodMotorista(motorista.getCodigo());
