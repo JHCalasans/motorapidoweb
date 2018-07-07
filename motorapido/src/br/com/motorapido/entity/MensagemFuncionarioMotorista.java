@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -17,6 +19,11 @@ import br.com.minhaLib.dao.Entidade;
 
 @Entity
 @Table(name = MensagemFuncionarioMotorista.nomeTabela, schema = MensagemFuncionarioMotorista.esquema, catalog = "diego")
+@NamedQueries(value = { 
+		@NamedQuery(name = "MensagemFuncionarioMotorista.obterMensagensFuncionario",
+				query = "select mfm from MensagemFuncionarioMotorista mfm join mfm.mensagemFuncionario mf "
+				+ " where mfm.motorista.codigo = :codMotorista and mf.funcionario.codigo = :codFuncionario")
+		})
 public class MensagemFuncionarioMotorista extends Entidade{
 
 

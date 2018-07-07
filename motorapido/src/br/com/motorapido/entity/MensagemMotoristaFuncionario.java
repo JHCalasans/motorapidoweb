@@ -51,6 +51,10 @@ public class MensagemMotoristaFuncionario extends Entidade{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_motorista", nullable = false, referencedColumnName = "cod_motorista")
 	private Motorista motorista;
+	
+	@Column(name = "flg_enviada_por_motorista", nullable = false, length = 1)
+	private String enviadaPorMotorista;
+	
 
 	@Override
 	public Serializable getIdentificador() {
@@ -95,6 +99,14 @@ public class MensagemMotoristaFuncionario extends Entidade{
 
 	public void setMotorista(Motorista motorista) {
 		this.motorista = motorista;
+	}
+
+	public String getEnviadaPorMotorista() {
+		return enviadaPorMotorista;
+	}
+
+	public void setEnviadaPorMotorista(String enviadaPorMotorista) {
+		this.enviadaPorMotorista = enviadaPorMotorista;
 	}
 
 }

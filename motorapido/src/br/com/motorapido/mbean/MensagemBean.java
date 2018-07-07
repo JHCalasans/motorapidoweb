@@ -9,8 +9,10 @@ import javax.faces.bean.ViewScoped;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.MensagemFuncionarioBO;
+import br.com.motorapido.bo.MensagemMotoristaFuncionarioBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.entity.MensagemFuncionario;
+import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.util.ExcecoesUtil;
 
@@ -24,7 +26,9 @@ public class MensagemBean  extends SimpleController {
 	
 	private List<Motorista> motoristas;
 	private List<Motorista> motoristasSelecionados;
+	private Motorista motoristaSelecionado;
 	private MensagemFuncionario mensagem;
+	private List<MensagemMotoristaFuncionario> historico;
 	
 	@PostConstruct
 	public void carregar() {
@@ -40,6 +44,16 @@ public class MensagemBean  extends SimpleController {
 			motoristas = MotoristaBO.getInstance().obterMotoristasExample(motorista);
 
 		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
+	public void ajustarMotoristaSelecionado(Motorista moto){
+		motoristaSelecionado = moto;
+		try {
+			historico = MensagemMotoristaFuncionarioBO.getInstance().obterMensagens(motoristaSelecionado.getCodigo(),
+					getFuncionarioLogado().getCodigo());
+		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
@@ -90,6 +104,24 @@ public class MensagemBean  extends SimpleController {
 
 	public void setMensagem(MensagemFuncionario mensagem) {
 		this.mensagem = mensagem;
+	}
+
+
+	public Motorista getMotoristaSelecionado() {
+		return motoristaSelecionado;
+	}
+
+
+	public void setMotoristaSelecionado(Motorista motoristaSelecionado) {
+		this.motoristaSelecionado = motoristaSelecionado;
+	}
+
+	public List<MensagemMotoristaFuncionario> getHistorico() {
+		return historico;
+	}
+
+	public void setHistorico(List<MensagemMotoristaFuncionario> historico) {
+		this.historico = historico;
 	}
 
 }
