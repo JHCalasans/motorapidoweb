@@ -112,8 +112,9 @@
 
     	
 		if(window.location.href.includes("enviar")){
-			var interval = setInterval('ajustaMsg()',
-	    			1000);
+			alert("#{mensagemBean.ultMotoristaSelecionado}");
+			/*  var interval = setInterval('ajustaMsg()',
+		    			2000); */
 		}
 		
 	}
@@ -157,7 +158,9 @@
 
 	<h:form id="formMenuNorth" enctype="multipart/form-data"
 		styleClass="cabecalhoMenu">
-		
+			
+			
+			
 			<p:commandButton actionListener="#{mensagemBean.atualizarMensagens()}" id="btnMsg"  
 			style="display:none;" ajax="false" >
 			

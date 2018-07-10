@@ -35,13 +35,13 @@ public class MensagemMotoristaFuncionario extends Entidade{
 	@Column(name = "cod_mensagem_motorista_funcionario", nullable = false)
 	@SequenceGenerator(name = "mensagem_motorista_funcionari_cod_mensagem_motorista_funcio_seq", sequenceName = "diego.mensagem_motorista_funcionari_cod_mensagem_motorista_funcio_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mensagem_motorista_funcionari_cod_mensagem_motorista_funcio_seq")
-	private Integer codigo;
+	private Long codigo;
 	
 	@Column(name = "ds_mensagem", nullable = false, length = 100)
 	private String descricao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_funcionario", nullable = false, referencedColumnName = "cod_funcionario")
+	@JoinColumn(name = "cod_funcionario", nullable = true, referencedColumnName = "cod_funcionario")
 	private Funcionario funcionario;
 	
 	
@@ -61,11 +61,11 @@ public class MensagemMotoristaFuncionario extends Entidade{
 		return this.codigo;
 	}
 
-	public Integer getCodigo() {
+	public Long getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(Integer codigo) {
+	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
 

@@ -8,7 +8,7 @@ import br.com.motorapido.dao.IMensagemMotoristaFuncionarioDAO;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 
 @PersistenceContext(unitName = "postgresPU")
-public class PostgresMensagemMotoristaFuncionarioDAOImpl extends GenericDAOImpl<MensagemMotoristaFuncionario, Integer>
+public class PostgresMensagemMotoristaFuncionarioDAOImpl extends GenericDAOImpl<MensagemMotoristaFuncionario, Long>
 implements IMensagemMotoristaFuncionarioDAO{
 
 	PostgresMensagemMotoristaFuncionarioDAOImpl() {

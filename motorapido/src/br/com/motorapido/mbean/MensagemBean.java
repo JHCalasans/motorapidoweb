@@ -26,28 +26,27 @@ import br.com.motorapido.util.ExcecoesUtil;
 @SuppressWarnings("deprecation")
 @ManagedBean(name = "mensagemBean")
 @ViewScoped
-public class MensagemBean  extends SimpleController {
-
+public class MensagemBean extends SimpleController {
 
 	private static final long serialVersionUID = 4346645475549207799L;
-	
+
 	private List<Motorista> motoristas;
 	private List<Motorista> motoristasSelecionados;
 	private Motorista motoristaSelecionado;
-	private MensagemFuncionario mensagem;
+	private MensagemMotoristaFuncionario mensagem;
 	private List<MensagemMotoristaFuncionario> historico;
 	private Socket socket;
 	private String codMotoMsg;
-	
+
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
 			return;
-		}		
+		}
 		try {
-			
-			mensagem = new MensagemFuncionario();
-			
+
+			mensagem = new MensagemMotoristaFuncionario();
+
 			Motorista motorista = new Motorista();
 			motorista.setAtivo("S");
 			motoristas = MotoristaBO.getInstance().obterMotoristasExample(motorista);
@@ -56,12 +55,12 @@ public class MensagemBean  extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	public void validarMensagem(){
-			System.out.println(getUltimoMotMsg());
+
+	public void validarMensagem() {
+		System.out.println(getUltimoMotMsg());
 	}
-	
-	public void ajustarMotoristaSelecionado(Motorista moto){
+
+	public void ajustarMotoristaSelecionado(Motorista moto) {
 		motoristaSelecionado = moto;
 		try {
 			historico = MensagemMotoristaFuncionarioBO.getInstance().obterMensagens(motoristaSelecionado.getCodigo(),
@@ -70,23 +69,38 @@ public class MensagemBean  extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	
-	public void atualizarMensagens(){
-		
-		System.out.println("opaaa");
+
+	public void atualizarMensagens() {
+		if (motoristaSelecionado != null && motoristaSelecionado.getCodigo() == getUltimoMotMsg()
+				&& getUltimaMsgEnviada().getCodigo() > historico.get(historico.size() - 1).getCodigo()) {
+
+			if (historico.size() > 30)
+				historico.remove(historico.get(historico.size() - 1));
+
+			historico.add(0, getUltimaMsgEnviada());
+			enviarUpdate("panelMensagem");
+
+		}
 	}
-	
-	
-	public void enviarMensagem(){
-		 mensagem.setFuncionario(getFuncionarioLogado());
-		 try {
-			MensagemFuncionarioBO.getInstance().salvarMensagem(getMensagem(), motoristasSelecionados);
-			addMsg(FacesMessage.SEVERITY_INFO, "Mensagem enviada com sucesso");
+
+	public void enviarMensagem() {
+
+		try {
+			if (motoristaSelecionado == null)
+				throw new ExcecaoNegocio("Favor selecione um motorista");
+			mensagem.setFuncionario(getFuncionarioLogado());
+			mensagem.setMotorista(motoristaSelecionado);
+			mensagem = MensagemMotoristaFuncionarioBO.getInstance().enviarMensagemDaCentral(mensagem);
+			if (historico.size() > 30)
+				historico.remove(historico.get(historico.size() - 1));
+
+			historico.add(0, mensagem);
+			mensagem = new MensagemMotoristaFuncionario();
+			enviarUpdate("panelMensagem");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
-		
+
 	}
 
 	@Override
@@ -95,41 +109,33 @@ public class MensagemBean  extends SimpleController {
 		return null;
 	}
 
-
 	public List<Motorista> getMotoristas() {
 		return motoristas;
 	}
-
 
 	public void setMotoristas(List<Motorista> motoristas) {
 		this.motoristas = motoristas;
 	}
 
-
 	public List<Motorista> getMotoristasSelecionados() {
 		return motoristasSelecionados;
 	}
-
 
 	public void setMotoristasSelecionados(List<Motorista> motoristasSelecionados) {
 		this.motoristasSelecionados = motoristasSelecionados;
 	}
 
-
-	public MensagemFuncionario getMensagem() {
+	public MensagemMotoristaFuncionario getMensagem() {
 		return mensagem;
 	}
 
-
-	public void setMensagem(MensagemFuncionario mensagem) {
+	public void setMensagem(MensagemMotoristaFuncionario mensagem) {
 		this.mensagem = mensagem;
 	}
-
 
 	public Motorista getMotoristaSelecionado() {
 		return motoristaSelecionado;
 	}
-
 
 	public void setMotoristaSelecionado(Motorista motoristaSelecionado) {
 		this.motoristaSelecionado = motoristaSelecionado;
@@ -158,5 +164,7 @@ public class MensagemBean  extends SimpleController {
 	public void setCodMotoMsg(String codMotoMsg) {
 		this.codMotoMsg = codMotoMsg;
 	}
+
+	
 
 }

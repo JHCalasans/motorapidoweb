@@ -85,8 +85,8 @@
 				header="Chat - #{mensagemBean.motoristaSelecionado.nome}">
 
 
-				<p:dataScroller value="#{mensagemBean.historico}" var="historico"
-					chunkSize="2" mode="inline" scrollHeight="500">
+				<p:dataScroller value="#{mensagemBean.historico}" var="historico" 
+					chunkSize="10" mode="inline" scrollHeight="300" id="scrollChat" widgetVar="scrollChatVar">
 
 
 					<h:panelGrid columns="2" style="width:100%"
@@ -146,8 +146,8 @@
 				<h:panelGroup>
 					<p:inputTextarea widgetVar="editor" rows="5"
 						value="#{mensagemBean.mensagem.descricao}"
-						style="margin-bottom:10px; width:99%"
-						placeholder="Digite aqui a mensagem">
+						style="margin-bottom:10px; width:99%" required="true"
+						placeholder="Digite aqui a mensagem" requiredMessage="Favor digite algo na mensagem">
 
 					</p:inputTextarea>
 
@@ -157,7 +157,7 @@
 				<h:panelGroup styleClass="p_like buttonPosition">
 					<br></br>
 					<p:commandButton action="#{mensagemBean.enviarMensagem}"
-						value="Enviar" update=":msgs,:growl" icon="ui-icon ui-icon-plus">
+						value="Enviar" update=":msgs,:growl, panelMensagem" icon="ui-icon ui-icon-plus">
 					</p:commandButton>
 
 				</h:panelGroup>

@@ -29,6 +29,7 @@ import com.sun.faces.component.visit.FullVisitContext;
 import br.com.minhaLib.util.FacesUtil;
 import br.com.motorapido.dao.FabricaDAO;
 import br.com.motorapido.entity.Funcionario;
+import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.Paginas;
 
@@ -44,6 +45,11 @@ public abstract class SimpleController implements Serializable {
 
 	//código do ultimo motorista que enviou mensagem
 	private static Integer ultimoMotMsg;
+	
+	//código da ultima mensagem enviada
+	private static MensagemMotoristaFuncionario ultimaMsgEnviada;
+	
+	
 
 	public SimpleController() {
 		super();
@@ -232,6 +238,15 @@ public abstract class SimpleController implements Serializable {
 	public static void setUltimoMotMsg(Integer ultimoMotMsg) {
 		SimpleController.ultimoMotMsg = ultimoMotMsg;
 	}
+
+	public static MensagemMotoristaFuncionario getUltimaMsgEnviada() {
+		return ultimaMsgEnviada;
+	}
+
+	public static void setUltimaMsgEnviada(MensagemMotoristaFuncionario ultimaMsgEnviada) {
+		SimpleController.ultimaMsgEnviada = ultimaMsgEnviada;
+	}
+
 	
 
 

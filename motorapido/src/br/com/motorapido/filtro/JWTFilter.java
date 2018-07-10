@@ -30,7 +30,7 @@ public class JWTFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) servletRequest;
 		HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-		if (req.getRequestURI().endsWith("/login")) {
+		if (req.getRequestURI().endsWith("/login") || req.getRequestURI().endsWith("/enviarMensagem")) {
 			filterChain.doFilter(servletRequest, servletResponse);
 			return;
 		}
