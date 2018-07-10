@@ -63,8 +63,7 @@ public class MensagemBean extends SimpleController {
 	public void ajustarMotoristaSelecionado(Motorista moto) {
 		motoristaSelecionado = moto;
 		try {
-			historico = MensagemMotoristaFuncionarioBO.getInstance().obterMensagens(motoristaSelecionado.getCodigo(),
-					getFuncionarioLogado().getCodigo());
+			historico = MensagemMotoristaFuncionarioBO.getInstance().obterMensagens(motoristaSelecionado.getCodigo());
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}

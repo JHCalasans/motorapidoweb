@@ -79,7 +79,7 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 		}
 	}
 
-	public List<MensagemMotoristaFuncionario> obterMensagens(Integer codMotorista, Integer codFuncionario)
+	public List<MensagemMotoristaFuncionario> obterMensagens(Integer codMotorista)
 			throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();

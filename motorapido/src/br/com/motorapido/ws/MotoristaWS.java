@@ -1,11 +1,15 @@
 package br.com.motorapido.ws;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -14,13 +18,15 @@ import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.MensagemMotoristaFuncionarioBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
-import br.com.motorapido.entity.MensagemFuncionarioMotorista;
+import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.ws.params.MensagemParam;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
+import br.com.motorapido.util.ws.retornos.Message;
 import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
+import jersey.repackaged.com.google.common.collect.Lists;
 
 
 
@@ -37,7 +43,7 @@ public class MotoristaWS  {
 		try {
 	
 			motorista = MotoristaBO.getInstance().login(motorista);
-			return Response.status(Status.OK).entity("oi").build();
+			return Response.status(Status.OK).entity(motorista).build();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
@@ -105,11 +111,24 @@ public class MotoristaWS  {
 	
 	
 	@POST
-	@Path("/atualizarMensagem")
-	public Response atualizarMensagem(MensagemFuncionarioMotorista mensagem) {
+	@Path("/atualizarMensagens")
+	public Response atualizarMensagens(MensagemParam param) {
 		try {
-		
-			return Response.status(Status.OK).build();
+			 List<MensagemMotoristaFuncionario> lista =  MensagemMotoristaFuncionarioBO.getInstance().obterMensagens(param.getCodMotorista());
+			 Message message = null;
+			 List<Message> retorno = new ArrayList<Message>();
+			 for(MensagemMotoristaFuncionario msg : lista){
+				 message = new Message();
+				 message.setText(msg.getDescricao());
+				 message.setMessageDateTime(msg.getDataCriacao());
+				 message.setIsTextIn(msg.getEnviadaPorMotorista().equals("N"));
+				 retorno.add(message);
+			 }
+			 
+			 retorno = Lists.reverse(retorno);
+			 GenericEntity<List<Message>> entidade = new GenericEntity<List<Message>>(retorno) {
+				};
+			 return Response.status(Status.OK).entity(entidade).build();
 		}catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter informações da base").build();

@@ -15,11 +15,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
 @Entity
 @Table(name = MensagemMotoristaFuncionario.nomeTabela, schema = MensagemMotoristaFuncionario.esquema, catalog = "diego")
+@XmlRootElement
 public class MensagemMotoristaFuncionario extends Entidade{
 
 
