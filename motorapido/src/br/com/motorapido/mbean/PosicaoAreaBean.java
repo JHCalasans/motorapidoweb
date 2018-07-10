@@ -3,6 +3,7 @@ package br.com.motorapido.mbean;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+@SuppressWarnings("deprecation")
 @ManagedBean(name = "posicaoAreaBean")
 @ViewScoped
 public class PosicaoAreaBean  extends SimpleController{

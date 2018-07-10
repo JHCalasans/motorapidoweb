@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html >
 <h:html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
@@ -35,6 +34,12 @@
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnSw7uj9P9oZIc_7c74peSmkmkYU1O5s"
 		defer="defer" type="text/javascript"></script>
+
+
+	<audio id="audio">
+		<source src="../../resources/mensagem.mp3" type="audio/mp3" />
+
+	</audio>
 
 	<script type="text/javascript">
     var currentMarker = null;
@@ -86,16 +91,47 @@
         }
         
     }
- 
+
+	/* function checktimer() {
+		alert('opa');
+	}
+	var interval = setInterval('checktimer()',
+			1000); */
+    var myAudio=document.getElementById('audio');
+
+    function handleMessage(facesmessage) {
+    	/* var res = facesmessage.detail.split("-");
+        facesmessage.detail = res[0]; */
+		facesmessage.severity = 'info';
+    	//alert(facesmessage);		
+		//myAudio.play();
+		
+		
+		
+    	PF('vmgrolw').show([facesmessage]);
+
+    	
+		if(window.location.href.includes("enviar")){
+			var interval = setInterval('ajustaMsg()',
+	    			1000);
+		}
+		
+	}
+
+	function  ajustaMsg() {
+		document.getElementById('formMenuNorth:btnMsg').click();
+	}
   
 </script>
 </h:head>
 <h:body>
+	<p:socket channel="/notify" id="socketMsg" onMessage="handleMessage">
 
+	</p:socket>
 	<ui:debug hotkey="k" />
 	<p:ajaxStatus>
-		<f:facet name="start" >
-			<h:panelGroup >
+		<f:facet name="start">
+			<h:panelGroup>
 				<div class="ui-widget-overlay"
 					style="z-index: 4500; position: fixed;" />
 				<p:panel id="panelAjaxStart" styleClass="panelAjax"
@@ -118,9 +154,14 @@
 			<h:outputLabel value="" />
 		</f:facet>
 	</p:ajaxStatus>
+
 	<h:form id="formMenuNorth" enctype="multipart/form-data"
 		styleClass="cabecalhoMenu">
-
+		
+			<p:commandButton actionListener="#{mensagemBean.atualizarMensagens()}" id="btnMsg"  
+			style="display:none;" ajax="false" >
+			
+			</p:commandButton>
 		<p:panel style="width:100%;">
 			<div align="center">
 				<p:panel styleClass="myHeader"
@@ -128,16 +169,15 @@
 
 				</p:panel>
 			</div>
-
 		</p:panel>
 
 		<p:menubar model="#{menuBean.model}">
 
 
 			<f:facet name="options">
-					<p:outputLabel
-						value="Olá, #{bean.funcionarioLogado.nome.split(' ')[0]}"
-						style="padding-top: 5px; margin-left: -75px;font-size:15px;position: absolute; right: 10%;"></p:outputLabel>
+				<p:outputLabel
+					value="Olá, #{bean.funcionarioLogado.nome.split(' ')[0]}"
+					style="padding-top: 5px; margin-left: -75px;font-size:15px;position: absolute; right: 10%;"></p:outputLabel>
 
 				<p:commandButton value="#{erroSessao ne 'S'? 'Logout' : 'Login'}"
 					icon="ui-icon-extlink" action="#{bean.logout}"
@@ -151,10 +191,17 @@
 	<div class="clear"></div>
 
 	<div>
+
 		<p:panel id="conteudo" style="width:100%;">
+
 			<div class="clear" id="div_pre_conteudo">
 				<p:messages closable="true" id="msgs" />
-				<p:growl id="growl" autoUpdate="true" closable="true"></p:growl>
+				<p:growl id="growl" autoUpdate="true" widgetVar="vmgrolw"
+					closable="true"></p:growl>
+
+			
+
+
 			</div>
 			<c:if test="${tituloPagina != null}">
 				<br></br>

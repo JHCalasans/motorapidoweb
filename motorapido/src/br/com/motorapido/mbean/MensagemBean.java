@@ -6,6 +6,13 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+
+import org.apache.tomcat.util.net.SocketEvent;
+import org.primefaces.component.growl.Growl;
+import org.primefaces.component.socket.Socket;
+import org.primefaces.push.PushContext;
+import org.primefaces.push.PushContextFactory;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.MensagemFuncionarioBO;
@@ -29,6 +36,8 @@ public class MensagemBean  extends SimpleController {
 	private Motorista motoristaSelecionado;
 	private MensagemFuncionario mensagem;
 	private List<MensagemMotoristaFuncionario> historico;
+	private Socket socket;
+	private String codMotoMsg;
 	
 	@PostConstruct
 	public void carregar() {
@@ -48,6 +57,10 @@ public class MensagemBean  extends SimpleController {
 		}
 	}
 	
+	public void validarMensagem(){
+			System.out.println(getUltimoMotMsg());
+	}
+	
 	public void ajustarMotoristaSelecionado(Motorista moto){
 		motoristaSelecionado = moto;
 		try {
@@ -56,6 +69,12 @@ public class MensagemBean  extends SimpleController {
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
+	}
+	
+	
+	public void atualizarMensagens(){
+		
+		System.out.println("opaaa");
 	}
 	
 	
@@ -122,6 +141,22 @@ public class MensagemBean  extends SimpleController {
 
 	public void setHistorico(List<MensagemMotoristaFuncionario> historico) {
 		this.historico = historico;
+	}
+
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
+	}
+
+	public String getCodMotoMsg() {
+		return codMotoMsg;
+	}
+
+	public void setCodMotoMsg(String codMotoMsg) {
+		this.codMotoMsg = codMotoMsg;
 	}
 
 }

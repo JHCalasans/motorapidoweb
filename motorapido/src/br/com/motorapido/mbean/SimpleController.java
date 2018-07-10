@@ -12,6 +12,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
+import javax.faces.component.visit.VisitCallback;
+import javax.faces.component.visit.VisitContext;
+import javax.faces.component.visit.VisitResult;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
@@ -19,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.primefaces.context.RequestContext;
+
+import com.sun.faces.component.visit.FullVisitContext;
 
 import br.com.minhaLib.util.FacesUtil;
 import br.com.motorapido.dao.FabricaDAO;
@@ -36,9 +42,38 @@ public abstract class SimpleController implements Serializable {
 
 	private static Funcionario funcionarioLogado;
 
+	//código do ultimo motorista que enviou mensagem
+	private static Integer ultimoMotMsg;
 
 	public SimpleController() {
 		super();
+	}
+	
+	public boolean estaNaPaginaDeMensagem(){
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		return request.getRequestURL().toString().contains("enviar");
+	
+	}
+	
+	public UIComponent findComponent(final String id) {
+
+	    FacesContext context = FacesContext.getCurrentInstance(); 
+	    UIViewRoot root = context.getViewRoot();
+	    final UIComponent[] found = new UIComponent[1];
+
+	    root.visitTree(new FullVisitContext(context), new VisitCallback() {     
+	        @Override
+	        public VisitResult visit(VisitContext context, UIComponent component) {
+	            if(component.getId().equals(id)){
+	                found[0] = component;
+	                return VisitResult.COMPLETE;
+	            }
+	            return VisitResult.ACCEPT;              
+	        }
+	    });
+
+	    return found[0];
+
 	}
 
 	protected static void addMsg(final Severity tipo, final String info) {
@@ -47,7 +82,7 @@ public abstract class SimpleController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
-	protected static void addMsg(final String id_message, final Severity tipo, final String info) {
+	public static void addMsg(final String id_message, final Severity tipo, final String info) {
 		String msgTexto = getMessageFor(info);
 		FacesMessage msg = new FacesMessage(tipo, msgTexto, msgTexto);
 		FacesContext.getCurrentInstance().addMessage(id_message, msg);
@@ -188,6 +223,14 @@ public abstract class SimpleController implements Serializable {
 
 	public static void setFuncionarioLogado(Funcionario funcionarioLogado) {
 		SimpleController.funcionarioLogado = funcionarioLogado;
+	}
+
+	public Integer getUltimoMotMsg() {
+		return ultimoMotMsg;
+	}
+
+	public static void setUltimoMotMsg(Integer ultimoMotMsg) {
+		SimpleController.ultimoMotMsg = ultimoMotMsg;
 	}
 	
 

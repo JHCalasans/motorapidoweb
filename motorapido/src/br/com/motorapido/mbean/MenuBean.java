@@ -4,18 +4,32 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
+import javax.faces.component.visit.VisitCallback;
+import javax.faces.component.visit.VisitContext;
+import javax.faces.component.visit.VisitResult;
+import javax.faces.context.FacesContext;
 
+import org.primefaces.component.socket.Socket;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuItem;
 import org.primefaces.model.menu.MenuModel;
 import org.primefaces.model.menu.Submenu;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
+
+import com.sun.faces.component.visit.FullVisitContext;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.bo.PerfilMenuBO;
 import br.com.motorapido.entity.PerfilMenu;
 import br.com.motorapido.util.ExcecoesUtil;
@@ -29,7 +43,8 @@ public class MenuBean extends SimpleController implements Serializable {
 
 	private static final long serialVersionUID = -2168554630566444675L;
 	private MenuModel model;
-
+	private String message = "ereere";
+	Socket sockt = null;
 	public MenuBean() {
 
 	}
@@ -42,6 +57,16 @@ public class MenuBean extends SimpleController implements Serializable {
 		}
 		return null;
 	}
+	
+	public void testeee(){
+
+	
+		System.out.println(message);
+		//MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF inválido!.", "");
+	}
+
+	
+	
 	
 	public MenuModel getModel() {
 		try {
@@ -83,6 +108,14 @@ public class MenuBean extends SimpleController implements Serializable {
 	public String salvoSucesso() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 }

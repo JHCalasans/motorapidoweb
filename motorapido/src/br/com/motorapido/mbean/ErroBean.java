@@ -1,24 +1,18 @@
 package br.com.motorapido.mbean;
 
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import br.com.minhaLib.mbean.AbstractUsuarioLogadoBean;
 import br.com.motorapido.util.ExcecoesUtil;
 
-
 @SuppressWarnings("deprecation")
-@ManagedBean(name = HomeBean.NOME_BEAN)
+@ManagedBean(name = ErroBean.NOME_BEAN)
 @ViewScoped
-public class HomeBean extends SimpleController {
+public class ErroBean extends SimpleController {
 
-	private static final long serialVersionUID = -2819017417735069396L;
-
-	public static final String NOME_BEAN = "homeBean";
-
-	
+	private static final long serialVersionUID = -8257001720243437240L;
+	public static final String NOME_BEAN = "erroBean";
 
 	@PostConstruct
 	public void carregar() {
@@ -29,16 +23,16 @@ public class HomeBean extends SimpleController {
 		}
 	}
 
+	public String irParaLogin() {
 
+		String url = "//index.proj??faces-redirect=true";
+		return url;
+
+	}
 
 	@Override
 	public String salvoSucesso() {
 		return null;
 	}
 
-
-
-
-
-	
 }

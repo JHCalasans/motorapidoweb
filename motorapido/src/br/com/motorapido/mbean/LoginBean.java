@@ -12,6 +12,7 @@ import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.FacesUtil;
 import br.com.motorapido.util.Paginas;
 
+@SuppressWarnings("deprecation")
 @ManagedBean(name = LoginBean.NOME_BEAN)
 @ViewScoped
 public class LoginBean extends SimpleController {

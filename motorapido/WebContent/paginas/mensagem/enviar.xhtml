@@ -9,8 +9,12 @@
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Expires" content="0" />
+
+
+
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
+
 	<ui:param name="tituloPagina" value="#{bundle.mensagem_Titulo}" />
 	<ui:param name="headerConteudo" value="#{bundle.mensagem_Titulo}" />
 	<ui:param name="bean" value="#{mensagemBean}" />
@@ -20,8 +24,11 @@
 	</f:metadata>
 
 	<ui:define name="conteudo">
+
+
 		<h:form prependId="false" id="formConsulta">
 
+		
 			<p:panel id="panelMotoristas" header="Motoristas">
 
 				<h:panelGroup>
@@ -70,31 +77,61 @@
 					<div class="clear" />
 				</h:panelGroup>
 			</p:panel>
+			<p:spacer height="20"></p:spacer>
 
-
+			<br />
 
 			<p:panel id="panelMensagem"
 				header="Chat - #{mensagemBean.motoristaSelecionado.nome}">
+
 
 				<p:dataScroller value="#{mensagemBean.historico}" var="historico"
 					chunkSize="2" mode="inline" scrollHeight="500">
 
 
-					<h:panelGrid columns="2" style="width:100%">
-					
-						<p:graphicImage url="/resources/balao.png"
-							style="border-style: none; width:10%;" />
+					<h:panelGrid columns="2" style="width:100%"
+						columnClasses="firstColumn,secondColumn">
 
-						<p:outputPanel
-							style="background-color: lightgray;border-radius: 10px; width:100%; ">
+						<p:graphicImage url="/resources/balao.png"
+							rendered="#{historico.enviadaPorMotorista eq 'S'}"
+							style="border-style: none;" />
+
+						<p:outputPanel rendered="#{historico.enviadaPorMotorista eq 'S'}"
+							style="background-color: lightgray;border-radius: 10px;
+							 width:100%; ">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="#{historico.descricao}"
-									style="color:black;">
+									style="color:black;margin-left:5px;font-size:18px">
 								</p:outputLabel>
 
 							</h:panelGrid>
+							<h:outputText value="Enviada em "
+								style="font-size:10px; color:grey; margin-left:5px;">
+							</h:outputText>
 							<h:outputText value="#{historico.dataCriacao}"
-								style="font-size:10px; color:grey;">
+								style="font-size:10px; color:grey; margin-left:5px;">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:outputPanel>
+
+						<p:graphicImage url="/resources/atendente.png"
+							rendered="#{historico.enviadaPorMotorista eq 'N'}"
+							style="border-style: none;" />
+
+						<p:outputPanel rendered="#{historico.enviadaPorMotorista eq 'N'}"
+							style="background-color: cornsilk;border-radius: 10px;
+							 width:100%; ">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="#{historico.descricao}"
+									style="color:black;margin-left:5px;font-size:18px">
+								</p:outputLabel>
+
+							</h:panelGrid>
+							<h:outputText value="Enviada em "
+								style="font-size:10px; color:grey; margin-left:5px;">
+							</h:outputText>
+							<h:outputText value="#{historico.dataCriacao}"
+								style="font-size:10px; color:grey; margin-left:5px;">
 								<f:convertDateTime pattern="dd/MM/yyyy HH:mm"></f:convertDateTime>
 							</h:outputText>
 						</p:outputPanel>
@@ -102,9 +139,12 @@
 					</h:panelGrid>
 				</p:dataScroller>
 
+				<p:spacer height="20"></p:spacer>
+
+				<br />
 
 				<h:panelGroup>
-					<p:inputTextarea widgetVar="editor" rows="15"
+					<p:inputTextarea widgetVar="editor" rows="5"
 						value="#{mensagemBean.mensagem.descricao}"
 						style="margin-bottom:10px; width:99%"
 						placeholder="Digite aqui a mensagem">
