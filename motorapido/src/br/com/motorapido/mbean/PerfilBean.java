@@ -17,6 +17,7 @@ import br.com.motorapido.entity.Perfil;
 import br.com.motorapido.entity.PerfilMenu;
 import br.com.motorapido.util.ExcecoesUtil;
 
+@SuppressWarnings("deprecation")
 @ManagedBean(name = "perfilBean")
 @ViewScoped
 public class PerfilBean extends SimpleController {

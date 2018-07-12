@@ -45,6 +45,9 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 	private static PostgresMensagemFuncionarioMotoristaDAOImpl postgresMensagemFuncionarioMotoristaDAOImpl;
 	private static PostgresMensagemMotoristaFuncionarioDAOImpl postgresMensagemMotoristaFuncionarioDAOImpl;
 	private static PostgresMotoristaAparelhoDAOImpl postgresMotoristaAparelhoDAOImpl;
+	private static PostgresCaracteristicaDAOImpl postgresCaracteristicaDAOImpl;
+	private static PostgresCaracteristicaMotoristaDAOImpl postgresCaracteristicaMotoristaDAOImpl;
+	private static PostgresRestricaoClienteMotoristaDAOImpl postgresRestricaoClienteMotoristaDAOImpl;
 
 	private PostgresFabricaDAOImpl() {
 
@@ -288,6 +291,29 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		return postgresMotoristaAparelhoDAOImpl;
 	}
 	
+	@Override
+	public PostgresCaracteristicaDAOImpl getPostgresCaracteristicaDAO() {
+		if (postgresCaracteristicaDAOImpl == null) {
+			postgresCaracteristicaDAOImpl = new PostgresCaracteristicaDAOImpl();
+		}
+		return postgresCaracteristicaDAOImpl;
+	}
+	
+	@Override
+	public PostgresCaracteristicaMotoristaDAOImpl getPostgresCaracteristicaMotoristaDAO() {
+		if (postgresCaracteristicaMotoristaDAOImpl == null) {
+			postgresCaracteristicaMotoristaDAOImpl = new PostgresCaracteristicaMotoristaDAOImpl();
+		}
+		return postgresCaracteristicaMotoristaDAOImpl;
+	}
+	
+	@Override
+	public PostgresRestricaoClienteMotoristaDAOImpl getPostgresRestricaoClienteMotoristaDAO() {
+		if (postgresRestricaoClienteMotoristaDAOImpl == null) {
+			postgresRestricaoClienteMotoristaDAOImpl = new PostgresRestricaoClienteMotoristaDAOImpl();
+		}
+		return postgresRestricaoClienteMotoristaDAOImpl;
+	}
 	
 	
 }
