@@ -9,7 +9,7 @@ import javax.faces.bean.ViewScoped;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.CaracteristicaBO;
-import br.com.motorapido.bo.PerfilBO;
+import br.com.motorapido.dao.ICaracteristicaDAO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.util.ExcecoesUtil;
 
@@ -32,12 +32,32 @@ public class CaracteristicaBean extends SimpleController {
 			return;
 		}
 		try {
+			String codCaracteristicaStr = (String) getRequestParam("codCaracteristica");
 
+			if (codCaracteristicaStr != null) {
+				Integer codCaracteristica = Integer.valueOf(codCaracteristicaStr);
+				carregarCaracteristica(codCaracteristica);
+				
+			} else {
+				caracteristica = new Caracteristica();
+				listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(caracteristica.getDescricao(),
+						null);
+			}
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
 
+	
+	private void carregarCaracteristica(Integer codCaracteristica) {
+		try {
+			ICaracteristicaDAO caracteristicaDAO = getFabrica().getPostgresCaracteristicaDAO();
+			caracteristica = caracteristicaDAO.findById(codCaracteristica);
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
 	public void pesquisar() {
 		try {
 			listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(caracteristica.getDescricao(),

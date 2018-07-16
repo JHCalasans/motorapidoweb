@@ -18,10 +18,12 @@ public class PostgresCaracteristicaDAOImpl extends GenericDAOImpl<Caracteristica
 	@Override
 	public List<Caracteristica> obterCaracteristicas(String desc, String ativo, EntityManager em) throws ExcecaoBanco {
 		Map<String, Object> mapa = new HashMap<String, Object>();
-		mapa.put("ativo", ativo == null ? null : ativo.isEmpty() ? null : ativo.equals("S") ? true : false);
+		mapa.put("ativo", ativo == null ? null : ativo.isEmpty() ? null : ativo);
 		mapa.put("desc", desc == null ? "" : desc);
 		List<Caracteristica> lista = findByNamedQueryAndNamedParams("Caracteristica.obterCaracteristicas", mapa, em);
 		return lista;
 	}
+
+	
 
 }

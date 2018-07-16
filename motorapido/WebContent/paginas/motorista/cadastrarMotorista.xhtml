@@ -179,7 +179,7 @@
 						for="comprovante" title="Comprovante de Residência"
 						styleClass="OutputLabelCampo" style="width:120px;" />
 
-					<p:fileUpload id="criminais" label="#{bundle.selecione}"
+					<p:fileUpload id="comprovante" label="#{bundle.selecione}"
 						value="#{motoristaBean.motorista.comprovanteResidencia}"
 						cancelLabel="#{bundle.cancelar}" styleClass="upload"
 						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
@@ -189,7 +189,7 @@
 						fileLimitMessage="Tamanho do arquivo excedido"
 						invalidFileMessage="Tipo de arquivo não suportado">
 					</p:fileUpload>
-				
+
 
 				</h:panelGroup>
 
@@ -322,6 +322,16 @@
 					</p:fileUpload>
 
 
+				</h:panelGroup>
+
+				<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
+
+					<h3>Características</h3>
+					<p:selectManyCheckbox id="caracteristicas" converter="caracteristicaConverter"
+						value="#{motoristaBean.listaCaracteristicasSelecionadas}" layout="grid" columns="4">
+						<f:selectItems value="#{motoristaBean.listaCaracteristicas}" var="carac"
+							itemLabel="#{carac.descricao}" itemValue="#{carac}" />
+					</p:selectManyCheckbox>
 				</h:panelGroup>
 
 				<br />

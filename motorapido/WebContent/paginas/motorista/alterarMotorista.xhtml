@@ -177,14 +177,18 @@
 					<p:outputLabel value="#{bundle.motorista_comprovante}:"
 						for="comprovante" title="Comprovante de Residência"
 						styleClass="OutputLabelCampo" style="width:120px;" />
-					<p:selectOneMenu id="comprovante" var="banco" required="true"
-						value="#{motoristaBean.motorista.comprovanteResidencial}"
-						style="width:125px;">
 
-						<f:selectItem itemLabel="Não Entregue" itemValue="N" />
-						<f:selectItem itemLabel="Entregue" itemValue="S" />
+					<p:fileUpload id="comprovante" label="#{bundle.selecione}"
+						value="#{motoristaBean.motorista.comprovanteResidencia}"
+						cancelLabel="#{bundle.cancelar}" styleClass="upload"
+						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
+						mode="advanced" skinSimple="true" auto="true"
+						update=":msgs,pgIcone"
+						fileUploadListener="#{motoristaBean.comprovanteResidencialUploadAction}"
+						fileLimitMessage="Tamanho do arquivo excedido"
+						invalidFileMessage="Tipo de arquivo não suportado">
+					</p:fileUpload>
 
-					</p:selectOneMenu>
 
 				</h:panelGroup>
 
@@ -319,17 +323,30 @@
 
 
 				<h:panelGroup id="pngAtivo" styleClass="p_like">
-					<p:outputLabel value="#{bundle.motorista_situacao}:" for="slcSituacao"
-						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:outputLabel value="#{bundle.motorista_situacao}:"
+						for="slcSituacao" styleClass="OutputLabelCampo"
+						style="width:120px;" />
 					<p:selectOneMenu id="slcSituacao" var="banco" required="true"
 						value="#{motoristaBean.motorista.ativo}" style="width:123px;">
 
-						<f:selectItem itemLabel="Ativo"	itemValue="S" />
+						<f:selectItem itemLabel="Ativo" itemValue="S" />
 						<f:selectItem itemLabel="Inativo" itemValue="N" />
 
 					</p:selectOneMenu>
 
 				</h:panelGroup>
+
+				<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
+
+					<h3>Características</h3>
+					<p:selectManyCheckbox id="caracteristicas" converter="caracteristicaConverter"
+						value="#{motoristaBean.listaCaracteristicasSelecionadas}"
+						layout="grid" columns="4">
+						<f:selectItems value="#{motoristaBean.listaCaracteristicas}"
+							var="carac" itemLabel="#{carac.descricao}" itemValue="#{carac}" />
+					</p:selectManyCheckbox>
+				</h:panelGroup>
+
 
 				<br />
 				<div class="clear"></div>

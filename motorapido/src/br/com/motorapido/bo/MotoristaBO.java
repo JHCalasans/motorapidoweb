@@ -8,9 +8,12 @@ import javax.persistence.EntityTransaction;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IBloqueioMotoristaDAO;
+import br.com.motorapido.dao.ICaracteristicaMotoristaDAO;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.entity.BloqueioMotorista;
+import br.com.motorapido.entity.Caracteristica;
+import br.com.motorapido.entity.CaracteristicaMotorista;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
@@ -45,6 +48,26 @@ public class MotoristaBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar obter motoristas.", e);
+		}		finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	
+	public List<Motorista> obterMotoristasAtivos() throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			Motorista motorista = new Motorista();
+			motorista.setAtivo("S");
+			List<Motorista> lista = motoristaDAO.findByExample(motorista, em);
+			emUtil.commitTransaction(transaction);
+			return lista;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter motoristas ativos.", e);
 		}		finally {
 			emUtil.closeEntityManager(em);
 		}
@@ -180,13 +203,30 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 	
-	public Motorista alterarMotorista(Motorista motorista) throws ExcecaoNegocio {
+	public Motorista alterarMotorista(Motorista motorista, List<Caracteristica> caracteristicas) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			ICaracteristicaMotoristaDAO caracteristicaMotoristaDAO = fabricaDAO.getPostgresCaracteristicaMotoristaDAO();
+
 			motorista = motoristaDAO.save(motorista, em);
+			
+			CaracteristicaMotorista caracteristicaMotorista = new CaracteristicaMotorista();
+			caracteristicaMotorista.setMotorista(motorista);
+			List<CaracteristicaMotorista> result = caracteristicaMotoristaDAO.findByExample(caracteristicaMotorista, em);
+			if(result != null && result.size() > 0){
+				caracteristicaMotoristaDAO.deleteLista(result, em);
+			}
+			
+			caracteristicaMotorista.setDataCriacao(new Date());
+			for (Caracteristica caracteristica : caracteristicas) {
+				caracteristicaMotorista.setCaracteristica(caracteristica);
+				caracteristicaMotoristaDAO.save(caracteristicaMotorista, em);
+				
+			}
+			
 			emUtil.commitTransaction(transaction);
 			return motorista;
 		}catch (Exception e) {

@@ -117,6 +117,7 @@ public class Motorista extends Entidade{
 	@Column(name = "comprovante_residencia", nullable = false)
 	private byte[] comprovanteResidencia;
 	
+	
 	@Transient
 	private String chaveServicos;
 	
@@ -421,6 +422,7 @@ public class Motorista extends Entidade{
 	public void setIdPush(String idPush) {
 		this.idPush = idPush;
 	}
+
 
 
 	

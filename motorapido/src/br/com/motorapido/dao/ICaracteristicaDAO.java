@@ -14,5 +14,6 @@ public interface ICaracteristicaDAO extends GenericDAO<Caracteristica, Integer>{
 	static CriterioOrdenacao BY_DSC_ASC = CriterioOrdenacao.asc("descricao");
 	
 	List<Caracteristica> obterCaracteristicas(String desc, String ativo, EntityManager em) throws ExcecaoBanco;
-
+	
+	
 }

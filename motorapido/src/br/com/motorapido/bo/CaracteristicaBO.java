@@ -1,5 +1,6 @@
 package br.com.motorapido.bo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -7,7 +8,9 @@ import javax.persistence.EntityTransaction;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.ICaracteristicaDAO;
+import br.com.motorapido.dao.ICaracteristicaMotoristaDAO;
 import br.com.motorapido.entity.Caracteristica;
+import br.com.motorapido.entity.CaracteristicaMotorista;
 
 public class CaracteristicaBO  extends MotoRapidoBO {
 
@@ -79,5 +82,30 @@ public class CaracteristicaBO  extends MotoRapidoBO {
 		}
 	}
 	
+	
+	public List<Caracteristica> obterCaracteristicasPorMotorista(Integer codMotorista) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			ICaracteristicaMotoristaDAO caracteristicaMotoristaDAO = fabricaDAO.getPostgresCaracteristicaMotoristaDAO();
+			List<CaracteristicaMotorista> result = caracteristicaMotoristaDAO.obterCaracteristicasPorMotorista(codMotorista, em);
+			
+			List<Caracteristica> lista = new ArrayList<Caracteristica>();
+			for(CaracteristicaMotorista carac : result){
+				lista.add(carac.getCaracteristica());
+			}
+			
+			
+			
+			emUtil.commitTransaction(transaction);
+			return lista;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter características do motorista.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
 
 }

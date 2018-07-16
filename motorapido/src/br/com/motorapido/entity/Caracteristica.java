@@ -17,7 +17,9 @@ import br.com.minhaLib.dao.Entidade;
 @Entity
 @Table(name = Caracteristica.nomeTabela, schema = Caracteristica.esquema, catalog = "diego")
 @NamedQueries(value = { 
-		@NamedQuery(name = "Caracteristica.obterCaracteristicas", query = "select c from Caracteristica c where (:desc is null or c.descricao like '%' || :desc || '%' ) and ( :ativo is null or c.ativo = :ativo) ")
+		@NamedQuery(name = "Caracteristica.obterCaracteristicas", query = "select c from Caracteristica c "
+				+ " where (:desc is null or c.descricao like '%' || :desc || '%' ) and ( :ativo is null or c.ativo = :ativo) ")
+	
 		})
 public class Caracteristica extends Entidade{
 
