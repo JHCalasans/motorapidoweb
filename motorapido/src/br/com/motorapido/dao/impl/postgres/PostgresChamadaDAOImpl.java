@@ -30,4 +30,14 @@ implements IChamadaDAO{
 		return findByNamedQueryAndNamedParams("Chamada.obterChamadasAbertas", params, em);
 	}
 
+
+
+	@Override
+	public List<Chamada> obterChamadasFiltro(Integer codSituacao, EntityManager em)
+			throws ExcecaoBanco, ExcecaoNegocio {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSituacao", codSituacao);
+		return findByNamedQueryAndNamedParams("Chamada.obterChamadasFiltro", params, em);
+	}
+
 }

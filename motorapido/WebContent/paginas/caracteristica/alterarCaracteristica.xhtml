@@ -56,8 +56,8 @@
 				<h:panelGroup styleClass="p_like buttonPosition">
 
 					<p:commandButton value="Salvar" id="btnSalvar"
-						actionListener="#{caracteristicaBean.alterar}"
-						style="margin-right:10px;" update="formAlterar, msgs, conteudo">
+						action="#{caracteristicaBean.alterar}"
+						style="margin-right:10px;" update="formAlterar, :msgs, conteudo">
 					</p:commandButton>
 					<p:button value="#{bundle.voltarTela}"
 						outcome="consultarCaracteristica.proj"

@@ -33,6 +33,8 @@ public class CaracteristicaBean extends SimpleController {
 		}
 		try {
 			String codCaracteristicaStr = (String) getRequestParam("codCaracteristica");
+			
+			String alterou = (String) getRequestParam("alterou");
 
 			if (codCaracteristicaStr != null) {
 				Integer codCaracteristica = Integer.valueOf(codCaracteristicaStr);
@@ -42,6 +44,8 @@ public class CaracteristicaBean extends SimpleController {
 				caracteristica = new Caracteristica();
 				listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(caracteristica.getDescricao(),
 						null);
+				if(alterou != null && alterou.equals("true"))
+					addMsg(FacesMessage.SEVERITY_INFO, "Característica alterada com sucesso.");
 			}
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -79,13 +83,17 @@ public class CaracteristicaBean extends SimpleController {
 	}
 	
 
-	public void alterar() {
+	public String alterar() {
 		try {
 			CaracteristicaBO.getInstance().alterarCaracteristica(caracteristica);
-			addMsg(FacesMessage.SEVERITY_INFO, "Característica alterada com sucesso.");
+			ativo = "";
+			pesquisar();
+			caracteristica = new Caracteristica();
+			return "consultarCaracteristica.tjse?faces-redirect=true&alterou=true";
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
+		return "";
 	}
 	
 	public String navegarAlteracao(int codCaracteristica) {

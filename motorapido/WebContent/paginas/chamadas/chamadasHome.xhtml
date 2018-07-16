@@ -75,49 +75,6 @@
 
 						<!-- 	Filedset Origem    -->
 						<p:fieldset legend="Origem" id="fieldOrigem">
-
-
-							<h:panelGroup id="pngCep" styleClass="p_like">
-								<p:outputLabel value="#{bundle.funcionario_cep}:" for="cep"
-									styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputMask mask="99999-999" id="cep" required="true"
-									value="#{chamadaBean.enderecoClienteOrigem.cep}"
-									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cep}">
-
-								</p:inputMask>
-								<p:commandButton value="..." style="margin-left:10px;"
-									actionListener="#{chamadaBean.setIsDestino(false)}"
-									oncomplete="PF('varDlgPesqEndereco').show()" process="@this"
-									update=":formbuscaEnd" execute="@this"></p:commandButton>
-								
-							</h:panelGroup>
-							<br />
-							<div class="clear"></div>
-
-							<h:panelGroup id="pngCidade" styleClass="p_like">
-
-								<p:outputLabel value="#{bundle.funcionario_cidade}:"
-									for="cidade" styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputText id="cidade" required="true" size="55" 
-									value="#{chamadaBean.enderecoClienteOrigem.cidade}"
-									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cidade}" />
-
-							</h:panelGroup>
-
-							<br />
-							<div class="clear"></div>
-							<h:panelGroup id="pngBairro" styleClass="p_like">
-
-								<p:outputLabel value="#{bundle.funcionario_bairro}:"
-									for="bairro" styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputText id="bairro" required="true" size="55"
-									value="#{chamadaBean.enderecoClienteOrigem.bairro}"
-									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_bairro}" />
-
-							</h:panelGroup>
-
-							<br />
-							<div class="clear"></div>
 							<h:panelGroup id="pngLogradouro" styleClass="p_like">
 								<p:outputLabel value="#{bundle.funcionario_logradouro}:"
 									for="logradouro" styleClass="OutputLabelCampo"
@@ -130,6 +87,7 @@
 
 							<br />
 							<div class="clear"></div>
+
 							<h:panelGroup id="pngNumero" styleClass="p_like">
 								<p:outputLabel value="#{bundle.cliente_numero}:"
 									styleClass="OutputLabelCampo" style="width:80px;" />
@@ -149,6 +107,65 @@
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_logradouro}" />
 
 							</h:panelGroup>
+
+
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngBairro" styleClass="p_like">
+
+								<p:outputLabel value="#{bundle.funcionario_bairro}:"
+									for="bairro" styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="bairro" size="55"
+									value="#{chamadaBean.enderecoClienteOrigem.bairro}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_bairro}" />
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+
+							<h:panelGroup id="pngCep" styleClass="p_like">
+								<p:outputLabel value="#{bundle.funcionario_cep}:" for="cep"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputMask mask="99999-999" id="cep"
+									value="#{chamadaBean.enderecoClienteOrigem.cep}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cep}">
+
+								</p:inputMask>
+								<p:commandButton value="..." style="margin-left:10px;"
+									actionListener="#{chamadaBean.setIsDestino(false)}"
+									oncomplete="PF('varDlgPesqEndereco').show()" process="@this"
+									update=":formbuscaEnd" execute="@this"></p:commandButton>
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+
+							<h:panelGroup id="pngCidade" styleClass="p_like">
+
+								<p:outputLabel value="#{bundle.funcionario_cidade}:"
+									for="cidade" styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="cidade" required="true" size="55"
+									value="#{chamadaBean.enderecoClienteOrigem.cidade}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cidade}" />
+
+							</h:panelGroup>
+
+							<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
+
+								<h3>Características</h3>
+								<p:selectManyCheckbox id="caracteristicas"
+									converter="caracteristicaConverter"
+									value="#{chamadaBean.listaCaracteristicasSelecionadas}"
+									layout="grid" columns="4">
+									<f:selectItems value="#{chamadaBean.listaCaracteristicas}"
+										var="carac" itemLabel="#{carac.descricao}"
+										itemValue="#{carac}" />
+								</p:selectManyCheckbox>
+							</h:panelGroup>
+
+
 						</p:fieldset>
 						<br />
 						<div class="clear"></div>
@@ -255,7 +272,7 @@
 								actionListener="#{chamadaBean.adicionarChamada}"
 								update="msgs, conteudo">
 							</p:commandButton>
-							
+
 						</h:panelGroup>
 
 						<br />
@@ -279,6 +296,28 @@
 				</p:row>
 
 			</p:panelGrid>
+			<br />
+			<div class="clear"></div>
+
+
+			<h:panelGroup id="pngStatus" styleClass="p_like">
+				<p:outputLabel value="Status:" for="status"
+					styleClass="OutputLabelCampo" style="width:60px;" />
+				<p:selectOneMenu id="status"
+					value="#{chamadaBean.situacaoChamadaFiltro}">
+					<f:selectItem itemLabel="TODAS" itemValue="-1" />
+					<f:selectItem itemLabel="CANCELADA" itemValue="1" />
+					<f:selectItem itemLabel="PENDENTE" itemValue="2" />
+					<f:selectItem itemLabel="REJEITADA" itemValue="3" />
+					<f:selectItem itemLabel="ACEITA" itemValue="4" />
+					<f:selectItem itemLabel="EXPIRADA" itemValue="5" />
+
+					<p:ajax event="change"
+						listener="#{chamadaBean.atualizarChamadasFiltro()}"
+						update="msgs, conteudo"></p:ajax>
+				</p:selectOneMenu>
+
+			</h:panelGroup>
 
 			<br />
 			<div class="clear"></div>

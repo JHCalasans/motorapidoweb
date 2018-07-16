@@ -11,6 +11,7 @@ import org.primefaces.model.map.LatLng;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IChamadaDAO;
 import br.com.motorapido.entity.Area;
+import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Funcionario;
@@ -37,7 +38,7 @@ public class ChamadaBO extends MotoRapidoBO {
 	}
 
 	public Chamada iniciarChamada(Chamada chamada, EnderecoCliente origemEndereco, Local destino, Local origemLocal,
-			Funcionario funcionario) throws ExcecaoNegocio {
+			Funcionario funcionario, List<Caracteristica> caracteristicas) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -83,6 +84,23 @@ public class ChamadaBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar obter chamadas abertas.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public List<Chamada> obterChamadasFiltro(Integer codSituacao) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
+			List<Chamada> retorno = chamadaDAO.obterChamadasFiltro(codSituacao, em);
+			emUtil.commitTransaction(transaction);
+			return retorno;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter chamadas.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}

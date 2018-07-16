@@ -20,6 +20,7 @@ import br.com.motorapido.bo.ClienteBO;
 import br.com.motorapido.bo.EnderecoClienteBO;
 import br.com.motorapido.bo.LocalBO;
 import br.com.motorapido.bo.ParametroBO;
+import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.EnderecoCliente;
@@ -66,7 +67,13 @@ public class ChamadaBean extends SimpleController {
 	
 	private LatLng coordenadas;
 	
+	private Integer situacaoChamadaFiltro;
+	
 	private List<Chamada> chamadas;
+	
+	private List<Caracteristica> listaCaracteristicas;
+
+	private List<Caracteristica> listaCaracteristicasSelecionadas;
 
 	@PostConstruct
 	public void carregar() {
@@ -94,6 +101,14 @@ public class ChamadaBean extends SimpleController {
 		return null;
 	}
 
+	
+	public void atualizarChamadasFiltro(){
+		try {
+			chamadas = ChamadaBO.getInstance().obterChamadasFiltro(getSituacaoChamadaFiltro());
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
 	
 	public void limparOrigem(){
 		enderecoClienteOrigem = new EnderecoCliente();
@@ -136,7 +151,7 @@ public class ChamadaBean extends SimpleController {
 			
 			chamada.setCliente(getCliente());
 			ChamadaBO.getInstance().iniciarChamada(getChamada(), enderecoClienteOrigem, enderecoClienteDestino,
-					localOrigem, getFuncionarioLogado());
+					localOrigem, getFuncionarioLogado(), listaCaracteristicasSelecionadas);
 			
 			limparCampos();
 			atualizarChamadas();
@@ -363,6 +378,30 @@ public class ChamadaBean extends SimpleController {
 
 	public void setChamadas(List<Chamada> chamadas) {
 		this.chamadas = chamadas;
+	}
+
+	public Integer getSituacaoChamadaFiltro() {
+		return situacaoChamadaFiltro;
+	}
+
+	public void setSituacaoChamadaFiltro(Integer situacaoChamadaFiltro) {
+		this.situacaoChamadaFiltro = situacaoChamadaFiltro;
+	}
+
+	public List<Caracteristica> getListaCaracteristicas() {
+		return listaCaracteristicas;
+	}
+
+	public void setListaCaracteristicas(List<Caracteristica> listaCaracteristicas) {
+		this.listaCaracteristicas = listaCaracteristicas;
+	}
+
+	public List<Caracteristica> getListaCaracteristicasSelecionadas() {
+		return listaCaracteristicasSelecionadas;
+	}
+
+	public void setListaCaracteristicasSelecionadas(List<Caracteristica> listaCaracteristicasSelecionadas) {
+		this.listaCaracteristicasSelecionadas = listaCaracteristicasSelecionadas;
 	}
 
 }

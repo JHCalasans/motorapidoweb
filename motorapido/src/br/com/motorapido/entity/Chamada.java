@@ -23,7 +23,10 @@ import br.com.minhaLib.dao.Entidade;
 @NamedQueries(value = {
 		@NamedQuery(name = "Chamada.obterChamadasAbertas", query = "select ch from Chamada ch join fetch ch.situacaoChamada sc left join fetch ch.cliente cl"
 				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
-				+ " where ch.situacaoChamada.codigo in (2,3,4,5)") })
+				+ " where ch.situacaoChamada.codigo in (2,3,4,5)"),
+		@NamedQuery(name = "Chamada.obterChamadasFiltro", query = "select ch from Chamada ch join fetch ch.situacaoChamada sc left join fetch ch.cliente cl"
+				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
+				+ " where ch.situacaoChamada.codigo = :codSituacao")})
 public class Chamada extends Entidade {
 
 	private static final long serialVersionUID = 5895083303813489402L;

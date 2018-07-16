@@ -77,6 +77,8 @@ public class MotoristaBean extends SimpleController {
 	private List<Caracteristica> listaCaracteristicas;
 
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
+	
+	private List<Integer> listaCodsSelecionados;
 
 	@PostConstruct
 	public void carregar() {
@@ -306,6 +308,8 @@ public class MotoristaBean extends SimpleController {
 				motorista.setFoto(foto.getContents());
 			if (docCriminais != null)
 				motorista.setDocCriminais(docCriminais.getContents());
+			
+
 			MotoristaBO.getInstance().alterarMotorista(motorista, listaCaracteristicasSelecionadas);
 			enviarJavascript("PF('dlgSucesso').show();");
 
@@ -642,6 +646,14 @@ public class MotoristaBean extends SimpleController {
 
 	public void setListaCaracteristicasSelecionadas(List<Caracteristica> listaCaracteristicasSelecionadas) {
 		this.listaCaracteristicasSelecionadas = listaCaracteristicasSelecionadas;
+	}
+
+	public List<Integer> getListaCodsSelecionados() {
+		return listaCodsSelecionados;
+	}
+
+	public void setListaCodsSelecionados(List<Integer> listaCodsSelecionados) {
+		this.listaCodsSelecionados = listaCodsSelecionados;
 	}
 
 }

@@ -339,11 +339,11 @@
 				<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
 
 					<h3>Características</h3>
-					<p:selectManyCheckbox id="caracteristicas" converter="caracteristicaConverter"
+					<p:selectManyCheckbox id="caracteristicas" 
 						value="#{motoristaBean.listaCaracteristicasSelecionadas}"
 						layout="grid" columns="4">
 						<f:selectItems value="#{motoristaBean.listaCaracteristicas}"
-							var="carac" itemLabel="#{carac.descricao}" itemValue="#{carac}" />
+							var="carac" itemLabel="#{carac.descricao}" itemValue="#{carac.codigo}" />
 					</p:selectManyCheckbox>
 				</h:panelGroup>
 
