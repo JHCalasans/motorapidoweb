@@ -15,6 +15,7 @@ import org.primefaces.model.map.Marker;
 import com.google.maps.model.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.bo.CaracteristicaBO;
 import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.ClienteBO;
 import br.com.motorapido.bo.EnderecoClienteBO;
@@ -89,7 +90,7 @@ public class ChamadaBean extends SimpleController {
 				setCoordenadas(new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1])));
 			}
 			atualizarChamadas();
-			
+			carregarCaracteristicasAtivas();
 
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -126,6 +127,14 @@ public class ChamadaBean extends SimpleController {
 	public void pesquisarClienteDialog() {
 		try {
 			listaClientesDialog = ClienteBO.getInstance().obterClientes(nomePesquisa, null, codPesquisa);
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
+	public void carregarCaracteristicasAtivas() {
+		try {
+			listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}

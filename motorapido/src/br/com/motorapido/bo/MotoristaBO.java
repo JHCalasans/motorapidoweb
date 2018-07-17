@@ -36,13 +36,13 @@ public class MotoristaBO extends MotoRapidoBO {
 		return instance;
 	}
 	
-	public List<Motorista> obterMotoristas(String nome, String cpf) throws ExcecaoNegocio {
+	public List<Motorista> obterMotoristas(String nome, String cpf, String cnh,  String email,  String identidade) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
-			List<Motorista> lista = motoristaDAO.obterMotoristas(nome, cpf, em);
+			List<Motorista> lista = motoristaDAO.obterMotoristas(nome, cpf,cnh, email, identidade, em);
 			emUtil.commitTransaction(transaction);
 			return lista;
 		} catch (Exception e) {

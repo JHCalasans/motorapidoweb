@@ -11,6 +11,7 @@
 	<meta http-equiv="Expires" content="0" />
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
+
 	<ui:param name="tituloPagina" value="#{bundle.motorista_alterarTitulo}" />
 	<ui:param name="headerConteudo"
 		value="#{bundle.motorista_alterarTitulo}" />
@@ -339,11 +340,11 @@
 				<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
 
 					<h3>Características</h3>
-					<p:selectManyCheckbox id="caracteristicas" 
+					<p:selectManyCheckbox id="caracteristicas" converter="caracteristicaConverter"
 						value="#{motoristaBean.listaCaracteristicasSelecionadas}"
 						layout="grid" columns="4">
 						<f:selectItems value="#{motoristaBean.listaCaracteristicas}"
-							var="carac" itemLabel="#{carac.descricao}" itemValue="#{carac.codigo}" />
+							var="carac" itemLabel="#{carac.descricao}" itemValue="#{carac}" />
 					</p:selectManyCheckbox>
 				</h:panelGroup>
 
@@ -354,7 +355,7 @@
 
 				<h:panelGroup styleClass="p_like buttonPosition">
 
-					<p:commandButton value="Salvar" id="btnSalvar"
+					<p:commandButton value="Salvar" id="btnSalvar" onclick="verificarurl('Validando CPF, RG, CNH e EMAIL...')"
 						actionListener="#{motoristaBean.alterarMotorista}"
 						update="formCadastro, msgs, conteudo">
 					</p:commandButton>

@@ -322,7 +322,7 @@
 
 				<h:panelGroup styleClass="p_like buttonPosition">
 
-					<p:commandButton value="Salvar" id="btnSalvar"
+					<p:commandButton value="Salvar" id="btnSalvar" onclick="verificarurl('Validando CPF, RG e EMAIL...')"
 						actionListener="#{funcionarioBean.alterarFuncionario}"
 						update="formCadastro, msgs, conteudo">
 					</p:commandButton>

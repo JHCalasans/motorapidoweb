@@ -1,19 +1,28 @@
 package br.com.motorapido.util;
 
-import javax.faces.application.FacesMessage;
-
 public class ObjetoMensagem {
 
-	private FacesMessage message;
+	private String messagem;
 	
 	private Integer codMotorista;
+	
+	private String nomeMotorista;
 
-	public FacesMessage getMessage() {
-		return message;
+	
+	public String getMessagem() {
+		return messagem;
 	}
 
-	public void setMessage(FacesMessage message) {
-		this.message = message;
+	public void setMessagem(String messagem) {
+		this.messagem = messagem;
+	}
+
+	public String getNomeMotorista() {
+		return nomeMotorista;
+	}
+
+	public void setNomeMotorista(String nomeMotorista) {
+		this.nomeMotorista = nomeMotorista;
 	}
 
 	public Integer getCodMotorista() {

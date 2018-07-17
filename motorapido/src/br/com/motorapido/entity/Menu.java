@@ -41,6 +41,11 @@ public class Menu extends Entidade{
 	
 	@Column(name = "url", nullable = false)
 	private String url;
+	
+
+	@Column(name = "cod_menu_pai", nullable = true)
+	private Integer codMenuPai;
+
 
 	
 	@Override
@@ -77,5 +82,16 @@ public class Menu extends Entidade{
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+
+
+	public Integer getCodMenuPai() {
+		return codMenuPai;
+	}
+
+
+	public void setCodMenuPai(Integer codMenuPai) {
+		this.codMenuPai = codMenuPai;
 	}
 }

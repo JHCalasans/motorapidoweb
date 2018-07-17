@@ -152,7 +152,7 @@ public class MotoristaBean extends SimpleController {
 
 	public void pesquisarMotorista() {
 		try {
-			listaMotoristas = MotoristaBO.getInstance().obterMotoristas(nomePesquisa, cpfPesquisa);
+			listaMotoristas = MotoristaBO.getInstance().obterMotoristas(nomePesquisa, cpfPesquisa, null, null, null);
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -174,9 +174,9 @@ public class MotoristaBean extends SimpleController {
 			return false;
 		} else {
 			try {
-				Motorista moto = new Motorista();
-				moto.setCpf(motorista.getCpf());
-				List<Motorista> lista = MotoristaBO.getInstance().obterMotoristasExample(moto);
+				/*Motorista moto = new Motorista();
+				moto.setCpf(motorista.getCpf());*/
+				List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, motorista.getCpf(), null, null, null);//MotoristaBO.getInstance().obterMotoristasExample(moto);
 				if (lista != null && lista.size() > 0
 						&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 					MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF já cadastrado na base de dados!.", "");
@@ -194,9 +194,9 @@ public class MotoristaBean extends SimpleController {
 	public boolean validarRG() {
 
 		try {
-			Motorista moto = new Motorista();
-			moto.setIdentidade(motorista.getIdentidade());
-			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristasExample(moto);
+			/*Motorista moto = new Motorista();
+			moto.setIdentidade(motorista.getIdentidade());*/
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null, motorista.getIdentidade());//MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "RG já cadastrado na base de dados!.", "");
@@ -213,9 +213,9 @@ public class MotoristaBean extends SimpleController {
 	public boolean validarEmail() {
 
 		try {
-			Motorista moto = new Motorista();
-			moto.setEmail(motorista.getEmail());
-			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristasExample(moto);
+			/*Motorista moto = new Motorista();
+			moto.setEmail(motorista.getEmail());*/
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, motorista.getEmail(), null);//MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "Email já cadastrado na base de dados!.", "");
@@ -240,9 +240,9 @@ public class MotoristaBean extends SimpleController {
 	public boolean validarCNH() {
 
 		try {
-			Motorista moto = new Motorista();
-			moto.setCnh(motorista.getCnh());
-			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristasExample(moto);
+		/*	Motorista moto = new Motorista();
+			moto.setCnh(motorista.getCnh());*/
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, motorista.getCnh(), null, null);//MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CNH já cadastrada na base de dados!.", "");

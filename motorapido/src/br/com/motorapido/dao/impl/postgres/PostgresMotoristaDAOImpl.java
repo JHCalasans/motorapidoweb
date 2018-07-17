@@ -17,10 +17,13 @@ public class PostgresMotoristaDAOImpl  extends GenericDAOImpl<Motorista, Integer
 implements IMotoristaDAO{
 
 	@Override
-	public List<Motorista> obterMotoristas(String nome, String cpf, EntityManager em) throws ExcecaoBanco {
+	public List<Motorista> obterMotoristas(String nome, String cpf, String cnh,  String email,  String identidade, EntityManager em) throws ExcecaoBanco {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("nome", nome != null ? nome.toLowerCase() : "");
 		params.put("cpf", cpf != null ? cpf.toLowerCase() : "");
+		params.put("cnh", cnh != null ? cnh.toLowerCase() : "");
+		params.put("email", email != null ? email.toLowerCase() : "");
+		params.put("identidade", identidade != null ? identidade.toLowerCase() : "");
 		return findByNamedQueryAndNamedParams("Motorista.obterMotoristas", params, em);
 	}
 

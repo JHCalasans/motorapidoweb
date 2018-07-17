@@ -1,6 +1,7 @@
 package br.com.motorapido.mbean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -34,22 +35,20 @@ import br.com.motorapido.bo.PerfilMenuBO;
 import br.com.motorapido.entity.PerfilMenu;
 import br.com.motorapido.util.ExcecoesUtil;
 
-
-
 @ManagedBean(name = "menuBean")
 @SessionScoped
 public class MenuBean extends SimpleController implements Serializable {
-
 
 	private static final long serialVersionUID = -2168554630566444675L;
 	private MenuModel model;
 	private String message = "ereere";
 	Socket sockt = null;
+
 	public MenuBean() {
 
 	}
-	
-	public List<PerfilMenu> getMenus(){
+
+	public List<PerfilMenu> getMenus() {
 		try {
 			return PerfilMenuBO.getInstance().obterMenusPorPerfil(getFuncionarioLogado().getPerfil().getCodigo());
 		} catch (ExcecaoNegocio e) {
@@ -57,36 +56,48 @@ public class MenuBean extends SimpleController implements Serializable {
 		}
 		return null;
 	}
-	
-	public void testeee(){
 
-	
+	public void testeee() {
+
 		System.out.println(message);
-		//MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF inválido!.", "");
+		// MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF inválido!.",
+		// "");
 	}
 
-	
-	
-	
 	public MenuModel getModel() {
 		try {
 			if (model == null) {
 				model = new DefaultMenuModel();
-				//Funcionario funcionario =  getFuncionarioLogado();				
-				List<PerfilMenu> perfisMenus = PerfilMenuBO.getInstance().obterMenusPorPerfil(getFuncionarioLogado().getPerfil().getCodigo());
+				// Funcionario funcionario = getFuncionarioLogado();
+				List<PerfilMenu> perfisMenus = PerfilMenuBO.getInstance()
+						.obterMenusPorPerfil(getFuncionarioLogado().getPerfil().getCodigo());
 				MenuItem menuItem = null;
-				for(PerfilMenu perfilMenu: perfisMenus){
-					menuItem =  new DefaultMenuItem(perfilMenu.getMenu().getNome(), null, perfilMenu.getMenu().getUrl());
-					getModel().addElement(menuItem);
+				Submenu subMenu = null;
+				
+				for (PerfilMenu perfilMenu : perfisMenus) {
+					if (perfilMenu.getMenu().getUrl() == null || perfilMenu.getMenu().getUrl().isEmpty()) {
+						subMenu = new DefaultSubMenu(perfilMenu.getMenu().getNome());
+						if (perfilMenu.getMenu().getNome().equals("Configurações")) {
+							menuItem = new DefaultMenuItem("Senha", null, null);
+							((DefaultMenuItem) menuItem).setOnclick("PF('dlgSenha').show();");
+							((DefaultSubMenu) subMenu).setStyleClass("subMenu");
+							((DefaultSubMenu) subMenu).addElement(menuItem);
+						}
+						getModel().addElement(subMenu);
+					} else if (perfilMenu.getMenu().getCodMenuPai() != null) {
+						menuItem = new DefaultMenuItem(perfilMenu.getMenu().getNome(), null,
+								perfilMenu.getMenu().getUrl());
+						((DefaultSubMenu) subMenu).addElement(menuItem);
+					} else {
+						menuItem = new DefaultMenuItem(perfilMenu.getMenu().getNome(), null,
+								perfilMenu.getMenu().getUrl());
+						getModel().addElement(menuItem);
+					}
 				}
-				Submenu  subMenu = new DefaultSubMenu("Configurações");	
-				menuItem =  new DefaultMenuItem("Senha", null, null);
-				((DefaultMenuItem)menuItem).setOnclick("PF('dlgSenha').show();");
-				((DefaultSubMenu)subMenu).setStyleClass("subMenu");
-				((DefaultSubMenu)subMenu).addElement(menuItem);
-				getModel().addElement(subMenu);
 				
 				
+				// Submenu subMenu = new DefaultSubMenu("Configurações");
+
 			}
 		} catch (Exception ex) {
 			ExcecoesUtil.TratarExcecao(ex);
@@ -94,14 +105,14 @@ public class MenuBean extends SimpleController implements Serializable {
 		}
 		return model;
 	}
-	
+
 	public void setModel(MenuModel model) {
 		this.model = model;
 	}
 
 	@PostConstruct
 	public void init() {
-		
+
 	}
 
 	@Override

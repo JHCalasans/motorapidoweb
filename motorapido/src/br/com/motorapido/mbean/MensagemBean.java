@@ -68,6 +68,11 @@ public class MensagemBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
+	
+	public void mostrarAviso() {
+		enviarJavascript("PF('dlgMensagem').show();");
+	}
+
 
 	public void atualizarMensagens() {
 		if (motoristaSelecionado != null && motoristaSelecionado.getCodigo() == getUltimoMotMsg()

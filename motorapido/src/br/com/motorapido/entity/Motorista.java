@@ -20,7 +20,8 @@ import br.com.minhaLib.dao.Entidade;
 @Entity
 @Table(name = Motorista.nomeTabela, schema = Motorista.esquema, catalog = "diego")
 @NamedQueries(value = { 
-		@NamedQuery(name = "Motorista.obterMotoristas", query = "select m from Motorista m  where (:nome is null or lower(m.nome) like '%' || :nome || '%') and (:cpf is null or m.cpf like '%' || :cpf || '%')"),		
+		@NamedQuery(name = "Motorista.obterMotoristas", query = "select m from Motorista m  where (:nome is null or lower(m.nome) like '%' || :nome || '%') and (:cpf is null or m.cpf like '%' || :cpf || '%')"
+				+ " and (:identidade is null or m.identidade like '%' || :identidade || '%') and (:email is null or m.email like '%' || :email || '%') and (:cnh is null or m.cnh like '%' || :cnh || '%') "),		
 		@NamedQuery(name = "Motorista.obterTodos", query = "select m from Motorista m "),
 		@NamedQuery(name = "Motorista.obterPorCod", query = "select m from Motorista m where m.codigo = :codigo")
 		})

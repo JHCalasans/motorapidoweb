@@ -19,6 +19,7 @@ import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.mbean.SimpleController;
+import br.com.motorapido.util.ObjetoMensagem;
 import br.com.motorapido.util.ws.params.MensagemParam;
 import jersey.repackaged.com.google.common.collect.Lists;
 
@@ -63,9 +64,14 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			mensag.setDataCriacao(new Date());
 			mensag = mensagemMotoristaFuncionarioDAO.save(mensag, em);
 			
+			ObjetoMensagem objetoMsg = new ObjetoMensagem();
+			objetoMsg.setCodMotorista(moto.getCodigo());
+			objetoMsg.setMessagem(param.getMensagem());
+			objetoMsg.setNomeMotorista(moto.getNome());
+			
 			EventBus eventBus = EventBusFactory.getDefault().eventBus();
 			eventBus.publish(CHANELL, new FacesMessage(StringEscapeUtils.escapeHtml3(summary),
-					StringEscapeUtils.escapeHtml3(moto.getNome())));
+										StringEscapeUtils.escapeHtml3(moto.getNome())));
 			SimpleController.setUltimoMotMsg(param.getCodMotorista());
 			SimpleController.setUltimaMsgEnviada(mensag);
 			

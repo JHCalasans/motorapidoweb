@@ -23,6 +23,27 @@ form span.p_like input, form span.p_like select, form span.p_like img,
 	width: 100%;
 }
 
+.img-nova-mensagem {
+	width: 40px;
+	height: 40px;
+	float: left;
+	margin: 0;
+	padding: 0;
+	display: block;
+	background: url('/motorapido/resources/msg_nova.png');
+}
+
+.nova-mensagem {
+	position: fixed;
+	right: 20px;
+	width: 300px;	
+	top: 197px !important;
+	z-index: 1002;
+	background: #9CCC65 !important;
+	border: transparent !important;
+	left: auto !important;
+}
+
 .upload .ui-fileupload-filename {
 	margin-top: .5em;
 }
