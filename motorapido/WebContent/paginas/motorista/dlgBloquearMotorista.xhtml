@@ -6,7 +6,7 @@
 	xmlns:tjse="http://www.tjse.jus.br/jsf/components">
 
 	<p:dialog header="#{bundle.bloquear_motorista}"
-		widgetVar="varDlgBloquearMoto" width="600" height="220" 
+		widgetVar="varDlgBloquearMoto" width="600" height="220"
 		resizable="false" showEffect="fade" dynamic="true" appendTo="@(body)"
 		closeOnEscape="true" closable="true" hideEffect="fade" modal="true"
 		draggable="false" id="dlgBloquearMoto">
@@ -23,10 +23,27 @@
 					</p:calendar>
 				</h:panelGroup>
 				<div class="clear"></div>
-				<h:panelGroup styleClass="p_like">
+
+				<h:panelGrid columns="2">
+					<p:outputLabel styleClass="OutputLabelCampo" for="duracao"
+						value="Duração"
+						style="margin-left: -5px; margin-right: 50px;" />
+					<p:selectOneRadio id="duracao" styleClass="checkPeriodo"
+						value="#{motoristaBean.periodoSelecionado}" layout="grid"
+						columns="6">
+						<f:selectItems value="#{motoristaBean.listaPeriodos}"
+							var="periodo" itemLabel="#{periodo}" itemValue="#{periodo}" />
+						<f:selectItem itemLabel="Outro" itemValue="N" />
+						<p:ajax event="change" update="formbusca"></p:ajax>
+					</p:selectOneRadio>
+				</h:panelGrid>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like" style="margin-bottom: 10px"
+					rendered="#{motoristaBean.periodoSelecionado eq 'N'}">
 					<p:outputLabel styleClass="OutputLabelCampo" for="dtFinal"
 						value="Final" />
-					<p:calendar id="dtFinal" disabled="#{motoristaBean.dataInicioBloqueio eq null}"
+					<p:calendar id="dtFinal"
+						disabled="#{motoristaBean.periodoSelecionado != 'N'}"
 						mindate="#{motoristaBean.dataInicioBloqueio}"
 						value="#{motoristaBean.dataFinalBloqueio}" showOn="button"
 						pattern="dd/MM/yyyy HH:mm">
@@ -36,9 +53,13 @@
 				<h:panelGroup styleClass="p_like">
 					<p:outputLabel styleClass="OutputLabelCampo" for="motivo"
 						value="Motivo" />
-					<p:inputTextarea id="motivo" rows="6" cols="50" autoResize="false"
-						value="#{motoristaBean.motivoBloqueio}">
-					</p:inputTextarea>
+					<p:selectOneMenu id="motivo"
+						value="#{motoristaBean.punicaoSelecionada}"
+						converter="tipoPunicaoConverter">
+						<f:selectItems value="#{motoristaBean.listaPunicoes}"
+							var="punicao" itemLabel="#{punicao.descricao}"
+							itemValue="#{punicao}" />
+					</p:selectOneMenu>
 				</h:panelGroup>
 				<div class="clear"></div>
 				<h:panelGroup styleClass="p_like buttonPosition">

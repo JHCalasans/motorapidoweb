@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,9 +29,13 @@ import com.google.gson.Gson;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.bo.CaracteristicaBO;
+import br.com.motorapido.bo.FuncaoBO;
 import br.com.motorapido.bo.MotoristaBO;
+import br.com.motorapido.bo.TipoPunicaoBO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.TipoPunicao;
+import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.EnderecoCep;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.FuncoesUtil;
@@ -79,6 +85,14 @@ public class MotoristaBean extends SimpleController {
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
 	
 	private List<Integer> listaCodsSelecionados;
+	
+	private List<String> listaPeriodos;
+	
+	private String periodoSelecionado;
+	
+	private List<TipoPunicao> listaPunicoes;
+	
+	private TipoPunicao punicaoSelecionada;
 
 	@PostConstruct
 	public void carregar() {
@@ -141,9 +155,13 @@ public class MotoristaBean extends SimpleController {
 	public void carregarMotoristaBloquear(Motorista moto, boolean bloquear) {
 		try {
 			motoristaBloqeuar = moto;
-			if (bloquear)
+			if (bloquear){
+				String chaves = FuncaoBO.getInstance().getParam(ParametroEnum.PERIODOS_BLOQUEIO);
+				listaPeriodos =  Arrays.asList(chaves.split(","));
+				listaPunicoes = TipoPunicaoBO.getInstance().obterTiposPunicoes(null, "S");
+				punicaoSelecionada = listaPunicoes.get(0);
 				enviarJavascript("PF('varDlgBloquearMoto').show()");
-			else
+			}else
 				enviarJavascript("PF('vardlConfirmDesbloqueio').show()");
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -326,16 +344,55 @@ public class MotoristaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
+	
+	public void downloadCompResidencia(Motorista moto) {
+		try {
+			UtilDownload.download(moto.getComprovanteResidencia(), "Comprovante de residência de " + moto.getNome() + ".pdf",
+					UtilDownload.MIMETYPE_OCTETSTREAM, UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
 
 	public void bloquearMotorista() {
 		try {
+			
+			if(dataInicioBloqueio == null)
+				throw new ExcecaoNegocio("Favor selecionar uma data inicial.");
+			
+			if(periodoSelecionado == null || periodoSelecionado.isEmpty())
+				throw new ExcecaoNegocio("Favor selecionar um período para o bloqueio");
+			if(periodoSelecionado.equals("N") && dataFinalBloqueio == null)
+				throw new ExcecaoNegocio("Favor informe uma data para o fim do bloqueio");
+			
+			if(!periodoSelecionado.equals("N"))
+				dataFinalBloqueio = calculaDataFinalBloqueio(periodoSelecionado);	
+			
+			if(dataFinalBloqueio.before(dataInicioBloqueio))
+				throw new ExcecaoNegocio("Data Final deve ser maior que a data inicial.");
+			
 			MotoristaBO.getInstance().bloquearMotorista(motoristaBloqeuar, getFuncionarioLogado(), motivoBloqueio,
-					dataInicioBloqueio, dataFinalBloqueio);
+					dataInicioBloqueio, dataFinalBloqueio, getPunicaoSelecionada());
+			
+			
 			enviarJavascript("PF('varDlgBloquearMoto').hide()");
 			addMsg(FacesMessage.SEVERITY_INFO, "Motorista bloqueado com sucesso!.");
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
+	}
+	
+	private Date calculaDataFinalBloqueio(String periodo){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dataInicioBloqueio);
+		if(periodo.contains("min")){
+			periodo = periodo.replaceAll("\\D+","");
+			calendar.add(Calendar.MINUTE, Integer.parseInt(periodo));
+		}else{
+			periodo = periodo.replaceAll("\\D+","");
+			calendar.add(Calendar.HOUR, Integer.parseInt(periodo));
+		}
+		return calendar.getTime();
 	}
 
 	public void desbloquearMotorista() {
@@ -654,6 +711,38 @@ public class MotoristaBean extends SimpleController {
 
 	public void setListaCodsSelecionados(List<Integer> listaCodsSelecionados) {
 		this.listaCodsSelecionados = listaCodsSelecionados;
+	}
+
+	public List<String> getListaPeriodos() {
+		return listaPeriodos;
+	}
+
+	public void setListaPeriodos(List<String> listaPeriodos) {
+		this.listaPeriodos = listaPeriodos;
+	}
+
+	public String getPeriodoSelecionado() {
+		return periodoSelecionado;
+	}
+
+	public void setPeriodoSelecionado(String periodoSelecionado) {
+		this.periodoSelecionado = periodoSelecionado;
+	}
+
+	public List<TipoPunicao> getListaPunicoes() {
+		return listaPunicoes;
+	}
+
+	public void setListaPunicoes(List<TipoPunicao> listaPunicoes) {
+		this.listaPunicoes = listaPunicoes;
+	}
+
+	public TipoPunicao getPunicaoSelecionada() {
+		return punicaoSelecionada;
+	}
+
+	public void setPunicaoSelecionada(TipoPunicao punicaoSelecionada) {
+		this.punicaoSelecionada = punicaoSelecionada;
 	}
 
 }

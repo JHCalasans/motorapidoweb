@@ -17,6 +17,7 @@ import br.com.motorapido.entity.CaracteristicaMotorista;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
+import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
@@ -237,7 +238,8 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 	
-	public void bloquearMotorista(Motorista motorista, Funcionario funcionario, String motivo, Date dataInicio, Date dataFinal) throws ExcecaoNegocio {
+	public void bloquearMotorista(Motorista motorista, Funcionario funcionario, String motivo, 
+			Date dataInicio, Date dataFinal, TipoPunicao punicaoSelecionada) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -251,6 +253,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			bloqueio.setMotivo(motivo);
 			bloqueio.setAtivo("S");
 			bloqueio.setMotorista(motorista);
+			bloqueio.setTipoPunicao(punicaoSelecionada);
 			bloqueioMotoristaDAO.save(bloqueio, em);
 			motorista.setBloqueado("S");
 			motoristaDAO.save(motorista, em);
@@ -262,6 +265,8 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
+	
+	
 	
 	public void desbloquearMotorista(Motorista motorista, Date dataFim) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();

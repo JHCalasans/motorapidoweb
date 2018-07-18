@@ -56,6 +56,10 @@ public class BloqueioMotorista extends Entidade {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_funcionario", nullable = false)
 	private Funcionario funcionario;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cod_tipo_punicao", nullable = false)
+	private TipoPunicao tipoPunicao;
 
 	@Override
 	public Serializable getIdentificador() {
@@ -118,6 +122,14 @@ public class BloqueioMotorista extends Entidade {
 
 	public void setAtivo(String ativo) {
 		this.ativo = ativo;
+	}
+
+	public TipoPunicao getTipoPunicao() {
+		return tipoPunicao;
+	}
+
+	public void setTipoPunicao(TipoPunicao tipoPunicao) {
+		this.tipoPunicao = tipoPunicao;
 	}
 
 }

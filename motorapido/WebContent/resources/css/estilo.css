@@ -117,9 +117,19 @@ form span.p_like input, form span.p_like select, form span.p_like img,
 	border-bottom-color: #990000
 }
 
+
+
+.checkPeriodo .ui-radiobutton {
+	    float: left;
+}
+
 .selectDistribuidora .ui-state-default {
 	background: #A16838 !important;
 	font-weight: 800 !important;
+}
+
+.ui-selectoneradio label{
+	margin-top: 5px;
 }
 
 .inputPrancheta {

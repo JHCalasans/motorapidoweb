@@ -116,7 +116,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width:80px">
+					<p:column style="width:90px">
 						<f:facet name="header">
 							<h:outputText value="#{bundle.operacoes}"
 								styleClass="cabecalhoDataTable" />
@@ -136,6 +136,12 @@
 							style="margin-left:10px;"
 							action="#{motoristaBean.downloadDocCriminais(motorista)}">
 							<h:graphicImage url="/resources/pdf.png"
+								style="border-style: none" />
+						</h:commandLink>
+						<h:commandLink title="Comp. Residência" immediate="true"
+							style="margin-left:10px;"
+							action="#{motoristaBean.downloadCompResidencia(motorista)}">
+							<h:graphicImage url="/resources/pdf2.png"
 								style="border-style: none" />
 						</h:commandLink>
 						<h:commandLink title="Bloquear" immediate="true"
