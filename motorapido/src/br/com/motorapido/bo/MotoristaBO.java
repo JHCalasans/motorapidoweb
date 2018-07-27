@@ -74,6 +74,24 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 	
+	public List<Motorista> obterMotoristasSemRestricoesCliente(Integer codCliente) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+
+			List<Motorista> lista = motoristaDAO.obterMotoristasSemRestricoesCliente(codCliente, em);
+			emUtil.commitTransaction(transaction);
+			return lista;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter motoristas sem restrições.", e);
+		}		finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
 	public void alterarDisponivel(Integer codMotorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();

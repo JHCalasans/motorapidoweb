@@ -40,7 +40,7 @@ public class PerfilMenuBO extends MotoRapidoBO {
 		
 			perfilMenu.setPerfil(new Perfil());
 			perfilMenu.getPerfil().setCodigo(codPerfil);
-			List<PerfilMenu> lista = perfilMenuDAO.findByExample(perfilMenu, em);
+			List<PerfilMenu> lista = perfilMenuDAO.findByExample(perfilMenu, em, perfilMenuDAO.BY_MENU_ASC);
 			
 			emUtil.commitTransaction(transaction);
 			return lista;

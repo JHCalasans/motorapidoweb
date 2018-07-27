@@ -15,5 +15,7 @@ public interface IMotoristaDAO extends GenericDAO<Motorista, Integer> {
 	public List<Motorista> obterTodos(EntityManager em) throws ExcecaoBanco;
 
 	public Motorista obterPorCodigo(Integer codigo, EntityManager em) throws ExcecaoBanco;
+	
+	public List<Motorista> obterMotoristasSemRestricoesCliente(Integer codCliente ,EntityManager em) throws ExcecaoBanco;
 
 }

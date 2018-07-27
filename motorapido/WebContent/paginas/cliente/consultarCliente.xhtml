@@ -36,7 +36,7 @@
 				<br />
 				<div class="clear"></div>
 
-			<!-- 	<h:panelGroup id="pngCpf" styleClass="p_like">
+				<!-- 	<h:panelGroup id="pngCpf" styleClass="p_like">
 					<p:outputLabel value="#{bundle.cliente_celular}:" for="cel"
 						styleClass="OutputLabelCampo" style="width:120px;" />
 					<p:inputMask id="cel" size="24" mask="(99)99999-9999"
@@ -109,15 +109,23 @@
 							<h:graphicImage url="/resources/vinculos.png"
 								style="border-style: none;  margin-right:10px" />
 						</h:commandLink>
-					
+
+						<h:commandLink title="Restrições" immediate="true" 
+						actionListener="#{clienteBean.abrirRestricao(cliente)}">
+							<h:graphicImage url="/resources/no_bike.jpg"
+								style="border-style: none;  margin-right:10px" />
+						</h:commandLink>
+
 					</p:column>
 				</p:dataTable>
 			</h:panelGroup>
 
 		</h:form>
-		
-	
 
+
+		<ui:include src="/paginas/cliente/dlgRestricao.xhtml">
+			<ui:param name="bean" value="#{clienteBean}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>
 </html>

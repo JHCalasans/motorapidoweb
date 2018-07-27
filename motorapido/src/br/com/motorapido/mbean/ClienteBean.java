@@ -20,8 +20,12 @@ import com.google.gson.Gson;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.bo.ClienteBO;
+import br.com.motorapido.bo.MotoristaBO;
+import br.com.motorapido.bo.RestricaoClienteMotoristaBO;
 import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.EnderecoCliente;
+import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.RestricaoClienteMotorista;
 import br.com.motorapido.util.EnderecoCep;
 import br.com.motorapido.util.ExcecoesUtil;
 
@@ -38,15 +42,25 @@ public class ClienteBean extends SimpleController {
 
 	private String nomePesquisa;
 
-	private String celPesquisa;	
+	private String celPesquisa;
 
 	private List<Cliente> listaClientes;
-	
+
 	private EnderecoCliente enderecoCliente;
-	
+
 	private List<EnderecoCliente> listaEnderecosCliente;
-	
+
 	private EnderecoCliente enderecoClienteRemover;
+
+	private List<Motorista> listaMotoristasLivres;
+
+	private List<Motorista> listaMotoristasLivresSelecionados;
+
+	private List<RestricaoClienteMotorista> listaMotoristasBloqueados;
+
+	private List<RestricaoClienteMotorista> listaMotoristasBloqueadosSelecionados;
+
+	private Cliente clienteRestricao;
 
 	@PostConstruct
 	public void carregar() {
@@ -56,29 +70,77 @@ public class ClienteBean extends SimpleController {
 		try {
 			String codClienteStr = (String) getRequestParam("codCliente");
 			String cadSucesso = (String) getRequestParam("cadSucesso");
-			String cadastrar =  (String) getRequestParam("cadastroParam");
+			String cadastrar = (String) getRequestParam("cadastroParam");
 			String altSucesso = (String) getRequestParam("altSucesso");
 			String isEndereco = (String) getRequestParam("endereco");
 			if (codClienteStr != null) {
 				Integer codCliente = Integer.valueOf(codClienteStr);
 				carregarCliente(codCliente);
-				if(isEndereco != null){
+				if (isEndereco != null) {
 					enderecoCliente = new EnderecoCliente();
 					listaEnderecosCliente = ClienteBO.getInstance().obterEnderecos(getCliente());
 				}
-				//cep = cliente.getCep();
-			} else if(cadastrar != null && (cadastrar.equals("true") || cadastrar.equals("true?"))) {
+				// cep = cliente.getCep();
+			} else if (cadastrar != null && (cadastrar.equals("true") || cadastrar.equals("true?"))) {
 				cliente = new Cliente();
 				enderecoCliente = new EnderecoCliente();
 
 			} else {
-				 if(cadSucesso != null && (cadSucesso.equals("true") || cadSucesso.equals("true?")))
-					 addMsg(FacesMessage.SEVERITY_INFO, "Cliente cadastrado com sucesso.");
-				 if(altSucesso != null && (altSucesso.equals("true") || altSucesso.equals("true?")))
-					 addMsg(FacesMessage.SEVERITY_INFO, "Cliente alterado com sucesso.");
+				if (cadSucesso != null && (cadSucesso.equals("true") || cadSucesso.equals("true?")))
+					addMsg(FacesMessage.SEVERITY_INFO, "Cliente cadastrado com sucesso.");
+				if (altSucesso != null && (altSucesso.equals("true") || altSucesso.equals("true?")))
+					addMsg(FacesMessage.SEVERITY_INFO, "Cliente alterado com sucesso.");
 				pesquisarCliente();
 			}
 		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+
+	public void abrirRestricao(Cliente cli) {
+		clienteRestricao = cli;
+		try {
+			listaMotoristasLivres = MotoristaBO.getInstance()
+					.obterMotoristasSemRestricoesCliente(clienteRestricao.getCodigo());
+			listaMotoristasBloqueados = RestricaoClienteMotoristaBO.getInstance()
+					.obterRestricoesPorCliente(clienteRestricao);
+			enviarJavascript("PF('varDlgRestricao').show()");
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+
+	}
+
+	public void limparDlgRestricao() {
+		listaMotoristasBloqueados.clear();
+		listaMotoristasLivres.clear();
+		listaMotoristasBloqueadosSelecionados.clear();
+		listaMotoristasLivresSelecionados.clear();
+		clienteRestricao = null;
+	}
+
+	public void restringirMotorista() {
+
+		try {
+			listaMotoristasBloqueados.addAll(RestricaoClienteMotoristaBO.getInstance().salvarRestricao(clienteRestricao,
+					listaMotoristasLivresSelecionados));
+			listaMotoristasLivres.removeAll(listaMotoristasLivresSelecionados);
+			listaMotoristasLivresSelecionados.clear();
+			addMsg(FacesMessage.SEVERITY_INFO, "Restrições gravadas com sucesso.");
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+
+	}
+
+	public void habilitarMotorista() {
+
+		try {
+			listaMotoristasLivres.addAll(RestricaoClienteMotoristaBO.getInstance().removerRestricaoCliente(listaMotoristasBloqueadosSelecionados));
+			listaMotoristasBloqueados.removeAll(listaMotoristasBloqueadosSelecionados);
+			listaMotoristasBloqueadosSelecionados.clear();
+			addMsg(FacesMessage.SEVERITY_INFO, "Restrição(ões) removida(s) com sucesso.");
+		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
@@ -91,8 +153,8 @@ public class ClienteBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	public void iniciarEnderecoRemocao(EnderecoCliente endereco){
+
+	public void iniciarEnderecoRemocao(EnderecoCliente endereco) {
 		enderecoClienteRemover = endereco;
 		enviarJavascript("PF('dlConfirmDelete').show();");
 	}
@@ -228,7 +290,7 @@ public class ClienteBean extends SimpleController {
 			Cliente clienteTemp = new Cliente();
 			clienteTemp.setEmail(cliente.getEmail());
 			clienteTemp = ClienteBO.getInstance().obterClienteByExample(clienteTemp);
-			if (clienteTemp != null ) {
+			if (clienteTemp != null) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "Email já cadastrado na base de dados!.", "");
 				return false;
 			}
@@ -239,14 +301,14 @@ public class ClienteBean extends SimpleController {
 		}
 
 	}
-	
+
 	public boolean validarCelular() {
 
 		try {
 			Cliente clienteTemp = new Cliente();
 			clienteTemp.setCelular(cliente.getCelular());
 			clienteTemp = ClienteBO.getInstance().obterClienteByExample(clienteTemp);
-			if (clienteTemp != null ) {
+			if (clienteTemp != null) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "Celular já cadastrado na base de dados!.", "");
 				return false;
 			}
@@ -257,8 +319,6 @@ public class ClienteBean extends SimpleController {
 		}
 
 	}
-	
-	
 
 	public void pesquisarCliente() {
 		try {
@@ -267,8 +327,8 @@ public class ClienteBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	public void excluirEndereco(){
+
+	public void excluirEndereco() {
 		try {
 			ClienteBO.getInstance().excluirEnderecoCliente(enderecoClienteRemover);
 			enderecoCliente = new EnderecoCliente();
@@ -276,29 +336,28 @@ public class ClienteBean extends SimpleController {
 			MsgUtil.updateMessage(FacesMessage.SEVERITY_INFO, "Endereço removido com sucesso!", "");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
-		}		
+		}
 	}
 
 	public String navegarAlteracao(int codCliente) {
 		String url = "alterarCliente.proj?faces-redirect=true&codCliente=" + codCliente;
 		return url;
 	}
-	
+
 	public String navegarEnderecos(int codCliente) {
 		String url = "vincularEndereco.proj?faces-redirect=true&endereco=true&codCliente=" + codCliente;
 		return url;
 	}
 
-
-	public void vincularEndereco() {		
+	public void vincularEndereco() {
 		try {
 			enderecoCliente.setCliente(getCliente());
-			ClienteBO.getInstance().salvarEndereco(enderecoCliente);	
+			ClienteBO.getInstance().salvarEndereco(enderecoCliente);
 			listaEnderecosCliente = ClienteBO.getInstance().obterEnderecos(getCliente());
 			MsgUtil.updateMessage(FacesMessage.SEVERITY_INFO, "Endereço incluído com sucesso!", "");
 			enderecoCliente = new EnderecoCliente();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);			
+			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
 
@@ -306,7 +365,7 @@ public class ClienteBean extends SimpleController {
 
 		if (!validarEmail())
 			return "";
-		if(!validarCelular())
+		if (!validarCelular())
 			return "";
 		try {
 			ClienteBO.getInstance().salvarCliente(cliente, enderecoCliente);
@@ -317,15 +376,15 @@ public class ClienteBean extends SimpleController {
 			return "";
 		}
 	}
-	
+
 	public String alterarCliente() {
 
 		if (!validarEmail())
 			return "";
-		if(!validarCelular())
+		if (!validarCelular())
 			return "";
 		try {
-			ClienteBO.getInstance().salvarCliente(cliente, null);			
+			ClienteBO.getInstance().salvarCliente(cliente, null);
 			String url = "consultarCliente.proj??faces-redirect=true&altSucesso=true";
 			return url;
 		} catch (ExcecaoNegocio e) {
@@ -333,8 +392,6 @@ public class ClienteBean extends SimpleController {
 			return "";
 		}
 	}
-	
-
 
 	@Override
 	public String salvoSucesso() {
@@ -405,6 +462,45 @@ public class ClienteBean extends SimpleController {
 		this.enderecoClienteRemover = enderecoClienteRemover;
 	}
 
+	public List<Motorista> getListaMotoristasLivres() {
+		return listaMotoristasLivres;
+	}
 
+	public void setListaMotoristasLivres(List<Motorista> listaMotoristasLivres) {
+		this.listaMotoristasLivres = listaMotoristasLivres;
+	}
+
+	public List<Motorista> getListaMotoristasLivresSelecionados() {
+		return listaMotoristasLivresSelecionados;
+	}
+
+	public void setListaMotoristasLivresSelecionados(List<Motorista> listaMotoristasLivresSelecionados) {
+		this.listaMotoristasLivresSelecionados = listaMotoristasLivresSelecionados;
+	}
+
+	public List<RestricaoClienteMotorista> getListaMotoristasBloqueados() {
+		return listaMotoristasBloqueados;
+	}
+
+	public void setListaMotoristasBloqueados(List<RestricaoClienteMotorista> listaMotoristasBloqueados) {
+		this.listaMotoristasBloqueados = listaMotoristasBloqueados;
+	}
+
+	public List<RestricaoClienteMotorista> getListaMotoristasBloqueadosSelecionados() {
+		return listaMotoristasBloqueadosSelecionados;
+	}
+
+	public void setListaMotoristasBloqueadosSelecionados(
+			List<RestricaoClienteMotorista> listaMotoristasBloqueadosSelecionados) {
+		this.listaMotoristasBloqueadosSelecionados = listaMotoristasBloqueadosSelecionados;
+	}
+
+	public Cliente getClienteRestricao() {
+		return clienteRestricao;
+	}
+
+	public void setClienteRestricao(Cliente clienteRestricao) {
+		this.clienteRestricao = clienteRestricao;
+	}
 
 }

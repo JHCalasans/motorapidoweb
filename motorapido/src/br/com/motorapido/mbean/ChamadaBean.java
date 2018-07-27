@@ -1,5 +1,6 @@
 package br.com.motorapido.mbean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -45,7 +46,7 @@ public class ChamadaBean extends SimpleController {
 	private String nomePesquisa;
 
 	private String nomeLocalPesquisa;
-	
+
 	private String numCelPesquisa;
 
 	private Cliente cliente;
@@ -61,20 +62,22 @@ public class ChamadaBean extends SimpleController {
 	private Boolean isDestino = false;
 
 	private Local localOrigem;
-	
+
 	private Boolean destinoFechado = true;
-	
+
 	private MapModel mapModel;
-	
+
 	private LatLng coordenadas;
-	
+
 	private Integer situacaoChamadaFiltro;
-	
+
 	private List<Chamada> chamadas;
-	
+
 	private List<Caracteristica> listaCaracteristicas;
 
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
+	
+	private List<String> autoComplete = new ArrayList<String>();
 
 	@PostConstruct
 	public void carregar() {
@@ -83,10 +86,13 @@ public class ChamadaBean extends SimpleController {
 		}
 		try {
 			limparCampos();
+			iniciarLista();
 			mapModel = new DefaultMapModel();
-			if(coordenadas == null){
-				String coordenadasIniciais = ParametroBO.getInstance().getParam(ParametroEnum.COORDENADAS_INICIAIS.getCodigo());
-				String[] coord = coordenadasIniciais.split(";");				
+			enderecoClienteOrigem = new EnderecoCliente();
+			if (coordenadas == null) {
+				String coordenadasIniciais = ParametroBO.getInstance()
+						.getParam(ParametroEnum.COORDENADAS_INICIAIS.getCodigo());
+				String[] coord = coordenadasIniciais.split(";");
 				setCoordenadas(new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1])));
 			}
 			atualizarChamadas();
@@ -97,33 +103,51 @@ public class ChamadaBean extends SimpleController {
 		}
 	}
 
+	
+	
+	public void iniciarLista(){
+		for (int i = 0; i < 200; i++){
+			autoComplete.add("teste " + i);
+		}
+	}
+	
 	@Override
 	public String salvoSucesso() {
 		return null;
 	}
 
-	
-	public void atualizarChamadasFiltro(){
+	public List<String> completeText(String query) {
+		List<String> result = new ArrayList<String>();
+		for (int i = 0; i < autoComplete.size(); i++) {
+			if(autoComplete.get(i).toLowerCase().contains(query.toLowerCase())){
+				result.add(autoComplete.get(i));
+			}
+		}
+
+		return result;
+	}
+
+	public void atualizarChamadasFiltro() {
 		try {
 			chamadas = ChamadaBO.getInstance().obterChamadasFiltro(getSituacaoChamadaFiltro());
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	public void limparOrigem(){
+
+	public void limparOrigem() {
 		enderecoClienteOrigem = new EnderecoCliente();
 		localOrigem = null;
 	}
-	
-	public void atualizarChamadas(){
+
+	public void atualizarChamadas() {
 		try {
 			chamadas = ChamadaBO.getInstance().obterChamadasAbertas();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void pesquisarClienteDialog() {
 		try {
 			listaClientesDialog = ClienteBO.getInstance().obterClientes(nomePesquisa, null, codPesquisa);
@@ -131,7 +155,7 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void carregarCaracteristicasAtivas() {
 		try {
 			listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S");
@@ -139,15 +163,15 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void pesquisarClientePorCelular() {
 		try {
 			cliente = ClienteBO.getInstance().obterClientePorCelular(numCelPesquisa);
-			if(cliente == null) 
-				 addMsg(FacesMessage.SEVERITY_WARN, "Cliente n�o encontrado.");
+			if (cliente == null)
+				addMsg(FacesMessage.SEVERITY_WARN, "Cliente n�o encontrado.");
 			else
 				vincularCliente(cliente);
-			
+
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -155,13 +179,13 @@ public class ChamadaBean extends SimpleController {
 
 	public void adicionarChamada() {
 		try {
-			if(cliente == null)
+			if (cliente == null)
 				throw new ExcecaoNegocio("Nenhum cliente selecionado");
-			
+
 			chamada.setCliente(getCliente());
 			ChamadaBO.getInstance().iniciarChamada(getChamada(), enderecoClienteOrigem, enderecoClienteDestino,
 					localOrigem, getFuncionarioLogado(), listaCaracteristicasSelecionadas);
-			
+
 			limparCampos();
 			atualizarChamadas();
 			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cadastrada.");
@@ -173,15 +197,17 @@ public class ChamadaBean extends SimpleController {
 	public void limparCampos() {
 		cliente = null;
 		numCelPesquisa = "";
-		if(enderecoClienteOrigem != null)
+		if (enderecoClienteOrigem != null)
 			enderecoClienteOrigem = new EnderecoCliente();
-		
+
 		enderecoClienteDestino = new Local();
-		//localOrigem = null;
+		// localOrigem = null;
 		chamada = new Chamada();
-		
-		/*if(mapModel != null && mapModel.getMarkers() != null && mapModel.getMarkers().size() > 0)
-			mapModel.getMarkers().clear();*/
+
+		/*
+		 * if(mapModel != null && mapModel.getMarkers() != null &&
+		 * mapModel.getMarkers().size() > 0) mapModel.getMarkers().clear();
+		 */
 	}
 
 	public void alterarTab(TabChangeEvent event) {
@@ -222,19 +248,19 @@ public class ChamadaBean extends SimpleController {
 		if (isDestino) {
 			setEnderecoClienteDestino(local);
 			setDestinoFechado(false);
-		}else {
+		} else {
 			setEnderecoClienteOrigem(converterLocalParaEnderecoCliente(local));
 			localOrigem = local;
 			ajustarMarcadorMapa(getEnderecoClienteOrigem());
 		}
 	}
-	
-	private void ajustarMarcadorMapa(EnderecoCliente enderecoOrigem){
-		
+
+	private void ajustarMarcadorMapa(EnderecoCliente enderecoOrigem) {
+
 		Double lat = Double.parseDouble(enderecoOrigem.getLatitude());
 		Double longt = Double.parseDouble(enderecoOrigem.getLongitude());
-		Marker marker = new Marker(new org.primefaces.model.map.LatLng(lat,longt), "Origem" );
-		mapModel.getMarkers().clear();		
+		Marker marker = new Marker(new org.primefaces.model.map.LatLng(lat, longt), "Origem");
+		mapModel.getMarkers().clear();
 		mapModel.addOverlay(marker);
 		coordenadas = new LatLng(lat, longt);
 	}

@@ -60,7 +60,7 @@
 							<h:panelGroup id="pngNome" styleClass="p_like">
 								<p:outputLabel value="#{bundle.funcionario_nome}:" for="nome"
 									styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputText id="nome" required="true" size="55" disabled="true"
+								<p:inputText id="nome" required="true" size="55"
 									value="#{chamadaBean.cliente.nome}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_nome}" />
 
@@ -79,9 +79,10 @@
 								<p:outputLabel value="#{bundle.funcionario_logradouro}:"
 									for="logradouro" styleClass="OutputLabelCampo"
 									style="width:80px;" />
-								<p:inputText id="logradouro" required="true" size="55"
+								<p:autoComplete id="logradouro" cache="true" cacheTimeout="30000"
 									value="#{chamadaBean.enderecoClienteOrigem.logradouro}"
-									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_logradouro}" />
+									completeMethod="#{chamadaBean.completeText}"  maxResults="5" />
+
 
 							</h:panelGroup>
 
@@ -146,7 +147,7 @@
 
 								<p:outputLabel value="#{bundle.funcionario_cidade}:"
 									for="cidade" styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputText id="cidade" required="true" size="55"
+								<p:inputText id="cidade" size="55"
 									value="#{chamadaBean.enderecoClienteOrigem.cidade}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cidade}" />
 
@@ -154,7 +155,7 @@
 
 							<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
 
-								<h3>Características para o  motorista</h3>
+								<h3>Características para o motorista</h3>
 								<p:selectManyCheckbox id="caracteristicas"
 									converter="caracteristicaConverter"
 									value="#{chamadaBean.listaCaracteristicasSelecionadas}"
@@ -281,7 +282,7 @@
 					</p:column>
 
 
-					<!--  lado esquerdo da tela -->
+					<!--  lado direito da tela -->
 					<p:column style="width:50%; vertical-align: initial;">
 						<h:panelGroup>
 							<p:panel>
