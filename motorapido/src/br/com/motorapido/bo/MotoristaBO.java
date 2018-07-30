@@ -308,6 +308,31 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 	
+	
+	public void desbloquearMotoristaRotina() throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			IBloqueioMotoristaDAO bloqueioMotoristaDAO = fabricaDAO.getPostgresBloqueioMotoristaDAO();
+			List<BloqueioMotorista> lista = bloqueioMotoristaDAO.obterBloqueiosrMotoristaRotina(new Date(), em);
+			for(BloqueioMotorista bloqueio : lista){
+				bloqueio.setAtivo("N");
+				bloqueioMotoristaDAO.save(bloqueio, em);
+				bloqueio.getMotorista().setBloqueado("N");
+				motoristaDAO.save(bloqueio.getMotorista(), em);
+			}
+			emUtil.commitTransaction(transaction);
+		}catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar desbloquear motorista na rotina.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	
 	public Motorista obterMotoristaPorCodigo(Integer codigo) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();

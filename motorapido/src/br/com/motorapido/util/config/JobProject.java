@@ -4,6 +4,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.util.ExcecoesUtil;
 
 
@@ -16,7 +17,9 @@ public class JobProject implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		try {
-			// TODO: Chamar aqui o metodo a ser executado
+			
+			MotoristaBO.getInstance().desbloquearMotoristaRotina();
+			
 		} catch (Exception ex) {
 			ExcecoesUtil.TratarExcecao(ex);
 		}

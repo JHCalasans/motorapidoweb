@@ -71,7 +71,7 @@ public class Config implements ServletContextListener {
 			JobDetail job = newJob(JobProject.class).withIdentity("JobProject", "GrupoMotoRapido").build();
 
 			Trigger trigger = newTrigger().withIdentity("MotoRapidoTrigger", "GrupoMotoRapido").startNow()
-					.withSchedule(simpleSchedule().withIntervalInHours(1).repeatForever()).build();
+					.withSchedule(simpleSchedule().withIntervalInMinutes(5).repeatForever()).build();
 			sched.scheduleJob(job, trigger);
 			sched.start();
 		} catch (Exception ex) {

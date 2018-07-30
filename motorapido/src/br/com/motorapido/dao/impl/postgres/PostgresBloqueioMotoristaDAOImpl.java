@@ -1,5 +1,6 @@
 package br.com.motorapido.dao.impl.postgres;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,15 @@ implements IBloqueioMotoristaDAO{
 		if(lista != null && lista.size() > 0)
 			return lista.get(0);
 		return null;
+	}
+
+	@Override
+	public List<BloqueioMotorista> obterBloqueiosrMotoristaRotina(Date dataFim, EntityManager em) throws ExcecaoBanco {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("dataFim",dataFim);
+		List<BloqueioMotorista> lista = null;
+		lista =  findByNamedQueryAndNamedParams("BloqueioMotorista.obterBloqueioMotoristaRotina", params, em);
+		return lista;
 	}
 	
 	

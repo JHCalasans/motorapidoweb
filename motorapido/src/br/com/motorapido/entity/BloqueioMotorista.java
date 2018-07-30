@@ -23,6 +23,7 @@ import br.com.minhaLib.dao.Entidade;
 @NamedQueries(value = { 
 		@NamedQuery(name = "BloqueioMotorista.obterUltimoBloqueioByMotorista", query = "select bm from BloqueioMotorista bm join fetch bm.motorista m "
 				+ " where m.codigo = :codMotorista and bm.ativo = 'S' "),		
+		@NamedQuery(name = "BloqueioMotorista.obterBloqueioMotoristaRotina", query = "select bm from BloqueioMotorista bm join fetch bm.motorista m where bm.ativo = 'S'and bm.dataFim != null and bm.dataFim <= :dataFim ")
 		})
 public class BloqueioMotorista extends Entidade {
 
