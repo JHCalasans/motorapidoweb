@@ -21,6 +21,28 @@
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnSw7uj9P9oZIc_7c74peSmkmkYU1O5s"
 		defer="defer" type="text/javascript"></script>
 
+	<script type="text/javascript">
+    var currentMarker = null;
+ 
+    function handlePointClick(event) {
+
+    	
+        if(currentMarker === null) {
+          
+ 
+            currentMarker = new google.maps.Marker({
+                position:new google.maps.LatLng(event.latLng.lat(), event.latLng.lng())
+            });
+
+           
+            PF('map').addOverlay(currentMarker);
+ 
+        }   
+    }
+ 
+  
+</script>
+
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
 
@@ -79,9 +101,16 @@
 								<p:outputLabel value="#{bundle.funcionario_logradouro}:"
 									for="logradouro" styleClass="OutputLabelCampo"
 									style="width:80px;" />
-								<p:autoComplete id="logradouro" cache="true" cacheTimeout="30000"
-									value="#{chamadaBean.enderecoClienteOrigem.logradouro}"
-									completeMethod="#{chamadaBean.completeText}"  maxResults="5" />
+								<p:autoComplete id="logradouro" cache="true"
+									cacheTimeout="30000" value="#{chamadaBean.logradouro}"
+									var="logradouro" itemLabel="#{logradouro.logradouroComCidade}"
+									itemValue="#{logradouro}" converter="logradouroConverter"
+									size="55" completeMethod="#{chamadaBean.completeText}"
+									maxResults="5">
+									<p:ajax event="itemSelect"
+										listener="#{chamadaBean.logradouroSelecionado}"
+										update=":formConsulta" />
+								</p:autoComplete>
 
 
 							</h:panelGroup>
@@ -289,7 +318,13 @@
 								<p:gmap id="gmap" center="#{chamadaBean.coordenadas}" zoom="14"
 									type="terrain"
 									style="width:600px;height:550px; text-align:center;"
-									model="#{chamadaBean.mapModel}" widgetVar="map" />
+									model="#{chamadaBean.mapModel}" widgetVar="map">
+									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}"
+										update="gmap"></p:ajax>
+									<p:ajax event="overlaySelect"
+										listener="#{chamadaBean.marcadorSelecionado}" update="gmap" />
+
+								</p:gmap>
 
 							</p:panel>
 						</h:panelGroup>

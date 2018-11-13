@@ -68,6 +68,12 @@ public abstract class FabricaDAO {
 	public abstract IRestricaoClienteMotoristaDAO getPostgresRestricaoClienteMotoristaDAO();
 	
 	public abstract ITipoPunicaoDAO getPostgresTipoPunicaoDAO();
+	
+	public abstract IBairroDAO getPostgresBairroDAO();
+	
+	public abstract ICidadeDAO getPostgresCidadeDAO();
+	
+	public abstract ILogradouroDAO getPostgresLogradouroDAO();
 
 
 	/**

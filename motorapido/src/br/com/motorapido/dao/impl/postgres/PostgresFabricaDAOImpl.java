@@ -49,6 +49,9 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 	private static PostgresCaracteristicaMotoristaDAOImpl postgresCaracteristicaMotoristaDAOImpl;
 	private static PostgresRestricaoClienteMotoristaDAOImpl postgresRestricaoClienteMotoristaDAOImpl;
 	private static PostgresTipoPunicaoDAOImpl postgresTipoPunicaoDAOImpl;
+	private static PostgresBairroDAOImpl postgresBairroDAOImpl;
+	private static PostgresCidadeDAOImpl postgresCidadeDAOImpl;
+	private static PostgresLogradouroDAOImpl postgresLogradouroDAOImpl;
 
 	private PostgresFabricaDAOImpl() {
 
@@ -72,7 +75,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresGenericDAOImplBO;
 	}
-	
+
 	@Override
 	public PostgresFuncionarioDAOImpl getPostgresFuncionarioDAO() {
 		if (postgresFuncionarioDAOImpl == null) {
@@ -80,7 +83,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresFuncionarioDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresPerfilDAOImpl getPostgresPerfilDAO() {
 		if (postgresPerfilDAOImpl == null) {
@@ -88,7 +91,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresPerfilDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresFuncionarioPerfilDAOImpl getPostgresFuncionarioPerfilDAO() {
 		if (postgresFuncionarioPerfilDAOImpl == null) {
@@ -96,7 +99,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresFuncionarioPerfilDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresMotoristaDAOImpl getPostgresMotoristaDAO() {
 		if (postgresMotoristaDAOImpl == null) {
@@ -104,7 +107,6 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresMotoristaDAOImpl;
 	}
-
 
 	@Override
 	public IParametroDAO getPostgresParametroDAO() {
@@ -121,7 +123,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresValorParametroDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresLogErroDAOImpl getPostgresLogErroDAO() {
 		if (postgresLogErroDAOImpl == null) {
@@ -129,7 +131,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresLogErroDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresMenuDAOImpl getPostgresMenuDAO() {
 		if (postgresMenuDAOImpl == null) {
@@ -137,7 +139,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresMenuDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresPerfilMenuDAOImpl getPostgresPerfilMenuDAO() {
 		if (postgresPerfilMenuDAOImpl == null) {
@@ -145,7 +147,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresPerfilMenuDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresAreaDAOImpl getPostgresAreaDAO() {
 		if (postgresAreaDAOImpl == null) {
@@ -153,7 +155,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresAreaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresCoordenadasAreaDAOImpl getPostgresCoordenadasAreaDAO() {
 		if (postgresCoordenadasAreaDAOImpl == null) {
@@ -161,7 +163,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresCoordenadasAreaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresModeloDAOImpl getPostgresModeloDAO() {
 		if (postgresModeloDAOImpl == null) {
@@ -169,7 +171,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresModeloDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresVeiculoDAOImpl getPostgresVeiculoDAO() {
 		if (postgresVeiculoDAOImpl == null) {
@@ -177,7 +179,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresVeiculoDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresFabricanteDAOImpl getPostgresFabricanteDAO() {
 		if (postgresFabricanteDAOImpl == null) {
@@ -185,7 +187,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresFabricanteDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresTipoVeiculoDAOImpl getPostgresTipoVeiculoDAO() {
 		if (postgresTipoVeiculoDAOImpl == null) {
@@ -193,7 +195,6 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresTipoVeiculoDAOImpl;
 	}
-	
 
 	@Override
 	public PostgresMotoristaPosicaoAreaDAOImpl getPostgresMotoristaPosicaoAreaDAO() {
@@ -203,7 +204,6 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		return postgresMotoristaPosicaoAreaDAOImpl;
 	}
 
-	
 	@Override
 	public PostgresChamadaDAOImpl getPostgresChamadaDAO() {
 		if (postgresChamadaDAOImpl == null) {
@@ -211,7 +211,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresChamadaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresChamadaVeiculoDAOImpl getPostgresChamadaVeiculoDAO() {
 		if (postgresChamadaVeiculoDAOImpl == null) {
@@ -219,7 +219,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresChamadaVeiculoDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresSituacaoChamadaDAOImpl getPostgresSituacaoChamadaDAO() {
 		if (postgresSituacaoChamadaDAOImpl == null) {
@@ -235,7 +235,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresClienteDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresEnderecoClienteDAOImpl getPostgresEnderecoClienteDAO() {
 		if (postgresEnderecoClienteDAOImpl == null) {
@@ -243,7 +243,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresEnderecoClienteDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresLocalDAOImpl getPostgresLocalDAO() {
 		if (postgresLocalDAOImpl == null) {
@@ -251,7 +251,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresLocalDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresBloqueioMotoristaDAOImpl getPostgresBloqueioMotoristaDAO() {
 		if (postgresBloqueioMotoristaDAOImpl == null) {
@@ -259,7 +259,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresBloqueioMotoristaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresMensagemFuncionarioDAOImpl getPostgresMensagemFuncionarioDAO() {
 		if (postgresMensagemFuncionarioDAOImpl == null) {
@@ -267,7 +267,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresMensagemFuncionarioDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresMensagemFuncionarioMotoristaDAOImpl getPostgresMensagemFuncionarioMotoristaDAO() {
 		if (postgresMensagemFuncionarioMotoristaDAOImpl == null) {
@@ -275,7 +275,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresMensagemFuncionarioMotoristaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresMensagemMotoristaFuncionarioDAOImpl getPostgresMensagemMotoristaFuncionarioDAO() {
 		if (postgresMensagemMotoristaFuncionarioDAOImpl == null) {
@@ -283,7 +283,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresMensagemMotoristaFuncionarioDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresMotoristaAparelhoDAOImpl getPostgresMotoristaAparelhoDAO() {
 		if (postgresMotoristaAparelhoDAOImpl == null) {
@@ -291,7 +291,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresMotoristaAparelhoDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresCaracteristicaDAOImpl getPostgresCaracteristicaDAO() {
 		if (postgresCaracteristicaDAOImpl == null) {
@@ -299,7 +299,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresCaracteristicaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresCaracteristicaMotoristaDAOImpl getPostgresCaracteristicaMotoristaDAO() {
 		if (postgresCaracteristicaMotoristaDAOImpl == null) {
@@ -307,7 +307,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresCaracteristicaMotoristaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresRestricaoClienteMotoristaDAOImpl getPostgresRestricaoClienteMotoristaDAO() {
 		if (postgresRestricaoClienteMotoristaDAOImpl == null) {
@@ -315,7 +315,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresRestricaoClienteMotoristaDAOImpl;
 	}
-	
+
 	@Override
 	public PostgresTipoPunicaoDAOImpl getPostgresTipoPunicaoDAO() {
 		if (postgresTipoPunicaoDAOImpl == null) {
@@ -323,6 +323,29 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresTipoPunicaoDAOImpl;
 	}
-	
-	
+
+	@Override
+	public PostgresBairroDAOImpl getPostgresBairroDAO() {
+		if (postgresBairroDAOImpl == null) {
+			postgresBairroDAOImpl = new PostgresBairroDAOImpl();
+		}
+		return postgresBairroDAOImpl;
+	}
+
+	@Override
+	public PostgresCidadeDAOImpl getPostgresCidadeDAO() {
+		if (postgresCidadeDAOImpl == null) {
+			postgresCidadeDAOImpl = new PostgresCidadeDAOImpl();
+		}
+		return postgresCidadeDAOImpl;
+	}
+
+	@Override
+	public PostgresLogradouroDAOImpl getPostgresLogradouroDAO() {
+		if (postgresLogradouroDAOImpl == null) {
+			postgresLogradouroDAOImpl = new PostgresLogradouroDAOImpl();
+		}
+		return postgresLogradouroDAOImpl;
+	}
+
 }

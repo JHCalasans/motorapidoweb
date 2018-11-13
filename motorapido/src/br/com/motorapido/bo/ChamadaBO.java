@@ -10,6 +10,7 @@ import org.primefaces.model.map.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IChamadaDAO;
+import br.com.motorapido.dao.IClienteDAO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
@@ -62,6 +63,11 @@ public class ChamadaBO extends MotoRapidoBO {
 			situacaChamada.setCodigo(SituacaoChamadaEnum.PENDENTE.getCodSituacao());
 			chamada.setSituacaoChamada(situacaChamada);
 			chamada = chamadaDAO.save(chamada, em);
+			//Incluindo cliente se ele não existir na base de dados
+			if(chamada.getCliente().getCodigo() == null){
+				IClienteDAO clienteDAO = fabricaDAO.getPostgresClienteDAO();
+				clienteDAO.save(chamada.getCliente(), em);				
+			}
 			emUtil.commitTransaction(transaction);
 			return chamada;
 		} catch (Exception e) {

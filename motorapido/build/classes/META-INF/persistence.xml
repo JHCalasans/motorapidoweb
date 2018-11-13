@@ -21,7 +21,10 @@
 			 <property name="hibernate.connection.url"
 				value="jdbc:postgresql://162.243.113.238:5432/projeto?ssl=true&amp;sslfactory=org.postgresql.ssl.NonValidatingFactory" /> -->
 
-		<!-- 	<property name="hibernate.hbm2ddl.auto" value="update" /> -->
+		<!-- 	<property name="hibernate.hbm2ddl.auto" value="update" />
+		
+		<property name="hibernate.hbm2ddl.auto" value="create"/>
+		 -->
 
 
 
@@ -40,6 +43,7 @@
 			<property name="hibernate.ejb.discard_pc_on_close" value="true" />
 			<property name="hibernate.transaction.auto_close_session" value="true" />	
 			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>	 
+			
 			
 		</properties> 
 

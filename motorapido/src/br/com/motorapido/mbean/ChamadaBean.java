@@ -2,16 +2,22 @@ package br.com.motorapido.mbean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
+import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.event.map.OverlaySelectEvent;
+import org.primefaces.event.map.PointSelectEvent;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
+import org.primefaces.model.map.Polyline;
 
 import com.google.maps.model.LatLng;
 
@@ -21,12 +27,14 @@ import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.ClienteBO;
 import br.com.motorapido.bo.EnderecoClienteBO;
 import br.com.motorapido.bo.LocalBO;
+import br.com.motorapido.bo.LogradouroBO;
 import br.com.motorapido.bo.ParametroBO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Local;
+import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.ExcecoesUtil;
 
@@ -76,8 +84,12 @@ public class ChamadaBean extends SimpleController {
 	private List<Caracteristica> listaCaracteristicas;
 
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
-	
+
 	private List<String> autoComplete = new ArrayList<String>();
+
+	private Logradouro logradouro;
+
+	private List<Logradouro> listaLogradouro;
 
 	@PostConstruct
 	public void carregar() {
@@ -86,8 +98,9 @@ public class ChamadaBean extends SimpleController {
 		}
 		try {
 			limparCampos();
-			iniciarLista();
+			iniciarListaLogradouros();
 			mapModel = new DefaultMapModel();
+
 			enderecoClienteOrigem = new EnderecoCliente();
 			if (coordenadas == null) {
 				String coordenadasIniciais = ParametroBO.getInstance()
@@ -103,25 +116,67 @@ public class ChamadaBean extends SimpleController {
 		}
 	}
 
-	
-	
-	public void iniciarLista(){
-		for (int i = 0; i < 200; i++){
-			autoComplete.add("teste " + i);
+	public void iniciarListaLogradouros() {
+		try {
+			listaLogradouro = LogradouroBO.getInstance().obterLogradourosPorEstados("SE");
+			/*
+			 * for (Logradouro logradouro : listaLogradouro) {
+			 * autoComplete.add(logradouro.getDescricao()); }
+			 */
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
 		}
+
 	}
-	
+
+	public void addMarker(PointSelectEvent event) {
+
+		try {
+			mapModel.getMarkers().clear();
+			
+			Marker marker = new Marker(event.getLatLng(), "Marcador");
+
+			mapModel.addOverlay(marker);
+		} catch (Exception e) {
+		}
+
+	}
+
+	public void marcadorSelecionado(OverlaySelectEvent event) {
+		mapModel.getMarkers().clear();
+	}
+
+	public void logradouroSelecionado(SelectEvent event) {
+		Logradouro logSelecionado = (Logradouro) event.getObject();
+		EnderecoCliente endereco = new EnderecoCliente();
+		endereco.setLatitude(logSelecionado.getLatitude());
+		endereco.setLongitude(logSelecionado.getLongitude());
+		ajustarMarcadorMapa(endereco);
+		enderecoClienteOrigem.setBairro(logSelecionado.getBairro().getBairro());
+		enderecoClienteOrigem.setCep(logSelecionado.getCep());
+		enderecoClienteOrigem.setCidade(logSelecionado.getCidade().getCidade());
+	}
+
 	@Override
 	public String salvoSucesso() {
 		return null;
 	}
 
-	public List<String> completeText(String query) {
-		List<String> result = new ArrayList<String>();
-		for (int i = 0; i < autoComplete.size(); i++) {
-			if(autoComplete.get(i).toLowerCase().contains(query.toLowerCase())){
-				result.add(autoComplete.get(i));
-			}
+	public List<Logradouro> completeText(String query) {
+		List<Logradouro> result = new ArrayList<Logradouro>();
+		int val = 0;
+		try {
+
+			result = listaLogradouro.stream()
+					.filter(lo -> lo.getDescricao().toLowerCase().contains(query.toLowerCase()))
+					.collect(Collectors.toList());
+			/*
+			 * for (int i = 0; i < autoComplete.size(); i++) { val = i; if
+			 * (autoComplete.get(i).toLowerCase().contains(query.toLowerCase()))
+			 * { result.add(autoComplete.get(i)); } }
+			 */
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
 		}
 
 		return result;
@@ -167,9 +222,11 @@ public class ChamadaBean extends SimpleController {
 	public void pesquisarClientePorCelular() {
 		try {
 			cliente = ClienteBO.getInstance().obterClientePorCelular(numCelPesquisa);
-			if (cliente == null)
-				addMsg(FacesMessage.SEVERITY_WARN, "Cliente n�o encontrado.");
-			else
+			if (cliente == null) {
+				addMsg(FacesMessage.SEVERITY_WARN, "Cliente não encontrado.");
+				cliente = new Cliente();
+				cliente.setCelular(numCelPesquisa);
+			} else
 				vincularCliente(cliente);
 
 		} catch (ExcecaoNegocio e) {
@@ -437,6 +494,22 @@ public class ChamadaBean extends SimpleController {
 
 	public void setListaCaracteristicasSelecionadas(List<Caracteristica> listaCaracteristicasSelecionadas) {
 		this.listaCaracteristicasSelecionadas = listaCaracteristicasSelecionadas;
+	}
+
+	public Logradouro getLogradouro() {
+		return logradouro;
+	}
+
+	public void setLogradouro(Logradouro logradouro) {
+		this.logradouro = logradouro;
+	}
+
+	public List<Logradouro> getListaLogradouro() {
+		return listaLogradouro;
+	}
+
+	public void setListaLogradouro(List<Logradouro> listaLogradouro) {
+		this.listaLogradouro = listaLogradouro;
 	}
 
 }
