@@ -37,6 +37,8 @@ import br.com.motorapido.entity.Local;
 import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.ExcecoesUtil;
+import br.com.motorapido.util.GoogleWSUtil;
+import br.com.motorapido.util.RetornoGoogleWSCoordenadas;
 
 @SuppressWarnings("deprecation")
 @ManagedBean(name = "chamadaBean")
@@ -90,6 +92,8 @@ public class ChamadaBean extends SimpleController {
 	private Logradouro logradouro;
 
 	private List<Logradouro> listaLogradouro;
+	
+	private String componenteParaUpdate;
 
 	@PostConstruct
 	public void carregar() {
@@ -100,7 +104,7 @@ public class ChamadaBean extends SimpleController {
 			limparCampos();
 			iniciarListaLogradouros();
 			mapModel = new DefaultMapModel();
-
+			logradouro = new Logradouro();
 			enderecoClienteOrigem = new EnderecoCliente();
 			if (coordenadas == null) {
 				String coordenadasIniciais = ParametroBO.getInstance()
@@ -133,10 +137,24 @@ public class ChamadaBean extends SimpleController {
 
 		try {
 			mapModel.getMarkers().clear();
-			
 			Marker marker = new Marker(event.getLatLng(), "Marcador");
-
 			mapModel.addOverlay(marker);
+			org.primefaces.model.map.LatLng coord = event.getLatLng();
+
+			RetornoGoogleWSCoordenadas retorno = GoogleWSUtil
+					.buscarCoordenadas(String.valueOf(coord.getLat()) + "," + String.valueOf(coord.getLng()));
+			logradouro = new Logradouro();
+			logradouro.setDescricao(retorno.getResults().get(0).getAddress_components().get(1).getLong_name());
+			enderecoClienteOrigem.setCidade(retorno.getResults().get(0).getAddress_components().get(3).getLong_name());
+			logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + enderecoClienteOrigem.getCidade());
+			enderecoClienteOrigem.setBairro(retorno.getResults().get(0).getAddress_components().get(2).getLong_name());
+			enderecoClienteOrigem.setCep(retorno.getResults().get(0).getAddress_components().get(6).getLong_name());
+			enderecoClienteOrigem.setLogradouro(logradouro.getDescricao());
+
+			enderecoClienteOrigem.setLatitude(String.valueOf(coord.getLat()));
+			enderecoClienteOrigem.setLongitude(String.valueOf(coord.getLng()));
+			
+
 		} catch (Exception e) {
 		}
 
@@ -144,6 +162,8 @@ public class ChamadaBean extends SimpleController {
 
 	public void marcadorSelecionado(OverlaySelectEvent event) {
 		mapModel.getMarkers().clear();
+		logradouro = new Logradouro();
+		enderecoClienteOrigem = new EnderecoCliente();
 	}
 
 	public void logradouroSelecionado(SelectEvent event) {
@@ -151,10 +171,11 @@ public class ChamadaBean extends SimpleController {
 		EnderecoCliente endereco = new EnderecoCliente();
 		endereco.setLatitude(logSelecionado.getLatitude());
 		endereco.setLongitude(logSelecionado.getLongitude());
-		ajustarMarcadorMapa(endereco);
 		enderecoClienteOrigem.setBairro(logSelecionado.getBairro().getBairro());
 		enderecoClienteOrigem.setCep(logSelecionado.getCep());
 		enderecoClienteOrigem.setCidade(logSelecionado.getCidade().getCidade());
+		ajustarMarcadorMapa(endereco);
+		
 	}
 
 	@Override
@@ -234,11 +255,26 @@ public class ChamadaBean extends SimpleController {
 		}
 	}
 
+	
+	public void removerChamada(Chamada chamadaRemover){
+		try{
+			ChamadaBO.getInstance().removerChamada(chamadaRemover);
+			atualizarChamadas();
+			addMsg(FacesMessage.SEVERITY_INFO, "Chamada removida com sucesso.");
+		}catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
 	public void adicionarChamada() {
 		try {
 			if (cliente == null)
 				throw new ExcecaoNegocio("Nenhum cliente selecionado");
 
+			
+			
+			if(cliente.getCodigo() == null)
+				cliente.setCelular(numCelPesquisa);
 			chamada.setCliente(getCliente());
 			ChamadaBO.getInstance().iniciarChamada(getChamada(), enderecoClienteOrigem, enderecoClienteDestino,
 					localOrigem, getFuncionarioLogado(), listaCaracteristicasSelecionadas);
@@ -293,11 +329,13 @@ public class ChamadaBean extends SimpleController {
 	public void vincularCliente(Cliente cliente) {
 		this.cliente = cliente;
 		pesquisarEnderecosCliente(cliente);
+		logradouro.setLogradouroComCidade(enderecoClienteOrigem.getLogradouro() );
 		ajustarMarcadorMapa(getEnderecoClienteOrigem());
 	}
 
 	public void vincularEnderecoCliente(EnderecoCliente enderecoCliente) {
 		setEnderecoClienteOrigem(enderecoCliente);
+	
 		ajustarMarcadorMapa(getEnderecoClienteOrigem());
 	}
 
@@ -309,6 +347,11 @@ public class ChamadaBean extends SimpleController {
 			setEnderecoClienteOrigem(converterLocalParaEnderecoCliente(local));
 			localOrigem = local;
 			ajustarMarcadorMapa(getEnderecoClienteOrigem());
+			logradouro = new Logradouro();
+			logradouro.setDescricao(localOrigem.getLogradouro());
+			logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + enderecoClienteOrigem.getCidade());
+			
+			
 		}
 	}
 
@@ -406,6 +449,17 @@ public class ChamadaBean extends SimpleController {
 		enderecoTemp.setLatitude(local.getLatitude());
 		enderecoTemp.setLongitude(local.getLongitude());
 		return enderecoTemp;
+	}
+
+	
+	public void setComponenteDestino(){
+		setIsDestino(true);
+		setComponenteParaUpdate(":formConsulta:fieldDestino");
+	}
+	
+	public void setComponenteOrigem(){
+		setIsDestino(false);
+		setComponenteParaUpdate(":formConsulta:fieldOrigem");
 	}
 
 	public Local getEnderecoClienteDestino() {
@@ -510,6 +564,14 @@ public class ChamadaBean extends SimpleController {
 
 	public void setListaLogradouro(List<Logradouro> listaLogradouro) {
 		this.listaLogradouro = listaLogradouro;
+	}
+
+	public String getComponenteParaUpdate() {
+		return componenteParaUpdate;
+	}
+
+	public void setComponenteParaUpdate(String componenteParaUpdate) {
+		this.componenteParaUpdate = componenteParaUpdate;
 	}
 
 }

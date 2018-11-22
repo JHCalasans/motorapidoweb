@@ -54,6 +54,23 @@ public class MotoristaWS  {
 	}
 	
 
+	@POST
+	@Path("/logoff")
+	public Response logoff(Motorista motorista) {
+		try {
+	
+			MotoristaBO.getInstance().logoff(motorista);
+			return Response.status(Status.OK).entity(motorista).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar efetuar logoff").build();
+		}
+	}
+	
+
 	@GET
 	@Path("/alterarDisponivel")
 	public Response alterarDisponivel(@QueryParam("codMotorista") Integer codMotorista) {
@@ -78,6 +95,18 @@ public class MotoristaWS  {
 			retorno.setAreaAtual(motoPosicao.getArea());
 			retorno.setPosicaoNaArea(motoPosicao.getPosicao());			
 			return Response.status(Status.OK).entity(retorno).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		}
+	}
+	
+	@POST
+	@Path("/alterarSenha")
+	public Response alterarSenha(Motorista motorista) {
+		try {
+			motorista = MotoristaBO.getInstance().alterarSenha(motorista);			
+			return Response.status(Status.OK).build();
 		}catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();

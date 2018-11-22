@@ -149,7 +149,7 @@
 						</p:column>
 						<p:column>
 
-							<p:commandLink update=":formConsulta, :msgs" ajax="true"
+							<p:commandLink update="#{chamadaBean.componenteParaUpdate}, :msgs" ajax="true"
 								actionListener="#{chamadaBean.vincularLocal(local)}"
 								process="@this,:formConsulta" title="#{bundle.associar}"
 								immediate="false" oncomplete="PF('varDlgPesqEndereco').hide()">

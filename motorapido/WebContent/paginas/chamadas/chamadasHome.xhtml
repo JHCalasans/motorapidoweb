@@ -69,11 +69,11 @@
 									for="celular" styleClass="OutputLabelCampo" style="width:80px;" />
 								<p:inputMask id="celular" required="true" size="35"
 									mask="(99)99999-9999" value="#{chamadaBean.numCelPesquisa}"
-									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_celular}" />
-								<p:commandButton value="Buscar" style="margin-left:10px;"
-									process="pngCel"
-									actionListener="#{chamadaBean.pesquisarClientePorCelular}"
-									update=":formConsulta" execute="@this"></p:commandButton>
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_celular}">
+									<p:ajax event="blur" update=":formConsulta"
+										listener="#{chamadaBean.pesquisarClientePorCelular}" />
+								</p:inputMask>
+
 
 							</h:panelGroup>
 							<br />
@@ -163,7 +163,7 @@
 
 								</p:inputMask>
 								<p:commandButton value="..." style="margin-left:10px;"
-									actionListener="#{chamadaBean.setIsDestino(false)}"
+									actionListener="#{chamadaBean.setComponenteOrigem()}"
 									oncomplete="PF('varDlgPesqEndereco').show()" process="@this"
 									update=":formbuscaEnd" execute="@this"></p:commandButton>
 
@@ -215,7 +215,7 @@
 
 								</p:inputMask>
 								<p:commandButton value="..." style="margin-left:10px;"
-									actionListener="#{chamadaBean.setIsDestino(true)}"
+									actionListener="#{chamadaBean.setComponenteDestino()}"
 									oncomplete="PF('varDlgPesqEndereco').show()" process="@this"
 									update=":formbuscaEnd" execute="@this">
 
@@ -310,19 +310,20 @@
 
 					</p:column>
 
-
 					<!--  lado direito da tela -->
 					<p:column style="width:50%; vertical-align: initial;">
 						<h:panelGroup>
+
 							<p:panel>
 								<p:gmap id="gmap" center="#{chamadaBean.coordenadas}" zoom="14"
 									type="terrain"
 									style="width:600px;height:550px; text-align:center;"
 									model="#{chamadaBean.mapModel}" widgetVar="map">
 									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}"
-										update="gmap"></p:ajax>
+										update="gmap, :fieldOrigem"></p:ajax>
 									<p:ajax event="overlaySelect"
-										listener="#{chamadaBean.marcadorSelecionado}" update="gmap" />
+										listener="#{chamadaBean.marcadorSelecionado}"
+										update="gmap, :fieldOrigem" />
 
 								</p:gmap>
 
@@ -406,6 +407,19 @@
 						</f:facet>
 						<h:outputText value="#{chamada.situacaoChamada.descricao}">
 						</h:outputText>
+					</p:column>
+
+					<p:column style="width:130px">
+						<f:facet name="header">
+							<h:outputText value="Operação" styleClass="cabecalhoDataTable" />
+						</f:facet>
+
+						<p:commandLink title="Remover" process="@this"  rendered="#{chamada.situacaoChamada.descricao eq 'PENDENTE'}"
+							style="margin-left:10px;" update="conteudo" 
+							actionListener="#{chamadaBean.removerChamada(chamada)}" >
+							<h:graphicImage url="/resources/delete.png"
+								style="border-style: none" />
+						</p:commandLink>
 					</p:column>
 
 				</p:dataTable>

@@ -87,7 +87,9 @@ public class Chamada extends Entidade {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_cliente", nullable = true)
-	private Cliente cliente;
+	private Cliente cliente;		
+
+	
 
 	@Override
 	public Serializable getIdentificador() {

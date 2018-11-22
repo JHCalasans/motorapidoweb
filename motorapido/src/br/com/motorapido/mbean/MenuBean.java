@@ -2,6 +2,7 @@ package br.com.motorapido.mbean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,8 @@ import javax.faces.component.visit.VisitCallback;
 import javax.faces.component.visit.VisitContext;
 import javax.faces.component.visit.VisitResult;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.swing.MenuElement;
 
 import org.primefaces.component.socket.Socket;
 import org.primefaces.context.RequestContext;
@@ -73,7 +76,7 @@ public class MenuBean extends SimpleController implements Serializable {
 						.obterMenusPorPerfil(getFuncionarioLogado().getPerfil().getCodigo());
 				MenuItem menuItem = null;
 				Submenu subMenu = null;
-				
+				Submenu subMenuConfig = null;
 				for (PerfilMenu perfilMenu : perfisMenus) {
 					if (perfilMenu.getMenu().getUrl() == null || perfilMenu.getMenu().getUrl().isEmpty()) {
 						subMenu = new DefaultSubMenu(perfilMenu.getMenu().getNome());
@@ -83,19 +86,20 @@ public class MenuBean extends SimpleController implements Serializable {
 							((DefaultSubMenu) subMenu).setStyleClass("subMenu");
 							((DefaultSubMenu) subMenu).addElement(menuItem);
 						}
-						getModel().addElement(subMenu);
+						subMenuConfig = subMenu;
+						
 					} else if (perfilMenu.getMenu().getCodMenuPai() != null) {
 						menuItem = new DefaultMenuItem(perfilMenu.getMenu().getNome(), null,
-								perfilMenu.getMenu().getUrl());
+								((HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest()).getRequestURI().split("motorapido")[0] + perfilMenu.getMenu().getUrl());
 						((DefaultSubMenu) subMenu).addElement(menuItem);
 					} else {
 						menuItem = new DefaultMenuItem(perfilMenu.getMenu().getNome(), null,
-								perfilMenu.getMenu().getUrl());
+								((HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest()).getRequestURI().split("motorapido")[0] + perfilMenu.getMenu().getUrl());
 						getModel().addElement(menuItem);
 					}
 				}
 				
-				
+				getModel().addElement(subMenuConfig);
 				// Submenu subMenu = new DefaultSubMenu("Configurações");
 
 			}

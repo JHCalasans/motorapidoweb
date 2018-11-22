@@ -300,7 +300,7 @@ public class MotoristaBean extends SimpleController {
 			motorista.setDocCriminais(docCriminais.getContents());
 			motorista.setComprovanteResidencia(compResidencial.getContents());
 			motorista.setSenha(msgSalvar);
-			MotoristaBO.getInstance().salvarMotorista(motorista);
+			MotoristaBO.getInstance().salvarMotorista(motorista, listaCaracteristicasSelecionadas);
 			// limparCampos();
 			// addMsg(FacesMessage.SEVERITY_INFO, "Motorista cadastrado com
 			// sucesso.");

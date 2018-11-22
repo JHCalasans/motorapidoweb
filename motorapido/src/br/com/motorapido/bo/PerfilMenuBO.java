@@ -1,6 +1,8 @@
 package br.com.motorapido.bo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -40,7 +42,15 @@ public class PerfilMenuBO extends MotoRapidoBO {
 		
 			perfilMenu.setPerfil(new Perfil());
 			perfilMenu.getPerfil().setCodigo(codPerfil);
-			List<PerfilMenu> lista = perfilMenuDAO.findByExample(perfilMenu, em, perfilMenuDAO.BY_MENU_ASC);
+			List<PerfilMenu> lista = perfilMenuDAO.findByExample(perfilMenu, em);
+			
+			 Collections.sort(lista , new Comparator<PerfilMenu>(){
+
+				@Override
+				public int compare(PerfilMenu o1, PerfilMenu o2) {
+					
+					return o1.getMenu().getOrdem().compareTo(o2.getMenu().getOrdem());
+				}});
 			
 			emUtil.commitTransaction(transaction);
 			return lista;

@@ -42,6 +42,8 @@ public class Menu extends Entidade{
 	@Column(name = "url", nullable = false)
 	private String url;
 	
+	@Column(name = "ordem", nullable = false)
+	private Integer ordem;	
 
 	@Column(name = "cod_menu_pai", nullable = true)
 	private Integer codMenuPai;
@@ -93,5 +95,15 @@ public class Menu extends Entidade{
 
 	public void setCodMenuPai(Integer codMenuPai) {
 		this.codMenuPai = codMenuPai;
+	}
+
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
 	}
 }

@@ -18,7 +18,7 @@ import br.com.minhaLib.dao.Entidade;
 
 
 @Entity
-@Table(name = Chamada.nomeTabela, schema = Chamada.esquema, catalog = "diego")
+@Table(name = ChamadaVeiculo.nomeTabela, schema = ChamadaVeiculo.esquema, catalog = "diego")
 public class ChamadaVeiculo extends Entidade{
 
 
@@ -40,8 +40,7 @@ public class ChamadaVeiculo extends Entidade{
 	
 	@Column(name = "dt_hora_recebimento", nullable = true)
 	private Date dataRecebimento;
-	
-	
+		
 	
 	@ManyToOne(fetch = FetchType.LAZY )
 	@JoinColumn(name = "cod_veiculo", nullable = false)

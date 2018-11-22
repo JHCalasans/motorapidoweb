@@ -38,7 +38,7 @@ public class LogradouroConverter  implements Converter{
 
 	@Override
 	public String getAsString(FacesContext arg0, UIComponent arg1, Object arg2) {
-		return arg2 != null ? ((Logradouro) arg2).getCodigo().toString() : null;
+		return arg2 != null  ? ((Logradouro) arg2).getCodigo() == null ? null : ((Logradouro) arg2).getCodigo().toString() : null;
 	}
 
 

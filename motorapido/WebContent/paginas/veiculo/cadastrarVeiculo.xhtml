@@ -53,19 +53,19 @@
 				</h:panelGroup>
 				<br />
 				<div class="clear"></div>
-				<h:panelGroup id="pnCategoria" styleClass="p_like">
+				<h:panelGroup id="pnCategoria" styleClass="p_like" rendered="false">
 					<p:outputLabel value="#{bundle.veiculo_categoria}:" for="slcCategoria"
 						styleClass="OutputLabelCampo" style="width:120px;" />
 					<p:selectOneMenu id="slcCategoria" required="true"
-						converter="modeloConverter" value="#{veiculoBean.veiculo.categoria}"
+						value="#{veiculoBean.veiculo.categoria}"
 						style="width:120px">
-					<f:selectItem itemValue="A" itemLabel="Alto"></f:selectItem>
+						<f:selectItem itemValue="A" itemLabel="Alto"></f:selectItem>
 						<f:selectItem itemValue="B" itemLabel="Baixo"></f:selectItem>
 					</p:selectOneMenu>
 
 				</h:panelGroup>
-				<br />
-				<div class="clear"></div>
+				<!-- <br />
+				<div class="clear"></div> -->
 				<h:panelGroup id="pngFabricante" styleClass="p_like">
 					<p:outputLabel value="#{bundle.veiculo_fabricante}:"
 						for="slcFabricante" styleClass="OutputLabelCampo"
@@ -121,7 +121,7 @@
 					<p:inputMask id="chassi" size="21" required="true"
 						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.veiculo_chassi}"
 						value="#{veiculoBean.veiculo.chassi}" mask="***.******.**.******"
-						style="text-transform:uppercase" />
+						style="text-transform:uppercase; width:136px" />
 				</h:panelGroup>
 				<br />
 				<div class="clear"></div>
@@ -129,7 +129,7 @@
 					<p:outputLabel value="#{bundle.veiculo_placa}:" for="placa"
 						styleClass="OutputLabelCampo" style="width:120px;" />
 					<p:inputMask id="placa" size="19" required="true"
-						style="text-transform:uppercase"
+						style="text-transform:uppercase; width:136px"
 						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.veiculo_placa}"
 						value="#{veiculoBean.veiculo.placa}" mask="aaa-9999" />
 				</h:panelGroup>

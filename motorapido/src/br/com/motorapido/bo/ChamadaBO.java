@@ -11,9 +11,11 @@ import org.primefaces.model.map.LatLng;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IChamadaDAO;
 import br.com.motorapido.dao.IClienteDAO;
+import br.com.motorapido.dao.IEnderecoClienteDAO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
+import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Local;
@@ -45,16 +47,31 @@ public class ChamadaBO extends MotoRapidoBO {
 		try {
 			transaction.begin();
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
+			boolean salvouCliente = false;
+			// Incluindo cliente se ele não existir na base de dados
+			if (chamada.getCliente().getCodigo() == null) {
+				IClienteDAO clienteDAO = fabricaDAO.getPostgresClienteDAO();
+
+				chamada.getCliente().setAtivo("S");
+				chamada.getCliente().setDataCriacao(new Date());
+
+				chamada.setCliente(clienteDAO.save(chamada.getCliente(), em));
+				salvouCliente = true;
+			}
+
 			if (origemLocal != null) {
 				chamada.setOrigem(origemLocal);
 				chamada.setEnderecoClienteOrigem(null);
 				validarAreaDoChamado(Double.parseDouble(origemLocal.getLatitude()),
-						Double.parseDouble(origemLocal.getLongitude()));
+						Double.parseDouble(origemLocal.getLongitude()), em);
 			} else {
 				chamada.setOrigem(null);
+				IEnderecoClienteDAO endereceoClienteDAO = fabricaDAO.getPostgresEnderecoClienteDAO();
+				origemEndereco.setCliente(chamada.getCliente());
+				origemEndereco = endereceoClienteDAO.save(origemEndereco, em);
 				chamada.setEnderecoClienteOrigem(origemEndereco);
 				validarAreaDoChamado(Double.parseDouble(origemEndereco.getLatitude()),
-						Double.parseDouble(origemEndereco.getLongitude()));
+						Double.parseDouble(origemEndereco.getLongitude()), em);
 			}
 			chamada.setDestino(destino.getCodigo() == null ? null : destino);
 			chamada.setDataCriacao(new Date());
@@ -62,12 +79,8 @@ public class ChamadaBO extends MotoRapidoBO {
 			SituacaoChamada situacaChamada = new SituacaoChamada();
 			situacaChamada.setCodigo(SituacaoChamadaEnum.PENDENTE.getCodSituacao());
 			chamada.setSituacaoChamada(situacaChamada);
+
 			chamada = chamadaDAO.save(chamada, em);
-			//Incluindo cliente se ele não existir na base de dados
-			if(chamada.getCliente().getCodigo() == null){
-				IClienteDAO clienteDAO = fabricaDAO.getPostgresClienteDAO();
-				clienteDAO.save(chamada.getCliente(), em);				
-			}
 			emUtil.commitTransaction(transaction);
 			return chamada;
 		} catch (Exception e) {
@@ -77,7 +90,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public List<Chamada> obterChamadasAbertas() throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -94,7 +107,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public List<Chamada> obterChamadasFiltro(Integer codSituacao) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -112,34 +125,47 @@ public class ChamadaBO extends MotoRapidoBO {
 		}
 	}
 
-	private void validarAreaDoChamado(double latitude, double longitude) throws ExcecaoNegocio {
+	public void removerChamada(Chamada chamada) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
+			chamadaDAO.delete(chamada, em);
+			emUtil.commitTransaction(transaction);
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar remover chamadas.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+
+	private Area validarAreaDoChamado(double latitude, double longitude, EntityManager em) throws ExcecaoNegocio {
 		Area areaOrigem = null;
-		List<CoordenadasAreaUtil> listaCoordAreas = AreaBO.getInstance().obterAreas();
+		List<CoordenadasAreaUtil> listaCoordAreas = AreaBO.getInstance().obterAreas(em);
 
 		CoordenadaPontoUtil[] pontos;
 		for (CoordenadasAreaUtil area : listaCoordAreas) {
 			CoordenadaPontoUtil ponto = null;
 			pontos = new CoordenadaPontoUtil[area.getCoordenadas().size()];
 			int count = 0;
-			for (LatLng coordenadas : area.getCoordenadas()){
+			for (LatLng coordenadas : area.getCoordenadas()) {
 				ponto = new CoordenadaPontoUtil(coordenadas.getLat(), coordenadas.getLng());
 				pontos[count] = ponto;
 				count++;
 			}
 			ponto = new CoordenadaPontoUtil(latitude, longitude);
-			if (FuncoesUtil.pontoEstaDentro(ponto, pontos)){
+			if (FuncoesUtil.pontoEstaDentro(ponto, pontos)) {
 				areaOrigem = area.getArea();
 				break;
-			}				
+			}
 		}
 		if (areaOrigem == null)
-			throw new ExcecaoNegocio("Ponto de origem não está em nenhuma área cadastrada");		
+			throw new ExcecaoNegocio("Ponto de origem não está em nenhuma área cadastrada");
+
+		return areaOrigem;
 
 	}
-	
-	
-	
-	
-	
 
 }
