@@ -5,14 +5,15 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:tjse="http://www.tjse.jus.br/jsf/components">
 
-	<p:dialog header="#{bundle.restricao_motorista}"
+	<p:dialog header="#{bundle.restricao_motorista}" 
 		widgetVar="varDlgRestricao" width="600" height="520" resizable="false"
 		showEffect="fade" dynamic="true" appendTo="@(body)"
 		closeOnEscape="true" closable="true" hideEffect="fade" modal="true"
 		draggable="false" id="dlgRestricao">
 		<h:form id="formbusca" prependId="false">
 			<h:panelGroup styleClass="p_like">
-				<p:outputLabel styleClass="OutputLabelCampo" style="width:50px;" value="Cliente:" />
+				<p:outputLabel styleClass="OutputLabelCampo" style="width:50px;"
+					value="Cliente:" />
 
 				<p:outputLabel styleClass="OutputLabelValor"
 					value="#{clienteBean.clienteRestricao.nome}" />
@@ -48,7 +49,7 @@
 							</div>
 						</p:column>
 
-						<p:column sortBy="#{motoLivre.nome}">
+						<p:column sortBy="#{motoLivre.nome}" filterBy="#{motoLivre.nome}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.motorista_nome}"
 									styleClass="cabecalhoDataTable" />
@@ -75,6 +76,7 @@
 
 			</p:panel>
 
+			<br />
 			<p:panel id="panelVinculados" header="Motoristas Bloqueados">
 
 				<br />
@@ -92,7 +94,8 @@
 						<p:column selectionMode="multiple"
 							style="width:16px;text-align:center" />
 
-						<p:column sortBy="#{motoBloqueado.motorista.codigo}" style="width:50px"> 
+						<p:column sortBy="#{motoBloqueado.motorista.codigo}"
+							style="width:50px">
 							<f:facet name="header">
 								<h:outputText value="Código" styleClass="cabecalhoDataTable" />
 							</f:facet>
@@ -101,7 +104,7 @@
 							</div>
 						</p:column>
 
-						<p:column sortBy="#{motoBloqueado.motorista.nome}">
+						<p:column sortBy="#{motoBloqueado.motorista.nome}" filterBy="#{motoLivre.nome}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.motorista_nome}"
 									styleClass="cabecalhoDataTable" />
@@ -131,7 +134,7 @@
 			</p:panel>
 
 		</h:form>
-		<p:ajax event="close" listener="#{motoristaBean.limparDlgBloqueio}"></p:ajax>
+		<p:ajax event="close" listener="#{clienteBean.fecharRestricao}"></p:ajax>
 	</p:dialog>
 
 </ui:composition>

@@ -71,7 +71,7 @@
 						for="dtNascimento" styleClass="OutputLabelCampo"
 						style="width:120px;" />
 					<p:calendar id="dtNascimento" required="true" size="20"
-						pattern="dd/MM/yyyy"
+						pattern="dd/MM/yyyy" mask="true"
 						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_dataNascimento}"
 						value="#{funcionarioBean.funcionario.dataNascimento}" />
 

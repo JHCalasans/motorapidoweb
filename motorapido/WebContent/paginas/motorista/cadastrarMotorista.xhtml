@@ -70,7 +70,7 @@
 						for="dtNascimento" styleClass="OutputLabelCampo"
 						style="width:120px;" />
 					<p:calendar id="dtNascimento" required="true" size="20"
-						pattern="dd/MM/yyyy"
+						pattern="dd/MM/yyyy" mask="true"
 						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_dataNascimento}"
 						value="#{motoristaBean.motorista.dataNascimento}" />
 
@@ -301,7 +301,7 @@
 					<p:outputLabel value="#{bundle.motorista_vencimentoCNH}:"
 						for="vencimentoCnh" styleClass="OutputLabelCampo"
 						style="width:120px;" />
-					<p:calendar id="vencimentoCnh" required="true" size="20"
+					<p:calendar id="vencimentoCnh" required="true" size="20" pattern="dd/MM/yyyy" mask="true"
 						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.motorista_vencimentoCNH}"
 						value="#{motoristaBean.motorista.dataVencimentoCNH}" />
 

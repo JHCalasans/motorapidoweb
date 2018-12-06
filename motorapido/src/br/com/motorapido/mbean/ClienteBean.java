@@ -62,6 +62,10 @@ public class ClienteBean extends SimpleController {
 
 	private Cliente clienteRestricao;
 
+	private String celularAntigo;
+
+	private String emailAntigo;
+
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
@@ -97,6 +101,22 @@ public class ClienteBean extends SimpleController {
 		}
 	}
 
+	public String getCelularAntigo() {
+		return celularAntigo;
+	}
+
+	public void setCelularAntigo(String celularAntigo) {
+		this.celularAntigo = celularAntigo;
+	}
+
+	public String getEmailAntigo() {
+		return emailAntigo;
+	}
+
+	public void setEmailAntigo(String emailAntigo) {
+		this.emailAntigo = emailAntigo;
+	}
+
 	public void abrirRestricao(Cliente cli) {
 		clienteRestricao = cli;
 		try {
@@ -108,6 +128,18 @@ public class ClienteBean extends SimpleController {
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
+
+	}
+	
+	public void fecharRestricao() {
+		if(listaMotoristasLivres != null)
+			listaMotoristasLivres.clear();
+		if(listaMotoristasLivresSelecionados != null)
+			listaMotoristasLivresSelecionados.clear();
+		if(listaMotoristasBloqueados != null)
+			listaMotoristasBloqueados.clear();
+		if(listaMotoristasBloqueadosSelecionados != null)
+			listaMotoristasBloqueadosSelecionados.clear();
 
 	}
 
@@ -136,7 +168,8 @@ public class ClienteBean extends SimpleController {
 	public void habilitarMotorista() {
 
 		try {
-			listaMotoristasLivres.addAll(RestricaoClienteMotoristaBO.getInstance().removerRestricaoCliente(listaMotoristasBloqueadosSelecionados));
+			listaMotoristasLivres.addAll(RestricaoClienteMotoristaBO.getInstance()
+					.removerRestricaoCliente(listaMotoristasBloqueadosSelecionados));
 			listaMotoristasBloqueados.removeAll(listaMotoristasBloqueadosSelecionados);
 			listaMotoristasBloqueadosSelecionados.clear();
 			addMsg(FacesMessage.SEVERITY_INFO, "Restrição(ões) removida(s) com sucesso.");
@@ -149,6 +182,8 @@ public class ClienteBean extends SimpleController {
 		try {
 
 			cliente = ClienteBO.getInstance().obterClientePorCodigo(codigo);
+			celularAntigo = cliente.getCelular();
+			emailAntigo = cliente.getEmail();
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -288,11 +323,13 @@ public class ClienteBean extends SimpleController {
 
 		try {
 			Cliente clienteTemp = new Cliente();
-			clienteTemp.setEmail(cliente.getEmail());
-			clienteTemp = ClienteBO.getInstance().obterClienteByExample(clienteTemp);
-			if (clienteTemp != null) {
-				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "Email já cadastrado na base de dados!.", "");
-				return false;
+			if (cliente.getEmail() != null && !cliente.getEmail().isEmpty()) {
+				clienteTemp.setEmail(cliente.getEmail());
+				clienteTemp = ClienteBO.getInstance().obterClienteByExample(clienteTemp);
+				if (clienteTemp != null) {
+					MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "Email já cadastrado na base de dados!.", "");
+					return false;
+				}
 			}
 			return true;
 		} catch (ExcecaoNegocio e) {
@@ -379,10 +416,16 @@ public class ClienteBean extends SimpleController {
 
 	public String alterarCliente() {
 
-		if (!validarEmail())
-			return "";
-		if (!validarCelular())
-			return "";
+		if ((emailAntigo != null && !emailAntigo.equals(cliente.getEmail()))
+				|| (emailAntigo == null && cliente.getEmail() != null)) {
+			if (!validarEmail())
+				return "";
+		}
+		if ((celularAntigo != null && !celularAntigo.equals(cliente.getCelular()))
+				|| (celularAntigo == null && cliente.getCelular() != null)) {
+			if (!validarCelular())
+				return "";
+		}
 		try {
 			ClienteBO.getInstance().salvarCliente(cliente, null);
 			String url = "consultarCliente.proj??faces-redirect=true&altSucesso=true";

@@ -61,8 +61,8 @@ public class Veiculo extends Entidade{
 	private Date dataDesativacao;
 	
 	@Column(name = "flg_ativo", nullable = false, length = 1)
-	private String flgAtivo;
-	
+	private String flgAtivo;	
+
 	@Column(name = "documento", nullable = false)
 	private byte[] documento;
 	

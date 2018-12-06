@@ -62,6 +62,8 @@ public class ChamadaBean extends SimpleController {
 	private Cliente cliente;
 
 	private EnderecoCliente enderecoClienteOrigem;
+	
+	private EnderecoCliente enderecoDestinoCliente;
 
 	private Local enderecoClienteDestino;
 
@@ -174,6 +176,18 @@ public class ChamadaBean extends SimpleController {
 		enderecoClienteOrigem.setBairro(logSelecionado.getBairro().getBairro());
 		enderecoClienteOrigem.setCep(logSelecionado.getCep());
 		enderecoClienteOrigem.setCidade(logSelecionado.getCidade().getCidade());
+		ajustarMarcadorMapa(endereco);
+		
+	}
+	
+	public void logradouroDestinoSelecionado(SelectEvent event) {
+		Logradouro logSelecionado = (Logradouro) event.getObject();
+		EnderecoCliente endereco = new EnderecoCliente();
+		endereco.setLatitude(logSelecionado.getLatitude());
+		endereco.setLongitude(logSelecionado.getLongitude());
+		enderecoDestinoCliente.setBairro(logSelecionado.getBairro().getBairro());
+		enderecoDestinoCliente.setCep(logSelecionado.getCep());
+		enderecoDestinoCliente.setCidade(logSelecionado.getCidade().getCidade());
 		ajustarMarcadorMapa(endereco);
 		
 	}
@@ -572,6 +586,14 @@ public class ChamadaBean extends SimpleController {
 
 	public void setComponenteParaUpdate(String componenteParaUpdate) {
 		this.componenteParaUpdate = componenteParaUpdate;
+	}
+
+	public EnderecoCliente getEnderecoDestinoCliente() {
+		return enderecoDestinoCliente;
+	}
+
+	public void setEnderecoDestinoCliente(EnderecoCliente enderecoDestinoCliente) {
+		this.enderecoDestinoCliente = enderecoDestinoCliente;
 	}
 
 }
