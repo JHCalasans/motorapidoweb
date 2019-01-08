@@ -17,6 +17,7 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 import br.com.minhaLib.util.EntityManagerUtil;
+import br.com.motorapido.mbean.SimpleController;
 
 
 
@@ -67,12 +68,25 @@ public class Config implements ServletContextListener {
 			sf = new StdSchedulerFactory("quartz.properties");
 			sched = sf.getScheduler();
 
-			// Rotina padr�o
+			// Rotina padrão
 			JobDetail job = newJob(JobProject.class).withIdentity("JobProject", "GrupoMotoRapido").build();
+			
+			JobDetail jobSegundos = newJob(JobProjectSegundos.class).withIdentity("JobProjectSegundos", "GrupoMotoRapido").build();
 
 			Trigger trigger = newTrigger().withIdentity("MotoRapidoTrigger", "GrupoMotoRapido").startNow()
 					.withSchedule(simpleSchedule().withIntervalInMinutes(5).repeatForever()).build();
-			sched.scheduleJob(job, trigger);
+			
+			Trigger triggerSegundos = newTrigger().withIdentity("MotoRapidoTriggerSegundos", "GrupoMotoRapido").startNow()
+					.withSchedule(simpleSchedule().withIntervalInSeconds(25).repeatForever()).build();
+			
+			//Aloca Lista de Logradouros em cache
+			SimpleController.iniciarListaLogradouros();
+			//Aloca Lista de características em cache
+			SimpleController.carregarCaracteristicasAtivas();			
+			
+			
+			sched.scheduleJob(job, trigger);			
+			sched.scheduleJob(jobSegundos, triggerSegundos);
 			sched.start();
 		} catch (Exception ex) {
 			log.error("Erro", ex);

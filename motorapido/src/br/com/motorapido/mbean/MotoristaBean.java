@@ -144,13 +144,13 @@ public class MotoristaBean extends SimpleController {
 		}
 	}
 
-	public void carregarCaracteristicasAtivas() {
+	/*public void carregarCaracteristicasAtivas() {
 		try {
 			listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
-	}
+	}*/
 
 	public void carregarMotoristaBloquear(Motorista moto, boolean bloquear) {
 		try {
@@ -547,6 +547,10 @@ public class MotoristaBean extends SimpleController {
 			MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CEP inválido!.", "");
 		}
 
+	}
+	
+	public  List<Caracteristica> obterCaracteristicas(){
+		return getListaCaracteristicasMemoria();
 	}
 
 	public Motorista getMotorista() {

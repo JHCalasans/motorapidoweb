@@ -74,7 +74,7 @@ public class CaracteristicaBean extends SimpleController {
 
 	public void salvar() {
 		try {
-			CaracteristicaBO.getInstance().salvarCaracteristica(caracteristica);
+			getListaCaracteristicasMemoria().add(CaracteristicaBO.getInstance().salvarCaracteristica(caracteristica));
 			addMsg(FacesMessage.SEVERITY_INFO, "Característica cadastrada com sucesso.");
 			caracteristica = new Caracteristica();
 		} catch (ExcecaoNegocio e) {
@@ -85,7 +85,13 @@ public class CaracteristicaBean extends SimpleController {
 
 	public String alterar() {
 		try {
-			CaracteristicaBO.getInstance().alterarCaracteristica(caracteristica);
+			getListaCaracteristicasMemoria().removeIf(ca -> ca.getCodigo() == caracteristica.getCodigo());
+			//filter(ca -> ca.getCodigo() == caracteristica.getCodigo()).
+			Caracteristica cara = CaracteristicaBO.getInstance().alterarCaracteristica(caracteristica);
+			if(cara.getAtivo().equals("S"))
+				getListaCaracteristicasMemoria().add(cara);
+			
+			
 			ativo = "";
 			pesquisar();
 			caracteristica = new Caracteristica();

@@ -345,7 +345,7 @@
 						converter="caracteristicaConverter"
 						value="#{motoristaBean.listaCaracteristicasSelecionadas}"
 						layout="grid" columns="4">
-						<f:selectItems value="#{motoristaBean.listaCaracteristicas}"
+						<f:selectItems value="#{motoristaBean.obterCaracteristicas()}"
 							var="carac" itemLabel="#{carac.descricao}" itemValue="#{carac}" />
 					</p:selectManyCheckbox>
 				</h:panelGroup>

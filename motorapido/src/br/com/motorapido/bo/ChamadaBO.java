@@ -1,5 +1,6 @@
 package br.com.motorapido.bo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,18 +13,30 @@ import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IChamadaDAO;
 import br.com.motorapido.dao.IClienteDAO;
 import br.com.motorapido.dao.IEnderecoClienteDAO;
+import br.com.motorapido.dao.IMensagemFuncionarioDAO;
+import br.com.motorapido.dao.IMensagemFuncionarioMotoristaDAO;
+import br.com.motorapido.dao.IMotoristaAparelhoDAO;
+import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
-import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Local;
+import br.com.motorapido.entity.Logradouro;
+import br.com.motorapido.entity.MensagemFuncionario;
+import br.com.motorapido.entity.MensagemFuncionarioMotorista;
+import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.MotoristaAparelho;
+import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.SituacaoChamada;
+import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.enums.SituacaoChamadaEnum;
+import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.CoordenadaPontoUtil;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.FuncoesUtil;
+import br.com.motorapido.util.PushNotificationUtil;
 
 public class ChamadaBO extends MotoRapidoBO {
 
@@ -40,8 +53,8 @@ public class ChamadaBO extends MotoRapidoBO {
 		return instance;
 	}
 
-	public Chamada iniciarChamada(Chamada chamada, EnderecoCliente origemEndereco, Local destino, Local origemLocal,
-			Funcionario funcionario, List<Caracteristica> caracteristicas) throws ExcecaoNegocio {
+	public Chamada iniciarChamada(Chamada chamada, Funcionario funcionario, List<Caracteristica> caracteristicas)
+			throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -59,21 +72,27 @@ public class ChamadaBO extends MotoRapidoBO {
 				salvouCliente = true;
 			}
 
-			if (origemLocal != null) {
-				chamada.setOrigem(origemLocal);
-				chamada.setEnderecoClienteOrigem(null);
-				validarAreaDoChamado(Double.parseDouble(origemLocal.getLatitude()),
-						Double.parseDouble(origemLocal.getLongitude()), em);
-			} else {
-				chamada.setOrigem(null);
+			// salva também o primeiro endereço da primeira chamada do cliente
+			if (salvouCliente) {
 				IEnderecoClienteDAO endereceoClienteDAO = fabricaDAO.getPostgresEnderecoClienteDAO();
+				EnderecoCliente origemEndereco = new EnderecoCliente();
+				origemEndereco.setBairro(chamada.getBairroOrigem());
+				origemEndereco.setCep(chamada.getCepOrigem());
+				origemEndereco.setCidade(chamada.getCidadeOrigem());
+				origemEndereco.setComplemento(chamada.getComplementoOrigem());
+				origemEndereco.setEstado("SE");
+				origemEndereco.setLatitude(chamada.getLatitudeOrigem());
+				origemEndereco.setLogradouro(chamada.getLogradouroOrigem());
+				origemEndereco.setLongitude(chamada.getLongitudeOrigem());
+				origemEndereco.setNumero(chamada.getNumeroOrigem());
 				origemEndereco.setCliente(chamada.getCliente());
 				origemEndereco = endereceoClienteDAO.save(origemEndereco, em);
-				chamada.setEnderecoClienteOrigem(origemEndereco);
-				validarAreaDoChamado(Double.parseDouble(origemEndereco.getLatitude()),
-						Double.parseDouble(origemEndereco.getLongitude()), em);
 			}
-			chamada.setDestino(destino.getCodigo() == null ? null : destino);
+
+			validarAreaDoChamado(Double.parseDouble(chamada.getLatitudeOrigem()),
+					Double.parseDouble(chamada.getLongitudeOrigem()), em);
+
+			// chamada.setDestino(destino.getCodigo() == null ? null : destino);
 			chamada.setDataCriacao(new Date());
 			chamada.setFuncionario(funcionario);
 			SituacaoChamada situacaChamada = new SituacaoChamada();
@@ -86,6 +105,51 @@ public class ChamadaBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar iniciar chamada.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+
+	public void enviarMsgChamadaMotorista(Chamada chamada) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			
+
+			Area area = validarAreaDoChamado(Double.parseDouble(chamada.getLatitudeOrigem()),
+					Double.parseDouble(chamada.getLongitudeOrigem()), em);
+			MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
+			motoristaPosicaoArea.setArea(area);
+			motoristaPosicaoArea.setAtivo("S");
+			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
+			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.findByExample(motoristaPosicaoArea, em, motoristaPosicaoAreaDAO.BY_POS_ASC);
+			if(listaMotoristas != null && listaMotoristas.size() > 0){
+				
+				List<String> listaParaNotificacao = new ArrayList<String>();
+				//Busco aparelho do motorista para enviar notificação
+				IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
+				MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
+				motoristaAparelho.setAtivo("S");
+				motoristaAparelho.setCodMotorista(listaMotoristas.get(0).getMotorista().getCodigo());
+				List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
+				if(lista != null && lista.size() > 0)
+					listaParaNotificacao.add(lista.get(0).getIdPush()); 
+				
+				PushNotificationUtil.enviarNotificacaoPlayerId(
+						FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
+						FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em), listaParaNotificacao,
+						"Nova Cahmada");
+			}
+			//Se não tiver nenhum motorista disponível na área a chamada vai para lista de espera geral
+			else
+				SimpleController.getListaChamadasEmEsperaGeral().add(chamada);
+
+			emUtil.commitTransaction(transaction);
+			
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar enviar mensagem.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}
@@ -131,11 +195,15 @@ public class ChamadaBO extends MotoRapidoBO {
 		try {
 			transaction.begin();
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
-			chamadaDAO.delete(chamada, em);
+			SituacaoChamada situacaChamada = new SituacaoChamada();
+			situacaChamada.setCodigo(SituacaoChamadaEnum.CANCELADA.getCodSituacao());
+			chamada.setSituacaoChamada(situacaChamada);
+			chamada.setDataCancelamento(new Date());
+			chamadaDAO.save(chamada, em);
 			emUtil.commitTransaction(transaction);
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
-			throw new ExcecaoNegocio("Falha ao tentar remover chamadas.", e);
+			throw new ExcecaoNegocio("Falha ao tentar cancelar chamadas.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}

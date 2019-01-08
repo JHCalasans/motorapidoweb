@@ -2,8 +2,10 @@ package br.com.motorapido.mbean;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -26,9 +28,15 @@ import org.primefaces.context.RequestContext;
 
 import com.sun.faces.component.visit.FullVisitContext;
 
+import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.FacesUtil;
+import br.com.motorapido.bo.CaracteristicaBO;
+import br.com.motorapido.bo.LogradouroBO;
 import br.com.motorapido.dao.FabricaDAO;
+import br.com.motorapido.entity.Caracteristica;
+import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.Funcionario;
+import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.Paginas;
@@ -43,42 +51,74 @@ public abstract class SimpleController implements Serializable {
 
 	private static Funcionario funcionarioLogado;
 
-	//código do ultimo motorista que enviou mensagem
+	// código do ultimo motorista que enviou mensagem
 	private static Integer ultimoMotMsg;
-	
-	//código da ultima mensagem enviada
+
+	// código da ultima mensagem enviada
 	private static MensagemMotoristaFuncionario ultimaMsgEnviada;
+
+	//lista de logradouros carregadas em memória
+	private static List<Logradouro> listaLogradouro;
 	
+	//lista de características do motorista carregadas em memória
+	private static List<Caracteristica> listaCaracteristicasMemoria;
 	
+	//lista de chamadas em espera
+	private static List<Chamada> listaChamadasEmEspera = new ArrayList<Chamada>();
+	
+	//lista de chamadas em espera
+	private static List<Chamada> listaChamadasEmEsperaGeral = new ArrayList<Chamada>();
 
 	public SimpleController() {
 		super();
 	}
-	
-	public boolean estaNaPaginaDeMensagem(){
-		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+
+	public boolean estaNaPaginaDeMensagem() {
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
 		return request.getRequestURL().toString().contains("enviar");
-	
+
+	}
+
+	public static void iniciarListaLogradouros() {
+		try {
+			listaLogradouro = LogradouroBO.getInstance().obterLogradourosPorEstados("SE");
+			/*
+			 * for (Logradouro logradouro : listaLogradouro) {
+			 * autoComplete.add(logradouro.getDescricao()); }
+			 */
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+
 	}
 	
+	public static void carregarCaracteristicasAtivas() {
+		try {
+			listaCaracteristicasMemoria = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S");
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+
 	public UIComponent findComponent(final String id) {
 
-	    FacesContext context = FacesContext.getCurrentInstance(); 
-	    UIViewRoot root = context.getViewRoot();
-	    final UIComponent[] found = new UIComponent[1];
+		FacesContext context = FacesContext.getCurrentInstance();
+		UIViewRoot root = context.getViewRoot();
+		final UIComponent[] found = new UIComponent[1];
 
-	    root.visitTree(new FullVisitContext(context), new VisitCallback() {     
-	        @Override
-	        public VisitResult visit(VisitContext context, UIComponent component) {
-	            if(component.getId().equals(id)){
-	                found[0] = component;
-	                return VisitResult.COMPLETE;
-	            }
-	            return VisitResult.ACCEPT;              
-	        }
-	    });
+		root.visitTree(new FullVisitContext(context), new VisitCallback() {
+			@Override
+			public VisitResult visit(VisitContext context, UIComponent component) {
+				if (component.getId().equals(id)) {
+					found[0] = component;
+					return VisitResult.COMPLETE;
+				}
+				return VisitResult.ACCEPT;
+			}
+		});
 
-	    return found[0];
+		return found[0];
 
 	}
 
@@ -192,14 +232,12 @@ public abstract class SimpleController implements Serializable {
 	public void verificaSessaoValida(ComponentSystemEvent event) {
 		if (!getSessionMap().containsKey("motoRapido.funcionario"))
 			FacesUtil.redirecionar(null, Paginas.PAG_SESSAO_ENCERRADA, true, null);
-		else{
-			
+		else {
+
 			setFuncionarioLogado((Funcionario) getSessionMap().get("motoRapido.funcionario"));
 		}
 
 	}
-	
-
 
 	public String logout() {
 		try {
@@ -214,7 +252,6 @@ public abstract class SimpleController implements Serializable {
 		return "";
 	}
 
-	
 	public abstract String salvoSucesso();
 
 	public Funcionario getFuncionarioLogado() {
@@ -247,9 +284,36 @@ public abstract class SimpleController implements Serializable {
 		SimpleController.ultimaMsgEnviada = ultimaMsgEnviada;
 	}
 
-	
+	protected static List<Logradouro> getListaLogradouro() {
+		return listaLogradouro;
+	}
 
+	protected static void setListaLogradouro(List<Logradouro> listaLogradouro) {
+		SimpleController.listaLogradouro = listaLogradouro;
+	}
 
+	protected static List<Caracteristica> getListaCaracteristicasMemoria() {
+		return listaCaracteristicasMemoria;
+	}
 
-	
+	protected static void setListaCaracteristicasMemoria(List<Caracteristica> listaCaracteristicas) {
+		SimpleController.listaCaracteristicasMemoria = listaCaracteristicas;
+	}
+
+	public static List<Chamada> getListaChamadasEmEspera() {
+		return listaChamadasEmEspera;
+	}
+
+	public static void setListaChamadasEmEspera(List<Chamada> listaChamadasEmEspera) {
+		SimpleController.listaChamadasEmEspera = listaChamadasEmEspera;
+	}
+
+	public static List<Chamada> getListaChamadasEmEsperaGeral() {
+		return listaChamadasEmEsperaGeral;
+	}
+
+	public static void setListaChamadasEmEsperaGeral(List<Chamada> listaChamadasEmEsperaGeral) {
+		SimpleController.listaChamadasEmEsperaGeral = listaChamadasEmEsperaGeral;
+	}
+
 }

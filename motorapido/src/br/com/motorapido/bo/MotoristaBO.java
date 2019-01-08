@@ -12,12 +12,14 @@ import br.com.motorapido.dao.ICaracteristicaMotoristaDAO;
 import br.com.motorapido.dao.IFuncionarioDAO;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.dao.IMotoristaDAO;
+import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
 import br.com.motorapido.entity.BloqueioMotorista;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.CaracteristicaMotorista;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
+import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.FuncoesUtil;
@@ -100,6 +102,19 @@ public class MotoristaBO extends MotoRapidoBO {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
 			Motorista motorista = motoristaDAO.findById(codMotorista, em);
+			
+			//Busca se o motorista estava ativo em alguma área para também desativar
+			MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
+			motoristaPosicaoArea.setMotorista(motorista);
+			motoristaPosicaoArea.setAtivo("S");
+			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
+			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.findByExample(motoristaPosicaoArea, em, motoristaPosicaoAreaDAO.BY_POS_ASC);
+					
+			for(MotoristaPosicaoArea motoPosicao: listaMotoristas){
+				motoPosicao.setAtivo("N");
+				motoristaPosicaoAreaDAO.save(motoPosicao, em);
+			}
+			
 			motorista.setDisponivel(motorista.getDisponivel().equals("S") ? "N" : "S");
 			motoristaDAO.save(motorista, em);
 			emUtil.commitTransaction(transaction);

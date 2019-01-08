@@ -48,6 +48,9 @@ public class Chamada extends Entidade {
 
 	@Column(name = "dt_inicio_corrida", nullable = true)
 	private Date dataInicioCorrida;
+	
+	@Column(name = "dt_cancelamento", nullable = true)
+	private Date dataCancelamento;
 
 	@Column(name = "dt_inicio_espera", nullable = true)
 	private Date dataInicioEspera;
@@ -60,6 +63,54 @@ public class Chamada extends Entidade {
 
 	@Column(name = "observacao", nullable = true)
 	private String observacao;
+	
+	@Column(name = "cep_origem", nullable = false)
+	private String cepOrigem; 
+	
+	@Column(name = "bairro_origem", nullable = false)
+	private String bairroOrigem; 
+	
+	@Column(name = "cidade_origem", nullable = false)
+	private String cidadeOrigem; 
+	
+	@Column(name = "logradouro_origem", nullable = false)
+	private String logradouroOrigem; 
+	
+	@Column(name = "numero_origem")
+	private String numeroOrigem; 
+	
+	@Column(name = "complemento_origem")
+	private String complementoOrigem; 
+	
+	@Column(name = "latitude_origem")
+	private String latitudeOrigem; 
+	
+	@Column(name = "longitude_origem")
+	private String longitudeOrigem; 
+	
+	@Column(name = "cep_destino")
+	private String cepDestino; 
+	
+	@Column(name = "bairro_destino")
+	private String bairroDestino; 
+	
+	@Column(name = "cidade_destino")
+	private String cidadeDestino; 
+	
+	@Column(name = "logradouro_destino")
+	private String logradouroDestino; 
+	
+	@Column(name = "numero_destino")
+	private String numeroDestino; 
+	
+	@Column(name = "complemento_destino")
+	private String complementoDestino; 
+	
+	@Column(name = "latitude_destino")
+	private String latitudeDestino; 
+	
+	@Column(name = "longitude_destino")
+	private String longitudeDestino; 
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_usuario", nullable = true)
@@ -70,15 +121,15 @@ public class Chamada extends Entidade {
 	private Funcionario funcionario;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_local_destino", nullable = true)
+	@JoinColumn(name = "cod_local_destino", nullable = true, referencedColumnName = "cod_local")
 	private Local destino;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_local_origem", nullable = true)
+	@JoinColumn(name = "cod_local_origem", nullable = true, referencedColumnName = "cod_local")
 	private Local origem;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_endereco_cliente_origem", nullable = true)
+	@JoinColumn(name = "cod_endereco_cliente_origem", nullable = true, referencedColumnName = "cod_endereco_cliente")
 	private EnderecoCliente enderecoClienteOrigem;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -88,9 +139,33 @@ public class Chamada extends Entidade {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_cliente", nullable = true)
 	private Cliente cliente;		
+	
+/*	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cod_logradouro_origem", nullable = true, referencedColumnName = "cod_logradouro")
+	private Logradouro logradouroOrigem;	*/
+	
+	/*@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cod_logradouro_destino", nullable = true, referencedColumnName = "cod_logradouro")
+	private Logradouro logradouroDestino;	*/
 
 	
 
+/*	public Logradouro getLogradouroOrigem() {
+		return logradouroOrigem;
+	}
+
+	public void setLogradouroOrigem(Logradouro logradouroOrigem) {
+		this.logradouroOrigem = logradouroOrigem;
+	}*/
+
+	/*public Logradouro getLogradouroDestino() {
+		return logradouroDestino;
+	}
+
+	public void setLogradouroDestino(Logradouro logradouroDestino) {
+		this.logradouroDestino = logradouroDestino;
+	}
+*/
 	@Override
 	public Serializable getIdentificador() {
 
@@ -218,13 +293,152 @@ public class Chamada extends Entidade {
 	}
 
 	public String getEnderecoFormatado() {
+		
+		return getLogradouroOrigem() + "; " + getBairroOrigem() + "; " + getComplementoOrigem();
+		/*
 		if (origem != null)
 			return origem.getLogradouro() + "; " + origem.getBairro() + "; " 
 					+ origem.getComplemento();
 		else
 			return enderecoClienteOrigem.getLogradouro() + "; " + enderecoClienteOrigem.getBairro() + "; "
 					 + enderecoClienteOrigem.getComplemento();
+*/
+	}
 
+	public String getCepOrigem() {
+		return cepOrigem;
+	}
+
+	public void setCepOrigem(String cepOrigem) {
+		this.cepOrigem = cepOrigem;
+	}
+
+	public String getBairroOrigem() {
+		return bairroOrigem;
+	}
+
+	public void setBairroOrigem(String bairroOrigem) {
+		this.bairroOrigem = bairroOrigem;
+	}
+
+	public String getCidadeOrigem() {
+		return cidadeOrigem;
+	}
+
+	public void setCidadeOrigem(String cidadeOrigem) {
+		this.cidadeOrigem = cidadeOrigem;
+	}
+
+	public String getLogradouroOrigem() {
+		return logradouroOrigem;
+	}
+
+	public void setLogradouroOrigem(String logradouroOrigem) {
+		this.logradouroOrigem = logradouroOrigem;
+	}
+
+	public String getNumeroOrigem() {
+		return numeroOrigem;
+	}
+
+	public void setNumeroOrigem(String numeroOrigem) {
+		this.numeroOrigem = numeroOrigem;
+	}
+
+	public String getComplementoOrigem() {
+		return complementoOrigem;
+	}
+
+	public void setComplementoOrigem(String complementoOrigem) {
+		this.complementoOrigem = complementoOrigem;
+	}
+
+	public String getLatitudeOrigem() {
+		return latitudeOrigem;
+	}
+
+	public void setLatitudeOrigem(String latitudeOrigem) {
+		this.latitudeOrigem = latitudeOrigem;
+	}
+
+	public String getLongitudeOrigem() {
+		return longitudeOrigem;
+	}
+
+	public void setLongitudeOrigem(String longitudeOrigem) {
+		this.longitudeOrigem = longitudeOrigem;
+	}
+
+	public String getCepDestino() {
+		return cepDestino;
+	}
+
+	public void setCepDestino(String cepDestino) {
+		this.cepDestino = cepDestino;
+	}
+
+	public String getBairroDestino() {
+		return bairroDestino;
+	}
+
+	public void setBairroDestino(String bairroDestino) {
+		this.bairroDestino = bairroDestino;
+	}
+
+	public String getCidadeDestino() {
+		return cidadeDestino;
+	}
+
+	public void setCidadeDestino(String cidadeDestino) {
+		this.cidadeDestino = cidadeDestino;
+	}
+
+	public String getLogradouroDestino() {
+		return logradouroDestino;
+	}
+
+	public void setLogradouroDestino(String logradouroDestino) {
+		this.logradouroDestino = logradouroDestino;
+	}
+
+	public String getNumeroDestino() {
+		return numeroDestino;
+	}
+
+	public void setNumeroDestino(String numeroDestino) {
+		this.numeroDestino = numeroDestino;
+	}
+
+	public String getComplementoDestino() {
+		return complementoDestino;
+	}
+
+	public void setComplementoDestino(String complementoDestino) {
+		this.complementoDestino = complementoDestino;
+	}
+
+	public String getLatitudeDestino() {
+		return latitudeDestino;
+	}
+
+	public void setLatitudeDestino(String latitudeDestino) {
+		this.latitudeDestino = latitudeDestino;
+	}
+
+	public String getLongitudeDestino() {
+		return longitudeDestino;
+	}
+
+	public void setLongitudeDestino(String longitudeDestino) {
+		this.longitudeDestino = longitudeDestino;
+	}
+
+	public Date getDataCancelamento() {
+		return dataCancelamento;
+	}
+
+	public void setDataCancelamento(Date dataCancelamento) {
+		this.dataCancelamento = dataCancelamento;
 	}
 
 }

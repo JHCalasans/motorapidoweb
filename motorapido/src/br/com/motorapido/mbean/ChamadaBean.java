@@ -12,8 +12,10 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.event.ToggleEvent;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.event.map.PointSelectEvent;
+import org.primefaces.model.Visibility;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
@@ -62,7 +64,7 @@ public class ChamadaBean extends SimpleController {
 	private Cliente cliente;
 
 	private EnderecoCliente enderecoClienteOrigem;
-	
+
 	private EnderecoCliente enderecoDestinoCliente;
 
 	private Local enderecoClienteDestino;
@@ -85,16 +87,18 @@ public class ChamadaBean extends SimpleController {
 
 	private List<Chamada> chamadas;
 
-	private List<Caracteristica> listaCaracteristicas;
-
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
 
 	private List<String> autoComplete = new ArrayList<String>();
 
 	private Logradouro logradouro;
 
-	private List<Logradouro> listaLogradouro;
-	
+	private Logradouro logradouroDestino;
+
+	private Logradouro logradouroOrigemSelecionado;
+
+	private Logradouro logradouroDestSelecionado;
+
 	private String componenteParaUpdate;
 
 	@PostConstruct
@@ -104,10 +108,11 @@ public class ChamadaBean extends SimpleController {
 		}
 		try {
 			limparCampos();
-			iniciarListaLogradouros();
+			// iniciarListaLogradouros();
 			mapModel = new DefaultMapModel();
 			logradouro = new Logradouro();
 			enderecoClienteOrigem = new EnderecoCliente();
+			enderecoDestinoCliente = new EnderecoCliente();
 			if (coordenadas == null) {
 				String coordenadasIniciais = ParametroBO.getInstance()
 						.getParam(ParametroEnum.COORDENADAS_INICIAIS.getCodigo());
@@ -115,24 +120,10 @@ public class ChamadaBean extends SimpleController {
 				setCoordenadas(new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1])));
 			}
 			atualizarChamadas();
-			carregarCaracteristicasAtivas();
 
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
-	}
-
-	public void iniciarListaLogradouros() {
-		try {
-			listaLogradouro = LogradouroBO.getInstance().obterLogradourosPorEstados("SE");
-			/*
-			 * for (Logradouro logradouro : listaLogradouro) {
-			 * autoComplete.add(logradouro.getDescricao()); }
-			 */
-		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
-		}
-
 	}
 
 	public void addMarker(PointSelectEvent event) {
@@ -147,15 +138,15 @@ public class ChamadaBean extends SimpleController {
 					.buscarCoordenadas(String.valueOf(coord.getLat()) + "," + String.valueOf(coord.getLng()));
 			logradouro = new Logradouro();
 			logradouro.setDescricao(retorno.getResults().get(0).getAddress_components().get(1).getLong_name());
-			enderecoClienteOrigem.setCidade(retorno.getResults().get(0).getAddress_components().get(3).getLong_name());
-			logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + enderecoClienteOrigem.getCidade());
-			enderecoClienteOrigem.setBairro(retorno.getResults().get(0).getAddress_components().get(2).getLong_name());
-			enderecoClienteOrigem.setCep(retorno.getResults().get(0).getAddress_components().get(6).getLong_name());
-			enderecoClienteOrigem.setLogradouro(logradouro.getDescricao());
+			chamada.setCidadeOrigem(retorno.getResults().get(0).getAddress_components().get(3).getLong_name());
+			logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + chamada.getCidadeOrigem());
+			chamada.setBairroOrigem(retorno.getResults().get(0).getAddress_components().get(2).getLong_name());
+			chamada.setCepOrigem(retorno.getResults().get(0).getAddress_components().get(6).getLong_name());
+			chamada.setLogradouroOrigem(logradouro.getDescricao());
 
-			enderecoClienteOrigem.setLatitude(String.valueOf(coord.getLat()));
-			enderecoClienteOrigem.setLongitude(String.valueOf(coord.getLng()));
-			
+			chamada.setLatitudeOrigem(String.valueOf(coord.getLat()));
+			chamada.setLongitudeOrigem(String.valueOf(coord.getLng()));
+			chamada.setComplementoOrigem(null);
 
 		} catch (Exception e) {
 		}
@@ -166,30 +157,56 @@ public class ChamadaBean extends SimpleController {
 		mapModel.getMarkers().clear();
 		logradouro = new Logradouro();
 		enderecoClienteOrigem = new EnderecoCliente();
+		chamada = new Chamada();
 	}
 
 	public void logradouroSelecionado(SelectEvent event) {
 		Logradouro logSelecionado = (Logradouro) event.getObject();
-		EnderecoCliente endereco = new EnderecoCliente();
-		endereco.setLatitude(logSelecionado.getLatitude());
-		endereco.setLongitude(logSelecionado.getLongitude());
-		enderecoClienteOrigem.setBairro(logSelecionado.getBairro().getBairro());
-		enderecoClienteOrigem.setCep(logSelecionado.getCep());
-		enderecoClienteOrigem.setCidade(logSelecionado.getCidade().getCidade());
-		ajustarMarcadorMapa(endereco);
-		
+		/*
+		 * EnderecoCliente endereco = new EnderecoCliente();
+		 * endereco.setLatitude(logSelecionado.getLatitude());
+		 * endereco.setLongitude(logSelecionado.getLongitude());
+		 * enderecoClienteOrigem.setBairro(logSelecionado.getBairro().getBairro(
+		 * )); enderecoClienteOrigem.setCep(logSelecionado.getCep());
+		 * enderecoClienteOrigem.setCidade(logSelecionado.getCidade().getCidade(
+		 * )); enderecoClienteOrigem.setLatitude(logSelecionado.getLatitude());
+		 * enderecoClienteOrigem.setLongitude(logSelecionado.getLongitude());
+		 * logradouroOrigemSelecionado = logSelecionado;
+		 * ajustarMarcadorMapa(endereco);
+		 */
+		chamada.setLogradouroOrigem(logSelecionado.getDescricao());
+		chamada.setBairroOrigem(logSelecionado.getBairro().getBairro());
+		chamada.setCepOrigem(logSelecionado.getCep());
+		chamada.setCidadeOrigem(logSelecionado.getCidade().getCidade());
+		chamada.setLatitudeOrigem(logSelecionado.getLatitude());
+		chamada.setLongitudeOrigem(logSelecionado.getLongitude());
+		ajustarMarcadorMapaChamada(chamada);
+
 	}
-	
+
 	public void logradouroDestinoSelecionado(SelectEvent event) {
 		Logradouro logSelecionado = (Logradouro) event.getObject();
-		EnderecoCliente endereco = new EnderecoCliente();
-		endereco.setLatitude(logSelecionado.getLatitude());
-		endereco.setLongitude(logSelecionado.getLongitude());
-		enderecoDestinoCliente.setBairro(logSelecionado.getBairro().getBairro());
-		enderecoDestinoCliente.setCep(logSelecionado.getCep());
-		enderecoDestinoCliente.setCidade(logSelecionado.getCidade().getCidade());
-		ajustarMarcadorMapa(endereco);
-		
+		/*
+		 * EnderecoCliente endereco = new EnderecoCliente();
+		 * endereco.setLatitude(logSelecionado.getLatitude());
+		 * endereco.setLongitude(logSelecionado.getLongitude());
+		 * enderecoDestinoCliente.setBairro(logSelecionado.getBairro().getBairro
+		 * ()); enderecoDestinoCliente.setCep(logSelecionado.getCep());
+		 * enderecoDestinoCliente.setCidade(logSelecionado.getCidade().getCidade
+		 * ());
+		 * enderecoDestinoCliente.setLatitude(logSelecionado.getLatitude());
+		 * enderecoDestinoCliente.setLongitude(logSelecionado.getLongitude());
+		 * logradouroDestSelecionado = logSelecionado;
+		 * ajustarMarcadorMapa(endereco);
+		 */
+		chamada.setLogradouroDestino(logSelecionado.getDescricao());
+		chamada.setBairroDestino(logSelecionado.getBairro().getBairro());
+		chamada.setCepDestino(logSelecionado.getCep());
+		chamada.setCidadeDestino(logSelecionado.getCidade().getCidade());
+		chamada.setLatitudeDestino(logSelecionado.getLatitude());
+		chamada.setLongitudeDestino(logSelecionado.getLongitude());
+		// ajustarMarcadorMapaChamada(chamada);
+
 	}
 
 	@Override
@@ -202,7 +219,7 @@ public class ChamadaBean extends SimpleController {
 		int val = 0;
 		try {
 
-			result = listaLogradouro.stream()
+			result = getListaLogradouro().stream()
 					.filter(lo -> lo.getDescricao().toLowerCase().contains(query.toLowerCase()))
 					.collect(Collectors.toList());
 			/*
@@ -231,24 +248,17 @@ public class ChamadaBean extends SimpleController {
 	}
 
 	public void atualizarChamadas() {
-		try {
-			chamadas = ChamadaBO.getInstance().obterChamadasAbertas();
-		} catch (ExcecaoNegocio e) {
+		//try {
+			//chamadas = ChamadaBO.getInstance().obterChamadasAbertas();
+			chamadas = getListaChamadasEmEspera();
+		/*} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
-		}
+		}*/
 	}
 
 	public void pesquisarClienteDialog() {
 		try {
 			listaClientesDialog = ClienteBO.getInstance().obterClientes(nomePesquisa, null, codPesquisa);
-		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
-		}
-	}
-
-	public void carregarCaracteristicasAtivas() {
-		try {
-			listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -269,30 +279,27 @@ public class ChamadaBean extends SimpleController {
 		}
 	}
 
-	
-	public void removerChamada(Chamada chamadaRemover){
-		try{
+	public void removerChamada(Chamada chamadaRemover) {
+		try {
+			getListaChamadasEmEspera().removeIf(cha -> cha.getCodigo() == chamadaRemover.getCodigo());
 			ChamadaBO.getInstance().removerChamada(chamadaRemover);
 			atualizarChamadas();
-			addMsg(FacesMessage.SEVERITY_INFO, "Chamada removida com sucesso.");
-		}catch (ExcecaoNegocio e) {
+			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cancelada com sucesso.");
+		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void adicionarChamada() {
 		try {
 			if (cliente == null)
 				throw new ExcecaoNegocio("Nenhum cliente selecionado");
 
-			
-			
-			if(cliente.getCodigo() == null)
+			if (cliente.getCodigo() == null)
 				cliente.setCelular(numCelPesquisa);
 			chamada.setCliente(getCliente());
-			ChamadaBO.getInstance().iniciarChamada(getChamada(), enderecoClienteOrigem, enderecoClienteDestino,
-					localOrigem, getFuncionarioLogado(), listaCaracteristicasSelecionadas);
-
+			getListaChamadasEmEspera().add(ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
+					listaCaracteristicasSelecionadas));			
 			limparCampos();
 			atualizarChamadas();
 			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cadastrada.");
@@ -343,29 +350,80 @@ public class ChamadaBean extends SimpleController {
 	public void vincularCliente(Cliente cliente) {
 		this.cliente = cliente;
 		pesquisarEnderecosCliente(cliente);
-		logradouro.setLogradouroComCidade(enderecoClienteOrigem.getLogradouro() );
-		ajustarMarcadorMapa(getEnderecoClienteOrigem());
+		logradouro.setLogradouroComCidade(enderecoClienteOrigem.getLogradouro());
+		chamada.setBairroOrigem(enderecoClienteOrigem.getBairro());
+		chamada.setCepOrigem(enderecoClienteOrigem.getCep());
+		chamada.setCidadeOrigem(enderecoClienteOrigem.getCidade());
+		chamada.setComplementoOrigem(enderecoClienteOrigem.getComplemento());
+		chamada.setLatitudeOrigem(enderecoClienteOrigem.getLatitude());
+		chamada.setLogradouroOrigem(enderecoClienteOrigem.getLogradouro());
+		chamada.setLongitudeOrigem(enderecoClienteOrigem.getLongitude());
+		chamada.setNumeroOrigem(enderecoClienteOrigem.getNumero());
+		ajustarMarcadorMapaChamada(chamada);
 	}
 
 	public void vincularEnderecoCliente(EnderecoCliente enderecoCliente) {
-		setEnderecoClienteOrigem(enderecoCliente);
-	
-		ajustarMarcadorMapa(getEnderecoClienteOrigem());
+		if (isDestino) {
+			chamada.setBairroDestino(enderecoCliente.getBairro());
+			chamada.setCepDestino(enderecoCliente.getCep());
+			chamada.setCidadeDestino(enderecoCliente.getCidade());
+			chamada.setComplementoDestino(enderecoCliente.getComplemento());
+			chamada.setLatitudeDestino(enderecoCliente.getLatitude());
+			chamada.setLogradouroDestino(enderecoCliente.getLogradouro());
+			chamada.setLongitudeDestino(enderecoCliente.getLongitude());
+			chamada.setNumeroDestino(enderecoCliente.getNumero());
+			logradouroDestino = new Logradouro();
+			logradouroDestino.setDescricao(enderecoCliente.getLogradouro());
+			logradouroDestino
+					.setLogradouroComCidade(logradouroDestino.getDescricao() + " - " + chamada.getCidadeDestino());
+			setDestinoFechado(false);
+		} else {
+			chamada.setBairroOrigem(enderecoCliente.getBairro());
+			chamada.setCepOrigem(enderecoCliente.getCep());
+			chamada.setCidadeOrigem(enderecoCliente.getCidade());
+			chamada.setComplementoOrigem(enderecoCliente.getComplemento());
+			chamada.setLatitudeOrigem(enderecoCliente.getLatitude());
+			chamada.setLogradouroOrigem(enderecoCliente.getLogradouro());
+			chamada.setLongitudeOrigem(enderecoCliente.getLongitude());
+			chamada.setNumeroOrigem(enderecoCliente.getNumero());
+			// setEnderecoClienteOrigem(enderecoCliente);
+
+			ajustarMarcadorMapaChamada(chamada);
+		}
 	}
 
 	public void vincularLocal(Local local) {
 		if (isDestino) {
-			setEnderecoClienteDestino(local);
+			// setEnderecoClienteDestino(local);
+			chamada.setBairroDestino(local.getBairro());
+			chamada.setCepDestino(local.getCep());
+			chamada.setCidadeDestino(local.getCidade());
+			chamada.setComplementoDestino(local.getComplemento());
+			chamada.setLatitudeDestino(local.getLatitude());
+			chamada.setLogradouroDestino(local.getLogradouro());
+			chamada.setLongitudeDestino(local.getLongitude());
+			chamada.setNumeroDestino(local.getNumero());
+			logradouroDestino = new Logradouro();
+			logradouroDestino.setDescricao(local.getLogradouro());
+			logradouroDestino
+					.setLogradouroComCidade(logradouroDestino.getDescricao() + " - " + chamada.getCidadeDestino());
 			setDestinoFechado(false);
 		} else {
-			setEnderecoClienteOrigem(converterLocalParaEnderecoCliente(local));
-			localOrigem = local;
-			ajustarMarcadorMapa(getEnderecoClienteOrigem());
+			// setEnderecoClienteOrigem(converterLocalParaEnderecoCliente(local));
+			chamada.setBairroOrigem(local.getBairro());
+			chamada.setCepOrigem(local.getCep());
+			chamada.setCidadeOrigem(local.getCidade());
+			chamada.setComplementoOrigem(local.getComplemento());
+			chamada.setLatitudeOrigem(local.getLatitude());
+			chamada.setLogradouroOrigem(local.getLogradouro());
+			chamada.setLongitudeOrigem(local.getLongitude());
+			chamada.setNumeroOrigem(local.getNumero());
+			// localOrigem = local;
+			ajustarMarcadorMapaChamada(chamada);
 			logradouro = new Logradouro();
-			logradouro.setDescricao(localOrigem.getLogradouro());
-			logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + enderecoClienteOrigem.getCidade());
-			
-			
+			logradouro.setDescricao(local.getLogradouro());
+			logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + chamada.getCidadeOrigem());
+
 		}
 	}
 
@@ -373,6 +431,16 @@ public class ChamadaBean extends SimpleController {
 
 		Double lat = Double.parseDouble(enderecoOrigem.getLatitude());
 		Double longt = Double.parseDouble(enderecoOrigem.getLongitude());
+		Marker marker = new Marker(new org.primefaces.model.map.LatLng(lat, longt), "Origem");
+		mapModel.getMarkers().clear();
+		mapModel.addOverlay(marker);
+		coordenadas = new LatLng(lat, longt);
+	}
+
+	private void ajustarMarcadorMapaChamada(Chamada chamadaParam) {
+
+		Double lat = Double.parseDouble(chamadaParam.getLatitudeOrigem());
+		Double longt = Double.parseDouble(chamadaParam.getLongitudeOrigem());
 		Marker marker = new Marker(new org.primefaces.model.map.LatLng(lat, longt), "Origem");
 		mapModel.getMarkers().clear();
 		mapModel.addOverlay(marker);
@@ -465,13 +533,16 @@ public class ChamadaBean extends SimpleController {
 		return enderecoTemp;
 	}
 
-	
-	public void setComponenteDestino(){
+	public void controleAbaDestino(ToggleEvent event) {
+		destinoFechado = event.getVisibility() == Visibility.HIDDEN;
+	}
+
+	public void setComponenteDestino() {
 		setIsDestino(true);
 		setComponenteParaUpdate(":formConsulta:fieldDestino");
 	}
-	
-	public void setComponenteOrigem(){
+
+	public void setComponenteOrigem() {
 		setIsDestino(false);
 		setComponenteParaUpdate(":formConsulta:fieldOrigem");
 	}
@@ -548,14 +619,6 @@ public class ChamadaBean extends SimpleController {
 		this.situacaoChamadaFiltro = situacaoChamadaFiltro;
 	}
 
-	public List<Caracteristica> getListaCaracteristicas() {
-		return listaCaracteristicas;
-	}
-
-	public void setListaCaracteristicas(List<Caracteristica> listaCaracteristicas) {
-		this.listaCaracteristicas = listaCaracteristicas;
-	}
-
 	public List<Caracteristica> getListaCaracteristicasSelecionadas() {
 		return listaCaracteristicasSelecionadas;
 	}
@@ -572,14 +635,6 @@ public class ChamadaBean extends SimpleController {
 		this.logradouro = logradouro;
 	}
 
-	public List<Logradouro> getListaLogradouro() {
-		return listaLogradouro;
-	}
-
-	public void setListaLogradouro(List<Logradouro> listaLogradouro) {
-		this.listaLogradouro = listaLogradouro;
-	}
-
 	public String getComponenteParaUpdate() {
 		return componenteParaUpdate;
 	}
@@ -594,6 +649,34 @@ public class ChamadaBean extends SimpleController {
 
 	public void setEnderecoDestinoCliente(EnderecoCliente enderecoDestinoCliente) {
 		this.enderecoDestinoCliente = enderecoDestinoCliente;
+	}
+
+	public Logradouro getLogradouroDestino() {
+		return logradouroDestino;
+	}
+
+	public void setLogradouroDestino(Logradouro logradouroDestino) {
+		this.logradouroDestino = logradouroDestino;
+	}
+
+	public Logradouro getLogradouroOrigemSelecionado() {
+		return logradouroOrigemSelecionado;
+	}
+
+	public void setLogradouroOrigemSelecionado(Logradouro logradouroOrigemSelecionado) {
+		this.logradouroOrigemSelecionado = logradouroOrigemSelecionado;
+	}
+
+	public Logradouro getLogradouroDestSelecionado() {
+		return logradouroDestSelecionado;
+	}
+
+	public void setLogradouroDestSelecionado(Logradouro logradouroDestSelecionado) {
+		this.logradouroDestSelecionado = logradouroDestSelecionado;
+	}
+
+	public List<Caracteristica> obterCaracteristicas() {
+		return getListaCaracteristicasMemoria();
 	}
 
 }
