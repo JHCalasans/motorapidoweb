@@ -119,7 +119,8 @@ public class ChamadaBean extends SimpleController {
 				String[] coord = coordenadasIniciais.split(";");
 				setCoordenadas(new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1])));
 			}
-			atualizarChamadas();
+			//atualizarChamadas();
+			atualizarChamadasInicio();
 
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -237,6 +238,14 @@ public class ChamadaBean extends SimpleController {
 	public void atualizarChamadasFiltro() {
 		try {
 			chamadas = ChamadaBO.getInstance().obterChamadasFiltro(getSituacaoChamadaFiltro());
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
+	public void atualizarChamadasInicio() {
+		try {
+			chamadas = ChamadaBO.getInstance().obterChamadasFiltro(-1);
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}

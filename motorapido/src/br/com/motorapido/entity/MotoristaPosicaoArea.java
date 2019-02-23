@@ -23,6 +23,9 @@ import br.com.minhaLib.dao.Entidade;
 
 @Entity
 @Table(name = MotoristaPosicaoArea.nomeTabela, schema = MotoristaPosicaoArea.esquema, catalog = "diego")
+@NamedQueries(value = {
+		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristasPorArea", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
+				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' order by mpa.posicao asc")})
 
 public class MotoristaPosicaoArea extends Entidade{
 

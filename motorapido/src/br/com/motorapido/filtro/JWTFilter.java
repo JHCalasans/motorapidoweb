@@ -2,6 +2,8 @@ package br.com.motorapido.filtro;
 
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBanco;
+import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.bo.FuncaoBO;
+import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.JWTUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -30,10 +35,27 @@ public class JWTFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) servletRequest;
 		HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-		if (req.getRequestURI().endsWith("/login") || req.getRequestURI().endsWith("/enviarMensagem")) {
-			filterChain.doFilter(servletRequest, servletResponse);
-			return;
+		
+		try {
+			String resul = FuncaoBO.getInstance().getParam(ParametroEnum.SERVICOS_LIBERADOS_SEGURANCA);
+			List<String> servicos = Arrays.asList(resul.split(";"));
+			for(String servico : servicos){
+				if((req.getRequestURI().endsWith("/"+servico))){
+					filterChain.doFilter(servletRequest, servletResponse);
+					return;
+				}
+			}
+			/*if (req.getRequestURI().endsWith("/login") || req.getRequestURI().endsWith("/enviarMensagem") 
+					|| req.getRequestURI().endsWith("/cadastrar")) {
+				filterChain.doFilter(servletRequest, servletResponse);
+				return;
+			}*/
+		} catch (ExcecaoNegocio e) {			
+			res.setContentType("aplication/json");
+			res.setStatus(500);
+			res.getWriter().write(e.getMessage());
 		}
+		
 
 		String token = req.getHeader(JWTUtil.TOKEN_HEADER);
 

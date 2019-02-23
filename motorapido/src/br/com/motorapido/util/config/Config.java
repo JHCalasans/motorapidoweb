@@ -82,7 +82,10 @@ public class Config implements ServletContextListener {
 			//Aloca Lista de Logradouros em cache
 			SimpleController.iniciarListaLogradouros();
 			//Aloca Lista de características em cache
-			SimpleController.carregarCaracteristicasAtivas();			
+			SimpleController.carregarCaracteristicasAtivas();	
+			//Aloca em memória as chamadas que estão pendentes geral
+			SimpleController.iniciarListaChamadasEmEsperaGeral();
+			
 			
 			
 			sched.scheduleJob(job, trigger);			

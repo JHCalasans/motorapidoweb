@@ -11,14 +11,24 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
 
 @Entity
 @Table(name = ChamadaVeiculo.nomeTabela, schema = ChamadaVeiculo.esquema, catalog = "diego")
+@NamedQueries(value = {
+		@NamedQuery(name = "ChamadaVeiculo.obterHistoricoMotorista", query = "select cv from ChamadaVeiculo cv join fetch cv.chamada ch join fetch ch.situacaoChamada sch "
+				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
+				+ " where cv.veiculo.motorista.codigo = :codMotorista and  ch.situacaoChamada.codigo in (6,1)"
+				+ " and cv.flgUltimoMovimento = 'S'")
+		})
+@XmlRootElement
 public class ChamadaVeiculo extends Entidade{
 
 
@@ -41,6 +51,11 @@ public class ChamadaVeiculo extends Entidade{
 	@Column(name = "dt_hora_recebimento", nullable = true)
 	private Date dataRecebimento;
 		
+	@Column(name = "flg_aceita", nullable = false)
+	private String flgAceita;
+	
+	@Column(name = "flg_ultimo_movimento", nullable = false)
+	private String flgUltimoMovimento;
 	
 	@ManyToOne(fetch = FetchType.LAZY )
 	@JoinColumn(name = "cod_veiculo", nullable = false)
@@ -96,6 +111,22 @@ public class ChamadaVeiculo extends Entidade{
 
 	public void setChamada(Chamada chamada) {
 		this.chamada = chamada;
+	}
+
+	public String getFlgAceita() {
+		return flgAceita;
+	}
+
+	public void setFlgAceita(String flgAceita) {
+		this.flgAceita = flgAceita;
+	}
+
+	public String getFlgUltimoMovimento() {
+		return flgUltimoMovimento;
+	}
+
+	public void setFlgUltimoMovimento(String flgUltimoMovimento) {
+		this.flgUltimoMovimento = flgUltimoMovimento;
 	}
 
 }

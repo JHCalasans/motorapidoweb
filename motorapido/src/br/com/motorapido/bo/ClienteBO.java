@@ -76,6 +76,7 @@ public class ClienteBO extends MotoRapidoBO {
 		}
 	}
 	
+
 	
 	
 	public Cliente obterClienteByExample(Cliente cliente) throws ExcecaoNegocio {
@@ -200,5 +201,7 @@ public class ClienteBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
+	
+	
 
 }

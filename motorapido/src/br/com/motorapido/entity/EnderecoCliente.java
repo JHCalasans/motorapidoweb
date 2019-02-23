@@ -12,9 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
+@XmlRootElement
 @Entity
 @Table(name = EnderecoCliente.nomeTabela, schema = EnderecoCliente.esquema, catalog = "diego")
 public class EnderecoCliente extends Entidade{

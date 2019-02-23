@@ -11,15 +11,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
+@XmlRootElement
 @Entity
 @Table(name = Perfil.nomeTabela, schema = Perfil.esquema, catalog = "diego")
 @NamedQueries(value = { 
 		@NamedQuery(name = "Perfil.obterPerfis", query = "select p from Perfil p where (:desc is null or p.descricao like '%' || :desc || '%' ) and ( :ativo is null or p.ativo = :ativo) and"
 				+ " ( :acesso is null or p.acessaSistema = :acesso )")
 		})
+
 public class Perfil extends Entidade{
 
 
@@ -46,6 +49,10 @@ public class Perfil extends Entidade{
 	@Override
 	public Serializable getIdentificador() {
 		return getCodigo();
+	}
+	
+	public Perfil(){
+		
 	}
 
 	public Integer getCodigo() {

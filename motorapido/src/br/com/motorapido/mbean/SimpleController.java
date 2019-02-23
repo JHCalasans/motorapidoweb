@@ -31,6 +31,7 @@ import com.sun.faces.component.visit.FullVisitContext;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.FacesUtil;
 import br.com.motorapido.bo.CaracteristicaBO;
+import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.LogradouroBO;
 import br.com.motorapido.dao.FabricaDAO;
 import br.com.motorapido.entity.Caracteristica;
@@ -38,6 +39,7 @@ import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
+import br.com.motorapido.enums.SituacaoChamadaEnum;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.Paginas;
 
@@ -83,6 +85,24 @@ public abstract class SimpleController implements Serializable {
 	public static void iniciarListaLogradouros() {
 		try {
 			listaLogradouro = LogradouroBO.getInstance().obterLogradourosPorEstados("SE");
+			/*
+			 * for (Logradouro logradouro : listaLogradouro) {
+			 * autoComplete.add(logradouro.getDescricao()); }
+			 */
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+
+	}
+	
+	public static void iniciarListaChamadasEmEsperaGeral() {
+		try {
+			
+			if(listaChamadasEmEsperaGeral != null)
+				listaChamadasEmEsperaGeral.clear();
+			
+			listaChamadasEmEsperaGeral = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.PENDENTE_GERAL.getCodSituacao());
+						
 			/*
 			 * for (Logradouro logradouro : listaLogradouro) {
 			 * autoComplete.add(logradouro.getDescricao()); }

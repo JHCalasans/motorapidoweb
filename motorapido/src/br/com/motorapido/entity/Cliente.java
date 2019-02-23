@@ -10,11 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
 
-
+@XmlRootElement
 @Entity
 @Table(name = Cliente.nomeTabela, schema = Cliente.esquema, catalog = "diego")
 //@NamedQueries(value = { 

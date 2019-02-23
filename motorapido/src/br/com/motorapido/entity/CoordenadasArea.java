@@ -32,13 +32,13 @@ public class CoordenadasArea extends Entidade{
 	private Integer codigo;
 	
 	@Column(name = "latitude", nullable = false)
-	private double latitude;
+	private Double latitude;
 
 	@Column(name = "longitude", nullable = false)
-	private double longitude;
+	private Double longitude;
 	
 	@Column(name = "ordem", nullable = false)
-	private int ordem;
+	private Integer ordem;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cod_area", nullable = false, referencedColumnName = "cod_area")
@@ -67,7 +67,7 @@ public class CoordenadasArea extends Entidade{
 	}
 
 
-	public void setLatitude(double latitude) {
+	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
 	}
 
@@ -77,7 +77,7 @@ public class CoordenadasArea extends Entidade{
 	}
 
 
-	public void setLongitude(double longitude) {
+	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
 
@@ -87,7 +87,7 @@ public class CoordenadasArea extends Entidade{
 	}
 
 
-	public void setOrdem(int ordem) {
+	public void setOrdem(Integer ordem) {
 		this.ordem = ordem;
 	}
 

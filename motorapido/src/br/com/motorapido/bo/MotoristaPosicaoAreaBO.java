@@ -1,5 +1,6 @@
 package br.com.motorapido.bo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,26 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área cadastrada");
 
 		return areaOrigem;
+
+	}
+	
+	public List<MotoristaPosicaoArea> obterMotoristasPorArea(Area area)
+			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea {
+	
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
+			List<MotoristaPosicaoArea> lista = motoristaPosicaoAreaDAO.obterMotoristasPorArea(area, em);			
+			return lista;
+			
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter posição na área do motorista.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
 
 	}
 

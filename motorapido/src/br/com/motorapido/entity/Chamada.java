@@ -15,6 +15,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.minhaLib.dao.Entidade;
 
@@ -23,10 +25,11 @@ import br.com.minhaLib.dao.Entidade;
 @NamedQueries(value = {
 		@NamedQuery(name = "Chamada.obterChamadasAbertas", query = "select ch from Chamada ch join fetch ch.situacaoChamada sc left join fetch ch.cliente cl"
 				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
-				+ " where ch.situacaoChamada.codigo in (2,3,4,5)"),
+				+ " where ch.situacaoChamada.codigo in (2,3,5)"),
 		@NamedQuery(name = "Chamada.obterChamadasFiltro", query = "select ch from Chamada ch join fetch ch.situacaoChamada sc left join fetch ch.cliente cl"
 				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
-				+ " where ch.situacaoChamada.codigo = :codSituacao")})
+				+ " where (:codSituacao = -1 or ch.situacaoChamada.codigo = :codSituacao)")})
+@XmlRootElement
 public class Chamada extends Entidade {
 
 	private static final long serialVersionUID = 5895083303813489402L;
@@ -112,73 +115,55 @@ public class Chamada extends Entidade {
 	@Column(name = "longitude_destino")
 	private String longitudeDestino; 
 
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_usuario", nullable = true)
-	private Usuario usuario;
-
+	private Usuario usuario;	
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_funcionario", nullable = true)
 	private Funcionario funcionario;
 
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_local_destino", nullable = true, referencedColumnName = "cod_local")
 	private Local destino;
 
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_local_origem", nullable = true, referencedColumnName = "cod_local")
 	private Local origem;
 
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_endereco_cliente_origem", nullable = true, referencedColumnName = "cod_endereco_cliente")
+	@JoinColumn(name = "cod_endereco_cliente_origem", nullable = true, referencedColumnName = "cod_endereco_cliente")	
 	private EnderecoCliente enderecoClienteOrigem;
 
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_situacao_chamada", nullable = false)
+	@JoinColumn(name = "cod_situacao_chamada", nullable = false)	
 	private SituacaoChamada situacaoChamada;
 
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_cliente", nullable = true)
 	private Cliente cliente;		
 	
-/*	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_logradouro_origem", nullable = true, referencedColumnName = "cod_logradouro")
-	private Logradouro logradouroOrigem;	*/
-	
-	/*@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_logradouro_destino", nullable = true, referencedColumnName = "cod_logradouro")
-	private Logradouro logradouroDestino;	*/
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cod_area", nullable = true)
+	private Area area;		
 
 	
-
-/*	public Logradouro getLogradouroOrigem() {
-		return logradouroOrigem;
+	public Chamada(){
+		
 	}
-
-	public void setLogradouroOrigem(Logradouro logradouroOrigem) {
-		this.logradouroOrigem = logradouroOrigem;
-	}*/
-
-	/*public Logradouro getLogradouroDestino() {
-		return logradouroDestino;
-	}
-
-	public void setLogradouroDestino(Logradouro logradouroDestino) {
-		this.logradouroDestino = logradouroDestino;
-	}
-*/
 	@Override
 	public Serializable getIdentificador() {
 
 		return getCodigo();
 	}
 
-	public SituacaoChamada getSituacaoChamada() {
-		return situacaoChamada;
-	}
-
-	public void setSituacaoChamada(SituacaoChamada situacaoChamada) {
-		this.situacaoChamada = situacaoChamada;
-	}
+	
 
 	public Integer getCodigo() {
 		return codigo;
@@ -236,6 +221,15 @@ public class Chamada extends Entidade {
 		this.pontosUsuario = pontosUsuario;
 	}
 
+	@XmlTransient
+	public SituacaoChamada getSituacaoChamada() {
+		return situacaoChamada;
+	}
+
+	public void setSituacaoChamada(SituacaoChamada situacaoChamada) {
+		this.situacaoChamada = situacaoChamada;
+	}
+	
 	public Usuario getUsuario() {
 		return usuario;
 	}
@@ -244,6 +238,7 @@ public class Chamada extends Entidade {
 		this.usuario = usuario;
 	}
 
+	@XmlTransient
 	public Funcionario getFuncionario() {
 		return funcionario;
 	}
@@ -252,13 +247,6 @@ public class Chamada extends Entidade {
 		this.funcionario = funcionario;
 	}
 
-	public String getObservacao() {
-		return observacao;
-	}
-
-	public void setObservacao(String observacao) {
-		this.observacao = observacao;
-	}
 
 	public Local getDestino() {
 		return destino;
@@ -305,6 +293,14 @@ public class Chamada extends Entidade {
 */
 	}
 
+	
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
 	public String getCepOrigem() {
 		return cepOrigem;
 	}
@@ -439,6 +435,14 @@ public class Chamada extends Entidade {
 
 	public void setDataCancelamento(Date dataCancelamento) {
 		this.dataCancelamento = dataCancelamento;
+	}
+	
+	@XmlTransient
+	public Area getArea() {
+		return area;
+	}
+	public void setArea(Area area) {
+		this.area = area;
 	}
 
 }

@@ -18,13 +18,17 @@ import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.MensagemMotoristaFuncionarioBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
+import br.com.motorapido.entity.Chamada;
+import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
+import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.ws.params.MensagemParam;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
 import br.com.motorapido.util.ws.retornos.Message;
+import br.com.motorapido.util.ws.retornos.RetornoHistoricoMotorista;
 import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 import jersey.repackaged.com.google.common.collect.Lists;
 
@@ -177,7 +181,50 @@ public class MotoristaWS  {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar enviar mensagem").build();
 		}
 	}
+	
+	
+	
+	@GET
+	@Path("/buscarChamadasPendentes")
+	public Response buscarChamadasPendentes() {
+		try {
+			
+		    List<Chamada> chamadas = new ArrayList<Chamada>();
+		    chamadas.addAll(SimpleController.getListaChamadasEmEsperaGeral());
+		  /*  for(Chamada chamada : chamadas){
+		    	chamada.setFuncionario(null);
+		    }
+		*/
+			GenericEntity<List<Chamada>> entidade = new GenericEntity<List<Chamada>>(chamadas) {
+			};
+			
+		
+			return Response.status(Status.OK).entity(entidade).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter chamadas pendentes").build();
+		}
+		
+	}
+	
+	@POST
+	@Path("/buscarHistorico")
+	public Response buscarHistorico(String codMotorista) {
+		try {
+			
+		    List<RetornoHistoricoMotorista> chamadas = MotoristaBO.getInstance().obterHistoricoMotorista(Integer.parseInt(codMotorista));		   
+		
+			GenericEntity<List<RetornoHistoricoMotorista>> entidade = new GenericEntity<List<RetornoHistoricoMotorista>>(chamadas) {
+			};
+					
+			return Response.status(Status.OK).entity(entidade).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter histórico do motorista").build();
+		}
+		
+	}
 
-
+	
 
 }

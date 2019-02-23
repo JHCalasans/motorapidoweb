@@ -20,8 +20,12 @@ import com.google.maps.model.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.AreaBO;
+import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.CoordenadasArea;
+import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.MotoristaPosicaoArea;
+import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.ExcecoesUtil;
 
@@ -45,12 +49,16 @@ public class AreaBean extends SimpleController {
 	private Area areaAlterar;
 	
 	private Area areaExcluir;
+	
+	private String  nomeAreaMotoristas;
 
 	private Boolean mostrarMapa = false;
 
 	private List<CoordenadasArea> areasCadastradas;
 	
 	private List<CoordenadasAreaUtil> listaArea;
+	
+	private List<MotoristaPosicaoArea> listaMotoristasArea;
 
 	@PostConstruct
 	public void carregar() {
@@ -78,6 +86,17 @@ public class AreaBean extends SimpleController {
 	public void abrirAlterar(Area param){
 		areaAlterar = param;
 		enviarJavascript("PF('dlgAlterarArea').show();");
+	}
+	
+	public void mostrarMotoristasArea(Area param){
+		try {
+			listaMotoristasArea = MotoristaPosicaoAreaBO.getInstance().obterMotoristasPorArea(param);
+			nomeAreaMotoristas = param.getDescricao();
+			enviarJavascript("PF('dlgMotoArea').show();");
+		} catch (ExcecaoNegocio | ExcecaoMotoristaPosicaoArea e) {			
+			ExcecoesUtil.TratarExcecao(e);
+		}
+		
 	}
 	
 	public void abrirExcluir(Area param){
@@ -285,6 +304,22 @@ public class AreaBean extends SimpleController {
 
 	public void setAreaExcluir(Area areaExcluir) {
 		this.areaExcluir = areaExcluir;
+	}
+
+	public List<MotoristaPosicaoArea> getListaMotoristasArea() {
+		return listaMotoristasArea;
+	}
+
+	public void setListaMotoristasArea(List<MotoristaPosicaoArea> listaMotoristasArea) {
+		this.listaMotoristasArea = listaMotoristasArea;
+	}
+
+	public String getNomeAreaMotoristas() {
+		return nomeAreaMotoristas;
+	}
+
+	public void setNomeAreaMotoristas(String nomeAreaMotoristas) {
+		this.nomeAreaMotoristas = nomeAreaMotoristas;
 	}
 
 	

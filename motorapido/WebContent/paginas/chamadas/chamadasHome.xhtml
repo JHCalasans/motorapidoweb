@@ -204,8 +204,8 @@
 
 
 						<!-- 	Filedset Destino    -->
-						<p:fieldset legend="Destino" toggleable="true" toggleSpeed="600"
-							collapsed="#{chamadaBean.destinoFechado}" id="fieldDestino">
+						<p:fieldset legend="Destino" toggleable="false" toggleSpeed="600"
+							collapsed="false" id="fieldDestino">
 							<p:ajax event="toggle" listener="#{chamadaBean.controleAbaDestino}"/>
 
 							<div class="clear"></div>
@@ -361,9 +361,10 @@
 					<f:selectItem itemLabel="TODAS" itemValue="-1" />
 					<f:selectItem itemLabel="CANCELADA" itemValue="1" />
 					<f:selectItem itemLabel="PENDENTE" itemValue="2" />
-					<f:selectItem itemLabel="REJEITADA" itemValue="3" />
-					<f:selectItem itemLabel="ACEITA" itemValue="4" />
-					<f:selectItem itemLabel="EXPIRADA" itemValue="5" />
+					<f:selectItem itemLabel="ACEITA" itemValue="3" />
+					<f:selectItem itemLabel="EXPIRADA" itemValue="4" />
+					<f:selectItem itemLabel="PENDENTE GERAL" itemValue="5" />
+					<f:selectItem itemLabel="FINALIZADA" itemValue="6" />
 
 					<p:ajax event="change"
 						listener="#{chamadaBean.atualizarChamadasFiltro()}"

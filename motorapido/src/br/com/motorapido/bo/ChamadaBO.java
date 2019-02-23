@@ -17,6 +17,7 @@ import br.com.motorapido.dao.IMensagemFuncionarioDAO;
 import br.com.motorapido.dao.IMensagemFuncionarioMotoristaDAO;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
+import br.com.motorapido.dao.ISituacaoChamadaDAO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
@@ -96,7 +97,8 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamada.setDataCriacao(new Date());
 			chamada.setFuncionario(funcionario);
 			SituacaoChamada situacaChamada = new SituacaoChamada();
-			situacaChamada.setCodigo(SituacaoChamadaEnum.PENDENTE.getCodSituacao());
+			ISituacaoChamadaDAO situacaoChamadaDAO = fabricaDAO.getPostgresSituacaoChamadaDAO();
+			situacaChamada = situacaoChamadaDAO.findById(SituacaoChamadaEnum.PENDENTE.getCodSituacao(), em);
 			chamada.setSituacaoChamada(situacaChamada);
 
 			chamada = chamadaDAO.save(chamada, em);

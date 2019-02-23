@@ -1,12 +1,19 @@
 package br.com.motorapido.dao.impl.postgres;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import br.com.minhaLib.dao.CriterioOrdenacao;
 import br.com.minhaLib.dao.impl.GenericDAOImpl;
+import br.com.minhaLib.excecao.excecaobanco.ExcecaoBanco;
+import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
 import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
+import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 
 @PersistenceContext(unitName = "postgresPU")
@@ -28,6 +35,13 @@ implements IMotoristaPosicaoAreaDAO{
 		//Query q = em.createNativeQuery(sql);
 		
 		return  (Integer)sql.getSingleResult();
+	}
+
+	@Override
+	public List<MotoristaPosicaoArea> obterMotoristasPorArea(Area area, EntityManager em) throws ExcecaoBancoConexao, ExcecaoBanco {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codArea", area.getCodigo());
+		return findByNamedQueryAndNamedParams("MotoristaPosicaoArea.obterMotoristasPorArea", params, em);
 	}
 	
 	

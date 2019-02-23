@@ -8,9 +8,10 @@ public enum SituacaoChamadaEnum implements IEnum {
 	
 	CANCELADA(1, "CANCELADA"),
 	PENDENTE(2,"PENDENTE"),
-	REJEITADA(3,"REJEITADA"),
-	ACEITA(4,"ACEITA"),
-	EXPIRADA(5,"EXPIRADA")
+	ACEITA(3,"ACEITA"),
+	EXPIRADA(4,"EXPIRADA"),
+	PENDENTE_GERAL(5,"PENDENTE_GERAL"),
+	FINALIZADA(6,"FINALIZADA")
 	;
 	private final int codSituacao;
 	private final String descricao;

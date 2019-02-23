@@ -87,6 +87,9 @@ public class AreaBO extends MotoRapidoBO {
 			ICoordenadasAreaDAO coordenadasAreaDAO = fabricaDAO.getPostgresCoordenadasAreaDAO();
 			CoordenadasArea coordenadas = new CoordenadasArea();
 			coordenadas.setArea(area);
+			coordenadas.setLatitude(null);
+			coordenadas.setLongitude(null);
+			coordenadas.setOrdem(null);
 			List<CoordenadasArea> resultado = coordenadasAreaDAO.findByExample(coordenadas, em);
 			coordenadasAreaDAO.deleteLista(resultado, em);
 			areaDAO.delete(area, em);

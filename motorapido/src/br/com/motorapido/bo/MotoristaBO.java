@@ -1,5 +1,6 @@
 package br.com.motorapido.bo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.persistence.EntityTransaction;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IBloqueioMotoristaDAO;
 import br.com.motorapido.dao.ICaracteristicaMotoristaDAO;
+import br.com.motorapido.dao.IChamadaVeiculoDAO;
 import br.com.motorapido.dao.IFuncionarioDAO;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.dao.IMotoristaDAO;
@@ -16,6 +18,7 @@ import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
 import br.com.motorapido.entity.BloqueioMotorista;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.CaracteristicaMotorista;
+import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
@@ -24,6 +27,7 @@ import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
+import br.com.motorapido.util.ws.retornos.RetornoHistoricoMotorista;
 
 public class MotoristaBO extends MotoRapidoBO {
 
@@ -423,6 +427,33 @@ public class MotoristaBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar obter motorista.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	
+	public List<RetornoHistoricoMotorista> obterHistoricoMotorista(Integer codigo) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IChamadaVeiculoDAO chamadaVeiculoDAO = fabricaDAO.getPostgresChamadaVeiculoDAO();
+			List<ChamadaVeiculo> lista = chamadaVeiculoDAO.obterHistoricoMotorista(codigo, em);
+			List<RetornoHistoricoMotorista> retorno = new ArrayList<RetornoHistoricoMotorista>();
+			for(ChamadaVeiculo chamadaVei : lista){
+				RetornoHistoricoMotorista retHistorico = new RetornoHistoricoMotorista();
+				retHistorico.setDataChamada(chamadaVei.getChamada().getDataInicioCorrida());
+				retHistorico.setPlaca(chamadaVei.getVeiculo().getPlaca());
+				retHistorico.setSituacao(chamadaVei.getChamada().getSituacaoChamada().getDescricao());
+				retHistorico.setTipoVeiculo(chamadaVei.getVeiculo().getModelo().getTipoVeiculo().getDescricao());
+				retorno.add(retHistorico);
+			}
+			emUtil.commitTransaction(transaction);
+			return retorno;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter histórico do motorista.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}

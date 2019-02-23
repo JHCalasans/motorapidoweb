@@ -16,9 +16,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.minhaLib.dao.Entidade;
 
+@XmlRootElement
 @Entity
 @Table(name = Funcionario.nomeTabela, schema = Funcionario.esquema, catalog = "diego")
 @NamedQueries(value = { 
@@ -104,8 +108,8 @@ public class Funcionario extends Entidade{
 	@Column(name = "dt_nascimento", nullable = false)
 	private Date dataNascimento;
 	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_perfil", nullable = false, referencedColumnName = "cod_perfil")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cod_perfil", nullable = false, referencedColumnName = "cod_perfil")	
 	private Perfil perfil;
 
 

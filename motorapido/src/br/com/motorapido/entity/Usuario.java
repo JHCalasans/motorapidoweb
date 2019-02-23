@@ -10,10 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
-
+@XmlRootElement
 @Entity
 @Table(name = Usuario.nomeTabela, schema = Usuario.esquema, catalog = "diego")
 public class Usuario extends Entidade{
@@ -39,13 +40,16 @@ public class Usuario extends Entidade{
 	private String senha;
 	
 	@Column(name = "flg_ativo", nullable = false)
-	private boolean ativo;
+	private String ativo;
 	
 	@Column(name = "dt_criacao", nullable = false)
 	private Date dataCriacao;
 	
 	@Column(name = "dt_desativacao", nullable = true)
 	private Date dataDesativacao;
+	
+	@Column(name = "email", nullable = true)
+	private String email;
 
 	
 	@Override
@@ -94,12 +98,12 @@ public class Usuario extends Entidade{
 	}
 
 
-	public boolean isAtivo() {
+	public String isAtivo() {
 		return ativo;
 	}
 
 
-	public void setAtivo(boolean ativo) {
+	public void setAtivo(String ativo) {
 		this.ativo = ativo;
 	}
 
@@ -126,6 +130,16 @@ public class Usuario extends Entidade{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

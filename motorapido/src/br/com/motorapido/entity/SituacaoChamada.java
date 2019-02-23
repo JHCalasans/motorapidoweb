@@ -10,10 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
-
+@XmlRootElement
 @Entity
 @Table(name = SituacaoChamada.nomeTabela, schema = SituacaoChamada.esquema, catalog = "diego")
 public class SituacaoChamada extends Entidade{
