@@ -14,5 +14,7 @@ public interface IChamadaDAO extends GenericDAO<Chamada, Integer> {
 	public List<Chamada> obterChamadasAbertas(EntityManager em) throws ExcecaoBanco,ExcecaoNegocio;
 	
 	public List<Chamada> obterChamadasFiltro(Integer codSituacao, EntityManager em) throws ExcecaoBanco,ExcecaoNegocio;
+	
+	public List<Chamada> obterHistoricoUsuario(Integer codUsuario, EntityManager em) throws ExcecaoBanco,ExcecaoNegocio;
 
 }

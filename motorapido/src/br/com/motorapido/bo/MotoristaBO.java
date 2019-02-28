@@ -232,8 +232,13 @@ public class MotoristaBO extends MotoRapidoBO {
 					motoristaAparelhoDAO.save(motoristaAparelho, em);
 				}
 
+				//Chave de segurança para uso dos ws
 				String chave = FuncoesUtil.getParam(ParametroEnum.CHAVE_SEGURANCA.getCodigo(), em);
 				motorista.setChaveServicos(JWTUtil.create(motorista.getLogin(), chave));
+				
+				//Chave para uso do google maps
+				String chaveGoogle = FuncoesUtil.getParam(ParametroEnum.CHAVE_SEGURANCA.getCodigo(), em);
+				motorista.setChaveGoogle(chaveGoogle);
 
 				emUtil.commitTransaction(transaction);
 			} else
@@ -447,6 +452,7 @@ public class MotoristaBO extends MotoRapidoBO {
 				retHistorico.setPlaca(chamadaVei.getVeiculo().getPlaca());
 				retHistorico.setSituacao(chamadaVei.getChamada().getSituacaoChamada().getDescricao());
 				retHistorico.setTipoVeiculo(chamadaVei.getVeiculo().getModelo().getTipoVeiculo().getDescricao());
+				retHistorico.setDestino(chamadaVei.getChamada().getLogradouroDestino() + " - " + chamadaVei.getChamada().getBairroDestino());
 				retorno.add(retHistorico);
 			}
 			emUtil.commitTransaction(transaction);

@@ -76,6 +76,8 @@ public abstract class FabricaDAO {
 	public abstract ILogradouroDAO getPostgresLogradouroDAO();
 	
 	public abstract IUsuarioDAO getPostgresUsuarioDAO();
+	
+	public abstract IUsuarioAparelhoDAO getPostgresUsuarioAparelhoDAO();
 
 
 	/**

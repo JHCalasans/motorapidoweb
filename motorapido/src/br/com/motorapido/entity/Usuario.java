@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
@@ -50,6 +51,15 @@ public class Usuario extends Entidade{
 	
 	@Column(name = "email", nullable = true)
 	private String email;
+	
+	@Column(name = "num_telefone", nullable = true)
+	private String numeroTelefone;
+	
+	@Transient
+	private String chaveServicos;
+	
+	@Transient
+	private String idPush;
 
 	
 	@Override
@@ -140,6 +150,41 @@ public class Usuario extends Entidade{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+
+	public String getNumeroTelefone() {
+		return numeroTelefone;
+	}
+
+
+	public void setNumeroTelefone(String numeroTelefone) {
+		this.numeroTelefone = numeroTelefone;
+	}
+
+
+	public String getChaveServicos() {
+		return chaveServicos;
+	}
+
+
+	public void setChaveServicos(String chaveServicos) {
+		this.chaveServicos = chaveServicos;
+	}
+
+
+	public String getIdPush() {
+		return idPush;
+	}
+
+
+	public void setIdPush(String idPush) {
+		this.idPush = idPush;
+	}
+
+
+	public String getAtivo() {
+		return ativo;
 	}
 
 }

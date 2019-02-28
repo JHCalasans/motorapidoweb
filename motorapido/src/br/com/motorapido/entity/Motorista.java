@@ -127,7 +127,8 @@ public class Motorista extends Entidade{
 	@Transient
 	private String idPush;
 	
-	
+	@Transient
+	private String chaveGoogle;
 
 	@Override
 	public Serializable getIdentificador() {
@@ -424,6 +425,16 @@ public class Motorista extends Entidade{
 
 	public void setIdPush(String idPush) {
 		this.idPush = idPush;
+	}
+
+
+	public String getChaveGoogle() {
+		return chaveGoogle;
+	}
+
+
+	public void setChaveGoogle(String chaveGoogle) {
+		this.chaveGoogle = chaveGoogle;
 	}
 
 

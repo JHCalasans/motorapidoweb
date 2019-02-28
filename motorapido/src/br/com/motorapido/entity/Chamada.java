@@ -28,7 +28,11 @@ import br.com.minhaLib.dao.Entidade;
 				+ " where ch.situacaoChamada.codigo in (2,3,5)"),
 		@NamedQuery(name = "Chamada.obterChamadasFiltro", query = "select ch from Chamada ch join fetch ch.situacaoChamada sc left join fetch ch.cliente cl"
 				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
-				+ " where (:codSituacao = -1 or ch.situacaoChamada.codigo = :codSituacao)")})
+				+ " where (:codSituacao = -1 or ch.situacaoChamada.codigo = :codSituacao)"),
+		@NamedQuery(name = "Chamada.obterHistoricoUsuario", query = "select c from Chamada c join fetch c.situacaoChamada sch "
+				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
+				+ " where c.usuario.codigo = :codUsuario and  ch.situacaoChamada.codigo in (6,1)"
+				+ " and cv.flgUltimoMovimento = 'S'") })
 @XmlRootElement
 public class Chamada extends Entidade {
 
@@ -51,7 +55,7 @@ public class Chamada extends Entidade {
 
 	@Column(name = "dt_inicio_corrida", nullable = true)
 	private Date dataInicioCorrida;
-	
+
 	@Column(name = "dt_cancelamento", nullable = true)
 	private Date dataCancelamento;
 
@@ -66,104 +70,99 @@ public class Chamada extends Entidade {
 
 	@Column(name = "observacao", nullable = true)
 	private String observacao;
-	
-	@Column(name = "cep_origem", nullable = false)
-	private String cepOrigem; 
-	
-	@Column(name = "bairro_origem", nullable = false)
-	private String bairroOrigem; 
-	
-	@Column(name = "cidade_origem", nullable = false)
-	private String cidadeOrigem; 
-	
-	@Column(name = "logradouro_origem", nullable = false)
-	private String logradouroOrigem; 
-	
-	@Column(name = "numero_origem")
-	private String numeroOrigem; 
-	
-	@Column(name = "complemento_origem")
-	private String complementoOrigem; 
-	
-	@Column(name = "latitude_origem")
-	private String latitudeOrigem; 
-	
-	@Column(name = "longitude_origem")
-	private String longitudeOrigem; 
-	
-	@Column(name = "cep_destino")
-	private String cepDestino; 
-	
-	@Column(name = "bairro_destino")
-	private String bairroDestino; 
-	
-	@Column(name = "cidade_destino")
-	private String cidadeDestino; 
-	
-	@Column(name = "logradouro_destino")
-	private String logradouroDestino; 
-	
-	@Column(name = "numero_destino")
-	private String numeroDestino; 
-	
-	@Column(name = "complemento_destino")
-	private String complementoDestino; 
-	
-	@Column(name = "latitude_destino")
-	private String latitudeDestino; 
-	
-	@Column(name = "longitude_destino")
-	private String longitudeDestino; 
 
-	
+	@Column(name = "cep_origem", nullable = false)
+	private String cepOrigem;
+
+	@Column(name = "bairro_origem", nullable = false)
+	private String bairroOrigem;
+
+	@Column(name = "cidade_origem", nullable = false)
+	private String cidadeOrigem;
+
+	@Column(name = "logradouro_origem", nullable = false)
+	private String logradouroOrigem;
+
+	@Column(name = "numero_origem")
+	private String numeroOrigem;
+
+	@Column(name = "complemento_origem")
+	private String complementoOrigem;
+
+	@Column(name = "latitude_origem")
+	private String latitudeOrigem;
+
+	@Column(name = "longitude_origem")
+	private String longitudeOrigem;
+
+	@Column(name = "cep_destino")
+	private String cepDestino;
+
+	@Column(name = "bairro_destino")
+	private String bairroDestino;
+
+	@Column(name = "cidade_destino")
+	private String cidadeDestino;
+
+	@Column(name = "logradouro_destino")
+	private String logradouroDestino;
+
+	@Column(name = "numero_destino")
+	private String numeroDestino;
+
+	@Column(name = "complemento_destino")
+	private String complementoDestino;
+
+	@Column(name = "latitude_destino")
+	private String latitudeDestino;
+
+	@Column(name = "longitude_destino")
+	private String longitudeDestino;
+
+	@Column(name = "valor_Final")
+	private Float valorFinal;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_usuario", nullable = true)
-	private Usuario usuario;	
-	
+	private Usuario usuario;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_funcionario", nullable = true)
 	private Funcionario funcionario;
 
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_local_destino", nullable = true, referencedColumnName = "cod_local")
 	private Local destino;
 
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_local_origem", nullable = true, referencedColumnName = "cod_local")
 	private Local origem;
 
-	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_endereco_cliente_origem", nullable = true, referencedColumnName = "cod_endereco_cliente")	
+	@JoinColumn(name = "cod_endereco_cliente_origem", nullable = true, referencedColumnName = "cod_endereco_cliente")
 	private EnderecoCliente enderecoClienteOrigem;
 
-	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cod_situacao_chamada", nullable = false)	
+	@JoinColumn(name = "cod_situacao_chamada", nullable = false)
 	private SituacaoChamada situacaoChamada;
 
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_cliente", nullable = true)
-	private Cliente cliente;		
-	
+	private Cliente cliente;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_area", nullable = true)
-	private Area area;		
+	private Area area;
 
-	
-	public Chamada(){
-		
+	public Chamada() {
+
 	}
+
 	@Override
 	public Serializable getIdentificador() {
 
 		return getCodigo();
 	}
-
-	
 
 	public Integer getCodigo() {
 		return codigo;
@@ -229,7 +228,7 @@ public class Chamada extends Entidade {
 	public void setSituacaoChamada(SituacaoChamada situacaoChamada) {
 		this.situacaoChamada = situacaoChamada;
 	}
-	
+
 	public Usuario getUsuario() {
 		return usuario;
 	}
@@ -246,7 +245,6 @@ public class Chamada extends Entidade {
 	public void setFuncionario(Funcionario funcionario) {
 		this.funcionario = funcionario;
 	}
-
 
 	public Local getDestino() {
 		return destino;
@@ -281,19 +279,17 @@ public class Chamada extends Entidade {
 	}
 
 	public String getEnderecoFormatado() {
-		
+
 		return getLogradouroOrigem() + "; " + getBairroOrigem() + "; " + getComplementoOrigem();
 		/*
-		if (origem != null)
-			return origem.getLogradouro() + "; " + origem.getBairro() + "; " 
-					+ origem.getComplemento();
-		else
-			return enderecoClienteOrigem.getLogradouro() + "; " + enderecoClienteOrigem.getBairro() + "; "
-					 + enderecoClienteOrigem.getComplemento();
-*/
+		 * if (origem != null) return origem.getLogradouro() + "; " +
+		 * origem.getBairro() + "; " + origem.getComplemento(); else return
+		 * enderecoClienteOrigem.getLogradouro() + "; " +
+		 * enderecoClienteOrigem.getBairro() + "; " +
+		 * enderecoClienteOrigem.getComplemento();
+		 */
 	}
 
-	
 	public String getObservacao() {
 		return observacao;
 	}
@@ -301,6 +297,7 @@ public class Chamada extends Entidade {
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
+
 	public String getCepOrigem() {
 		return cepOrigem;
 	}
@@ -436,13 +433,22 @@ public class Chamada extends Entidade {
 	public void setDataCancelamento(Date dataCancelamento) {
 		this.dataCancelamento = dataCancelamento;
 	}
-	
+
 	@XmlTransient
 	public Area getArea() {
 		return area;
 	}
+
 	public void setArea(Area area) {
 		this.area = area;
+	}
+
+	public Float getValorFinal() {
+		return valorFinal;
+	}
+
+	public void setValorFinal(Float valorFinal) {
+		this.valorFinal = valorFinal;
 	}
 
 }

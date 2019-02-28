@@ -53,6 +53,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 	private static PostgresCidadeDAOImpl postgresCidadeDAOImpl;
 	private static PostgresLogradouroDAOImpl postgresLogradouroDAOImpl;
 	private static PostgresUsuarioDAOImpl postgresUsuarioDAOImpl;
+	private static PostgresUsuarioAparelhoDAOImpl postgresUsuarioAparelhoDAOImpl;
 
 	private PostgresFabricaDAOImpl() {
 
@@ -356,5 +357,15 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 		}
 		return postgresUsuarioDAOImpl;
 	}
+	
+	@Override
+	public PostgresUsuarioAparelhoDAOImpl getPostgresUsuarioAparelhoDAO() {
+		if (postgresUsuarioAparelhoDAOImpl == null) {
+			postgresUsuarioAparelhoDAOImpl = new PostgresUsuarioAparelhoDAOImpl();
+		}
+		return postgresUsuarioAparelhoDAOImpl;
+	}
+	
+	
 	
 }
