@@ -47,7 +47,7 @@ implements IChamadaDAO{
 			throws ExcecaoBanco, ExcecaoNegocio {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("codUsuario", codUsuario);
-		return findByNamedQueryAndNamedParams("Chamada.obterHistoricousuario", params, em);
+		return findByNamedQueryAndNamedParams("Chamada.obterHistoricoUsuario", params, em);
 	}
 
 }

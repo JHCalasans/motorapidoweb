@@ -64,7 +64,7 @@ public class Veiculo extends Entidade{
 	private String flgAtivo;	
 
 	@Column(name = "documento", nullable = false)
-	private byte[] documento;
+	private Long codBinarioDocumento;
 	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_motorista", nullable = false, referencedColumnName = "cod_motorista")
@@ -136,14 +136,6 @@ public class Veiculo extends Entidade{
 		this.flgAtivo = flgAtivo;
 	}
 
-	public byte[] getDocumento() {
-		return documento;
-	}
-
-	public void setDocumento(byte[] documento) {
-		this.documento = documento;
-	}
-
 	public Motorista getMotorista() {
 		return motorista;
 	}
@@ -166,6 +158,14 @@ public class Veiculo extends Entidade{
 
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
+	}
+
+	public Long getCodBinarioDocumento() {
+		return codBinarioDocumento;
+	}
+
+	public void setCodBinarioDocumento(Long codBinarioDocumento) {
+		this.codBinarioDocumento = codBinarioDocumento;
 	}
 	
 	

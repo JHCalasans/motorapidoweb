@@ -30,9 +30,7 @@ import br.com.minhaLib.dao.Entidade;
 				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
 				+ " where (:codSituacao = -1 or ch.situacaoChamada.codigo = :codSituacao)"),
 		@NamedQuery(name = "Chamada.obterHistoricoUsuario", query = "select c from Chamada c join fetch c.situacaoChamada sch "
-				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
-				+ " where c.usuario.codigo = :codUsuario and  ch.situacaoChamada.codigo in (6,1)"
-				+ " and cv.flgUltimoMovimento = 'S'") })
+				+ " where c.usuario.codigo = :codUsuario and  c.situacaoChamada.codigo in (6,1)") })
 @XmlRootElement
 public class Chamada extends Entidade {
 
@@ -45,7 +43,7 @@ public class Chamada extends Entidade {
 	@Column(name = "cod_chamada", nullable = false)
 	@SequenceGenerator(name = "chamada_cod_chamada_seq", sequenceName = "diego.chamada_cod_chamada_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chamada_cod_chamada_seq")
-	private Integer codigo;
+	private Long codigo;
 
 	@Column(name = "dt_criacao", nullable = false)
 	private Date dataCriacao;
@@ -164,11 +162,11 @@ public class Chamada extends Entidade {
 		return getCodigo();
 	}
 
-	public Integer getCodigo() {
+	public Long getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(Integer codigo) {
+	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
 

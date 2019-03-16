@@ -18,8 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import br.com.minhaLib.dao.Entidade;
 
 @XmlRootElement
@@ -103,7 +101,8 @@ public class Funcionario extends Entidade{
 	private String email;
 	
 	@Column(name = "foto", nullable = true)
-	private byte[] foto;
+	private  Long codBinarioFoto;
+
 	
 	@Column(name = "dt_nascimento", nullable = false)
 	private Date dataNascimento;
@@ -270,15 +269,6 @@ public class Funcionario extends Entidade{
 	}
 
 
-	public byte[] getFoto() {
-		return foto;
-	}
-
-
-	public void setFoto(byte[] foto) {
-		this.foto = foto;
-	}
-
 
 	public Date getDataNascimento() {
 		return dataNascimento;
@@ -352,6 +342,16 @@ public class Funcionario extends Entidade{
 
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
+	}
+
+
+	public Long getCodBinarioFoto() {
+		return codBinarioFoto;
+	}
+
+
+	public void setCodBinarioFoto(Long codBinarioFoto) {
+		this.codBinarioFoto = codBinarioFoto;
 	}
 
 }

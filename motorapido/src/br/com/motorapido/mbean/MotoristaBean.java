@@ -32,6 +32,7 @@ import br.com.motorapido.bo.CaracteristicaBO;
 import br.com.motorapido.bo.FuncaoBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.TipoPunicaoBO;
+import br.com.motorapido.entity.BinarioMotorista;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.TipoPunicao;
@@ -83,15 +84,15 @@ public class MotoristaBean extends SimpleController {
 	private List<Caracteristica> listaCaracteristicas;
 
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
-	
+
 	private List<Integer> listaCodsSelecionados;
-	
+
 	private List<String> listaPeriodos;
-	
+
 	private String periodoSelecionado;
-	
+
 	private List<TipoPunicao> listaPunicoes;
-	
+
 	private TipoPunicao punicaoSelecionada;
 
 	@PostConstruct
@@ -135,33 +136,36 @@ public class MotoristaBean extends SimpleController {
 		try {
 
 			motorista = MotoristaBO.getInstance().obterMotoristaPorCodigo(codMotorista);
-			if (motorista.getFoto() != null)
-				streamFoto = new DefaultStreamedContent(new ByteArrayInputStream(motorista.getFoto()), "image/*");
-			
-			listaCaracteristicasSelecionadas = CaracteristicaBO.getInstance().obterCaracteristicasPorMotorista(motorista.getCodigo());
+			if (motorista.getCodBinarioFoto() != null) {
+				
+				 BinarioMotorista binarioFoto =	MotoristaBO.getInstance().obterBinarioMotoristaPorCodigo(motorista.getCodBinarioFoto());
+				streamFoto = new DefaultStreamedContent(new ByteArrayInputStream(binarioFoto.getBinario()),
+						"image/*");
+			}
+
+			listaCaracteristicasSelecionadas = CaracteristicaBO.getInstance()
+					.obterCaracteristicasPorMotorista(motorista.getCodigo());
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
 
-	/*public void carregarCaracteristicasAtivas() {
-		try {
-			listaCaracteristicas = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S");
-		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
-		}
-	}*/
+	/*
+	 * public void carregarCaracteristicasAtivas() { try { listaCaracteristicas
+	 * = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S"); } catch
+	 * (ExcecaoNegocio e) { ExcecoesUtil.TratarExcecao(e); } }
+	 */
 
 	public void carregarMotoristaBloquear(Motorista moto, boolean bloquear) {
 		try {
 			motoristaBloqeuar = moto;
-			if (bloquear){
+			if (bloquear) {
 				String chaves = FuncaoBO.getInstance().getParam(ParametroEnum.PERIODOS_BLOQUEIO);
-				listaPeriodos =  Arrays.asList(chaves.split(","));
+				listaPeriodos = Arrays.asList(chaves.split(","));
 				listaPunicoes = TipoPunicaoBO.getInstance().obterTiposPunicoes(null, "S");
 				punicaoSelecionada = listaPunicoes.get(0);
 				enviarJavascript("PF('varDlgBloquearMoto').show()");
-			}else
+			} else
 				enviarJavascript("PF('vardlConfirmDesbloqueio').show()");
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -192,9 +196,12 @@ public class MotoristaBean extends SimpleController {
 			return false;
 		} else {
 			try {
-				/*Motorista moto = new Motorista();
-				moto.setCpf(motorista.getCpf());*/
-				List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, motorista.getCpf(), null, null, null);//MotoristaBO.getInstance().obterMotoristasExample(moto);
+				/*
+				 * Motorista moto = new Motorista();
+				 * moto.setCpf(motorista.getCpf());
+				 */
+				List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, motorista.getCpf(), null, null,
+						null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
 				if (lista != null && lista.size() > 0
 						&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 					MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF já cadastrado na base de dados!.", "");
@@ -212,9 +219,12 @@ public class MotoristaBean extends SimpleController {
 	public boolean validarRG() {
 
 		try {
-			/*Motorista moto = new Motorista();
-			moto.setIdentidade(motorista.getIdentidade());*/
-			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null, motorista.getIdentidade());//MotoristaBO.getInstance().obterMotoristasExample(moto);
+			/*
+			 * Motorista moto = new Motorista();
+			 * moto.setIdentidade(motorista.getIdentidade());
+			 */
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null,
+					motorista.getIdentidade());// MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "RG já cadastrado na base de dados!.", "");
@@ -231,9 +241,12 @@ public class MotoristaBean extends SimpleController {
 	public boolean validarEmail() {
 
 		try {
-			/*Motorista moto = new Motorista();
-			moto.setEmail(motorista.getEmail());*/
-			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, motorista.getEmail(), null);//MotoristaBO.getInstance().obterMotoristasExample(moto);
+			/*
+			 * Motorista moto = new Motorista();
+			 * moto.setEmail(motorista.getEmail());
+			 */
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, motorista.getEmail(),
+					null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "Email já cadastrado na base de dados!.", "");
@@ -258,9 +271,12 @@ public class MotoristaBean extends SimpleController {
 	public boolean validarCNH() {
 
 		try {
-		/*	Motorista moto = new Motorista();
-			moto.setCnh(motorista.getCnh());*/
-			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, motorista.getCnh(), null, null);//MotoristaBO.getInstance().obterMotoristasExample(moto);
+			/*
+			 * Motorista moto = new Motorista();
+			 * moto.setCnh(motorista.getCnh());
+			 */
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, motorista.getCnh(), null,
+					null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CNH já cadastrada na base de dados!.", "");
@@ -294,13 +310,17 @@ public class MotoristaBean extends SimpleController {
 			return;
 
 		try {
-			if (foto != null)
-				motorista.setFoto(foto.getContents());
+		/*	if (foto != null) {
+				BinarioMotorista binarioFoto = new BinarioMotorista();
+				binarioFoto.setBinario(foto.getContents());
+				motorista.setFoto(binarioFoto);
+			}*/
 			msgSalvar = FuncoesUtil.gerarSenha();
-			motorista.setDocCriminais(docCriminais.getContents());
-			motorista.setComprovanteResidencia(compResidencial.getContents());
+			
+			
 			motorista.setSenha(msgSalvar);
-			MotoristaBO.getInstance().salvarMotorista(motorista, listaCaracteristicasSelecionadas);
+			MotoristaBO.getInstance().salvarMotorista(motorista, listaCaracteristicasSelecionadas, foto != null ? foto.getContents() : null, 
+					compResidencial != null ? compResidencial.getContents() : null, docCriminais != null ? docCriminais.getContents() : null);
 			// limparCampos();
 			// addMsg(FacesMessage.SEVERITY_INFO, "Motorista cadastrado com
 			// sucesso.");
@@ -322,13 +342,25 @@ public class MotoristaBean extends SimpleController {
 		if (!validarCNH())
 			return;
 		try {
-			if (foto != null && foto.getContents() != null)
-				motorista.setFoto(foto.getContents());
-			if (docCriminais != null)
-				motorista.setDocCriminais(docCriminais.getContents());
+			/*if (foto != null && foto.getContents() != null) {
+				BinarioMotorista binarioFoto = new BinarioMotorista();
+				binarioFoto.setBinario(foto.getContents());
+				motorista.setFoto(binarioFoto);
+			}
+			if (docCriminais != null) {
+				BinarioMotorista binarioDocCirminais = new BinarioMotorista();
+				binarioDocCirminais.setBinario(docCriminais.getContents());
+				motorista.setDocCriminais(binarioDocCirminais);
+			}
 			
-
-			MotoristaBO.getInstance().alterarMotorista(motorista, listaCaracteristicasSelecionadas);
+			if (compResidencial != null) {
+				BinarioMotorista binarioCompResidencia = new BinarioMotorista();
+				binarioCompResidencia.setBinario(compResidencial.getContents());
+				motorista.setComprovanteResidencia(binarioCompResidencia);
+			}
+*/
+			MotoristaBO.getInstance().alterarMotorista(motorista, listaCaracteristicasSelecionadas, foto != null ? foto.getContents() : null, docCriminais != null ? docCriminais.getContents() : null,
+					compResidencial != null ? compResidencial.getContents() : null);
 			enviarJavascript("PF('dlgSucesso').show();");
 
 		} catch (ExcecaoNegocio e) {
@@ -338,17 +370,20 @@ public class MotoristaBean extends SimpleController {
 
 	public void downloadDocCriminais(Motorista moto) {
 		try {
-			UtilDownload.download(moto.getDocCriminais(), "Documentos Criminais de " + moto.getNome() + ".pdf",
+			BinarioMotorista binario = MotoristaBO.getInstance().obterBinarioMotoristaPorCodigo(moto.getCodBinarioDocCriminal());
+			UtilDownload.download(binario.getBinario(), "Documentos Criminais de " + moto.getNome() + ".pdf",
 					UtilDownload.MIMETYPE_OCTETSTREAM, UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void downloadCompResidencia(Motorista moto) {
 		try {
-			UtilDownload.download(moto.getComprovanteResidencia(), "Comprovante de residência de " + moto.getNome() + ".pdf",
-					UtilDownload.MIMETYPE_OCTETSTREAM, UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
+			BinarioMotorista binario = MotoristaBO.getInstance().obterBinarioMotoristaPorCodigo(moto.getCodBinarioCompResidencia());
+			UtilDownload.download(binario.getBinario(),
+					"Comprovante de residência de " + moto.getNome() + ".pdf", UtilDownload.MIMETYPE_OCTETSTREAM,
+					UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -356,25 +391,24 @@ public class MotoristaBean extends SimpleController {
 
 	public void bloquearMotorista() {
 		try {
-			
-			if(dataInicioBloqueio == null)
+
+			if (dataInicioBloqueio == null)
 				throw new ExcecaoNegocio("Favor selecionar uma data inicial.");
-			
-			if(periodoSelecionado == null || periodoSelecionado.isEmpty())
+
+			if (periodoSelecionado == null || periodoSelecionado.isEmpty())
 				throw new ExcecaoNegocio("Favor selecionar um período para o bloqueio");
-			if(periodoSelecionado.equals("N") && dataFinalBloqueio == null)
+			if (periodoSelecionado.equals("N") && dataFinalBloqueio == null)
 				throw new ExcecaoNegocio("Favor informe uma data para o fim do bloqueio");
-			
-			if(!periodoSelecionado.equals("N"))
-				dataFinalBloqueio = calculaDataFinalBloqueio(periodoSelecionado);	
-			
-			if(dataFinalBloqueio.before(dataInicioBloqueio))
+
+			if (!periodoSelecionado.equals("N"))
+				dataFinalBloqueio = calculaDataFinalBloqueio(periodoSelecionado);
+
+			if (dataFinalBloqueio.before(dataInicioBloqueio))
 				throw new ExcecaoNegocio("Data Final deve ser maior que a data inicial.");
-			
+
 			MotoristaBO.getInstance().bloquearMotorista(motoristaBloqeuar, getFuncionarioLogado(), motivoBloqueio,
 					dataInicioBloqueio, dataFinalBloqueio, getPunicaoSelecionada());
-			
-			
+
 			enviarJavascript("PF('varDlgBloquearMoto').hide()");
 			addMsg(FacesMessage.SEVERITY_INFO, "Motorista bloqueado com sucesso!.");
 		} catch (Exception e) {
@@ -382,14 +416,16 @@ public class MotoristaBean extends SimpleController {
 		}
 	}
 	
-	private Date calculaDataFinalBloqueio(String periodo){
+	
+
+	private Date calculaDataFinalBloqueio(String periodo) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(dataInicioBloqueio);
-		if(periodo.contains("min")){
-			periodo = periodo.replaceAll("\\D+","");
+		if (periodo.contains("min")) {
+			periodo = periodo.replaceAll("\\D+", "");
 			calendar.add(Calendar.MINUTE, Integer.parseInt(periodo));
-		}else{
-			periodo = periodo.replaceAll("\\D+","");
+		} else {
+			periodo = periodo.replaceAll("\\D+", "");
 			calendar.add(Calendar.HOUR, Integer.parseInt(periodo));
 		}
 		return calendar.getTime();
@@ -399,6 +435,18 @@ public class MotoristaBean extends SimpleController {
 		try {
 			MotoristaBO.getInstance().desbloquearMotorista(motoristaBloqeuar, new Date());
 			addMsg(FacesMessage.SEVERITY_INFO, "Motorista desbloqueado com sucesso!.");
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
+	public void alterarPermissaoDestinoMotorista(Motorista motorista, boolean habilitado) {
+		try {
+			MotoristaBO.getInstance().alterarPermissaoDestinoMotorista(motorista, habilitado);
+			if(habilitado)
+				addMsg(FacesMessage.SEVERITY_INFO, "Permissão para visualizar destino desbloqueada com sucesso!");
+			else
+				addMsg(FacesMessage.SEVERITY_INFO, "Permissão para visualizar destino bloqueada com sucesso!");
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -548,8 +596,8 @@ public class MotoristaBean extends SimpleController {
 		}
 
 	}
-	
-	public  List<Caracteristica> obterCaracteristicas(){
+
+	public List<Caracteristica> obterCaracteristicas() {
 		return getListaCaracteristicasMemoria();
 	}
 

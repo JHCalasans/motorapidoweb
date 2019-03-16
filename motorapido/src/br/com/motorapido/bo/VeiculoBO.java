@@ -7,7 +7,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.dao.IBinarioVeiculoDAO;
 import br.com.motorapido.dao.IVeiculoDAO;
+import br.com.motorapido.entity.BinarioVeiculo;
 import br.com.motorapido.entity.Veiculo;
 
 public class VeiculoBO extends MotoRapidoBO {
@@ -25,7 +27,24 @@ public class VeiculoBO extends MotoRapidoBO {
 		return instance;
 	}
 	
-	public Veiculo salvarVeiculo(Veiculo veiculo) throws ExcecaoNegocio {
+	public BinarioVeiculo obterBinarioVeiculoPorCodigo(Long codBinario) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IBinarioVeiculoDAO binarioVeiculoDAO = fabricaDAO.getPostgresBinarioVeiculoDAO();
+			BinarioVeiculo binarioVeiculo = binarioVeiculoDAO.findById(codBinario, em);
+			emUtil.commitTransaction(transaction);
+			return binarioVeiculo;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter documento do veículo.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public Veiculo salvarVeiculo(Veiculo veiculo, byte[] documento) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -35,6 +54,12 @@ public class VeiculoBO extends MotoRapidoBO {
 			veiculo.setDataCadastro(new Date());
 			veiculo.setChassi(veiculo.getChassi().toUpperCase());
 			veiculo.setPlaca(veiculo.getPlaca().toUpperCase());
+			
+			IBinarioVeiculoDAO binarioVeiculoDAO = fabricaDAO.getPostgresBinarioVeiculoDAO();
+			BinarioVeiculo binarioVeiculo = new BinarioVeiculo();
+			binarioVeiculo.setBinario(documento);
+			 veiculo.setCodBinarioDocumento(binarioVeiculoDAO.save(binarioVeiculo, em).getCodigo());
+			
 			veiculo = veiculoDAO.save(veiculo, em);
 			emUtil.commitTransaction(transaction);
 			return veiculo;

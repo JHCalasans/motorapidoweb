@@ -67,6 +67,13 @@ public class Usuario extends Entidade{
 		return getCodigo();
 	}
 
+	public Usuario(Integer codUsuario){
+		this.codigo = codUsuario;
+	}
+	
+	public Usuario(){
+		
+	}
 
 	public Integer getCodigo() {
 		return codigo;

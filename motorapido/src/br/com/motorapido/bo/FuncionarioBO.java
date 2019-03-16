@@ -7,11 +7,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import org.hibernate.criterion.MatchMode;
-
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.dao.IBinarioFuncionarioDAO;
 import br.com.motorapido.dao.IFuncionarioDAO;
 import br.com.motorapido.dao.IPerfilDAO;
+import br.com.motorapido.entity.BinarioFuncionario;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.util.FuncoesUtil;
 
@@ -30,7 +30,24 @@ public class FuncionarioBO extends MotoRapidoBO {
 		return instance;
 	}
 	
-	public Funcionario salvarFuncionario(Funcionario funcionario, int codPerfil) throws ExcecaoNegocio {
+	public BinarioFuncionario obterBinarioFuncionarioPorCodigo(Long codBinario) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IBinarioFuncionarioDAO binarioFuncionarioDAO = fabricaDAO.getPostgresBinarioFuncionarioDAO();
+			BinarioFuncionario binarioFuncionario = binarioFuncionarioDAO.findById(codBinario, em);
+			emUtil.commitTransaction(transaction);
+			return binarioFuncionario;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter informação do funcionário.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public Funcionario salvarFuncionario(Funcionario funcionario, int codPerfil, byte[] foto) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -48,6 +65,16 @@ public class FuncionarioBO extends MotoRapidoBO {
 			funcionario.setSenha(FuncoesUtil.criptografarSenha(funcionario.getSenha()));
 			funcionario.setPerfil(perfilDAO.findById(codPerfil, em));
 			funcionario.setAtivo("S");
+			
+			if(foto != null){
+				IBinarioFuncionarioDAO binarioFuncionarioDAO = fabricaDAO.getPostgresBinarioFuncionarioDAO();
+				
+				BinarioFuncionario binarioFuncionario = new BinarioFuncionario();
+				binarioFuncionario.setBinario(foto);
+				funcionario.setCodBinarioFoto(binarioFuncionarioDAO.save(binarioFuncionario, em).getCodigo());
+			}
+			
+			
 			funcionario = funcionarioDAO.save(funcionario, em);
 			/*FuncionarioPerfil funcPerfil = new FuncionarioPerfil();
 			funcPerfil.setFuncionario(funcionario);
@@ -70,7 +97,7 @@ public class FuncionarioBO extends MotoRapidoBO {
 	}
 	
 	
-	public Funcionario alterarFuncionario(Funcionario funcionario, int codPerfil) throws ExcecaoNegocio {
+	public Funcionario alterarFuncionario(Funcionario funcionario, int codPerfil, byte[] foto) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -78,6 +105,20 @@ public class FuncionarioBO extends MotoRapidoBO {
 			IFuncionarioDAO funcionarioDAO = fabricaDAO.getPostgresFuncionarioDAO();
 			IPerfilDAO perfilDAO = fabricaDAO.getPostgresPerfilDAO();
 			funcionario.setPerfil(perfilDAO.findById(codPerfil, em));
+			
+			if(foto != null){
+				IBinarioFuncionarioDAO binarioFuncionarioDAO = fabricaDAO.getPostgresBinarioFuncionarioDAO();
+				BinarioFuncionario binarioFuncionario;
+				if(funcionario.getCodBinarioFoto() != null)					
+					binarioFuncionario = binarioFuncionarioDAO.findById(funcionario.getCodBinarioFoto(), em);
+				else
+					binarioFuncionario = new BinarioFuncionario();
+				
+				binarioFuncionario.setBinario(foto);
+				funcionario.setCodBinarioFoto(binarioFuncionarioDAO.save(binarioFuncionario, em).getCodigo());
+			}
+			
+			
 			funcionario = funcionarioDAO.save(funcionario, em);
 
 			emUtil.commitTransaction(transaction);

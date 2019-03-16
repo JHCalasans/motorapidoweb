@@ -78,6 +78,12 @@ public abstract class FabricaDAO {
 	public abstract IUsuarioDAO getPostgresUsuarioDAO();
 	
 	public abstract IUsuarioAparelhoDAO getPostgresUsuarioAparelhoDAO();
+	
+	public abstract IBinarioMotoristaDAO getPostgresBinarioMotoristaDAO();
+	
+	public abstract IBinarioFuncionarioDAO getPostgresBinarioFuncionarioDAO();
+	
+	public abstract IBinarioVeiculoDAO getPostgresBinarioVeiculoDAO();
 
 
 	/**

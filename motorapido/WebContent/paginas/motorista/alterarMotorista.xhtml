@@ -180,11 +180,11 @@
 						styleClass="OutputLabelCampo" style="width:120px;" />
 
 					<p:fileUpload id="comprovante" label="#{bundle.selecione}"
-						value="#{motoristaBean.motorista.comprovanteResidencia}"
+						value="#{motoristaBean.compResidencial}"
 						cancelLabel="#{bundle.cancelar}" styleClass="upload"
 						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
 						mode="advanced" skinSimple="true" auto="true"
-						update=":msgs,pgIcone"
+						update=":msgs"
 						fileUploadListener="#{motoristaBean.comprovanteResidencialUploadAction}"
 						fileLimitMessage="Tamanho do arquivo excedido"
 						invalidFileMessage="Tipo de arquivo não suportado">
@@ -305,12 +305,12 @@
 					<div class="clear"></div>
 					<p:outputLabel value="#{bundle.motorista_documentosCriminais}:"
 						for="criminais" styleClass="OutputLabelCampo" style="width:120px;" />
-					<p:fileUpload id="criminais" label="#{bundle.selecione}"
-						value="#{motoristaBean.motorista.docCriminais}"
+					<p:fileUpload id="criminais" label="#{bundle.selecione}" 
+						value="#{motoristaBean.docCriminais}"
 						cancelLabel="#{bundle.cancelar}" styleClass="upload"
 						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
 						mode="advanced" skinSimple="true" auto="true"
-						update=":msgs,pgIcone"
+						update=":msgs"
 						fileUploadListener="#{motoristaBean.DocCriminaisUploadAction}"
 						fileLimitMessage="Tamanho do arquivo excedido"
 						invalidFileMessage="Tipo de arquivo não suportado">

@@ -18,6 +18,7 @@ import br.com.motorapido.bo.ModeloBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.TipoVeiculoBO;
 import br.com.motorapido.bo.VeiculoBO;
+import br.com.motorapido.entity.BinarioVeiculo;
 import br.com.motorapido.entity.Fabricante;
 import br.com.motorapido.entity.Modelo;
 import br.com.motorapido.entity.Motorista;
@@ -115,7 +116,9 @@ public class VeiculoBean extends SimpleController {
 	public void downloadDocumentos(Veiculo veiculo)
 	{
 		try {			
-			UtilDownload.download(veiculo.getDocumento(), "Documentos do veículo de placa "+ veiculo.getPlaca() +".pdf",
+			
+			BinarioVeiculo binario = VeiculoBO.getInstance().obterBinarioVeiculoPorCodigo(veiculo.getCodBinarioDocumento());
+			UtilDownload.download(binario.getBinario(), "Documentos do veículo de placa "+ veiculo.getPlaca() +".pdf",
 					UtilDownload.MIMETYPE_OCTETSTREAM,
 					UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
 		} catch (Exception e)
@@ -209,10 +212,10 @@ public class VeiculoBean extends SimpleController {
 		if (!validaPlaca())
 			return;	
 		try {
-			veiculo.setDocumento(documento.getContents());
+			
 			veiculo.setMotorista(motorista);
 			veiculo.setModelo(modelo);
-			VeiculoBO.getInstance().salvarVeiculo(veiculo);
+			VeiculoBO.getInstance().salvarVeiculo(veiculo, documento != null ? documento.getContents() : null);
 			addMsg(FacesMessage.SEVERITY_INFO, "Veículo cadastrado com sucesso.");
 			atualizaCampos();
 

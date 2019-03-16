@@ -1,5 +1,6 @@
 package br.com.motorapido.ws;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -12,9 +13,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.bo.ChamadaBO;
+import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.UsuarioBO;
+import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.Usuario;
 import br.com.motorapido.util.ExcecoesUtil;
+import br.com.motorapido.util.ws.params.NovaChamadaParam;
+import br.com.motorapido.util.ws.retornos.RetornoChamadaUsuario;
 import br.com.motorapido.util.ws.retornos.RetornoHistoricoUsuario;
 
 
@@ -69,6 +75,55 @@ public class UsuarioWS  {
 		}catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter histórico do usuário").build();
+		}
+		
+	}
+	
+	
+
+/*
+	@POST
+	@Path("/logoff")
+	public Response logoff(String codUsuario) {
+		try {
+	
+			MotoristaBO.getInstance().logoff(motorista);
+			return Response.status(Status.OK).entity(motorista).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar efetuar logoff").build();
+		}
+	}
+	
+*/
+	
+	@POST
+	@Path("/enviarChamada")
+	public Response enviarChamada(NovaChamadaParam param) {
+		try {
+			
+			
+			/*ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
+					listaCaracteristicasSelecionadas)*/
+			
+			RetornoChamadaUsuario retorno = new RetornoChamadaUsuario();
+			retorno.setCodChamada(3L);
+			retorno.setCorVeiculo("Branco");
+			retorno.setDataChamada(new Date());
+			retorno.setDestino(param.getLogradouroDestino() + " - " + param.getBairroDestino());
+			retorno.setModeloVeiculo("Pop");
+			retorno.setNomeMotorista("José da Silva");
+			retorno.setOrigem(param.getLogradouroOrigem() + " - " + param.getBairroOrigem());
+			retorno.setPlacaVeiculo("TYU-6578");
+			
+		   
+			return Response.status(Status.OK).entity(retorno).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar realizar chamada").build();
 		}
 		
 	}

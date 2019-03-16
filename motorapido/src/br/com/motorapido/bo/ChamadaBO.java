@@ -31,6 +31,7 @@ import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.SituacaoChamada;
+import br.com.motorapido.entity.Usuario;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.enums.SituacaoChamadaEnum;
 import br.com.motorapido.mbean.SimpleController;
@@ -38,6 +39,7 @@ import br.com.motorapido.util.CoordenadaPontoUtil;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.PushNotificationUtil;
+import br.com.motorapido.util.ws.params.NovaChamadaParam;
 
 public class ChamadaBO extends MotoRapidoBO {
 
@@ -90,8 +92,8 @@ public class ChamadaBO extends MotoRapidoBO {
 				origemEndereco = endereceoClienteDAO.save(origemEndereco, em);
 			}
 
-			validarAreaDoChamado(Double.parseDouble(chamada.getLatitudeOrigem()),
-					Double.parseDouble(chamada.getLongitudeOrigem()), em);
+			chamada.setArea(validarAreaDoChamado(Double.parseDouble(chamada.getLatitudeOrigem()),
+					Double.parseDouble(chamada.getLongitudeOrigem()), em));
 
 			// chamada.setDestino(destino.getCodigo() == null ? null : destino);
 			chamada.setDataCriacao(new Date());
@@ -112,6 +114,55 @@ public class ChamadaBO extends MotoRapidoBO {
 		}
 	}
 
+	public Chamada iniciarChamadaApp(NovaChamadaParam param)
+			throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
+			Chamada chamada = new Chamada();
+			chamada.setBairroDestino(param.getBairroDestino());
+			chamada.setBairroOrigem(param.getBairroOrigem());
+			chamada.setCepDestino(param.getCepDestino());
+			chamada.setCepOrigem(param.getCepOrigem());
+			chamada.setCidadeDestino(param.getCidadeDestino());
+			chamada.setCidadeOrigem(param.getCidadeOrigem());
+			chamada.setComplementoDestino(param.getComplementoDestino());
+			chamada.setComplementoOrigem(param.getComplementoOrigem());
+			chamada.setLatitudeDestino(param.getLatitudeDestino());
+			chamada.setLatitudeOrigem(param.getLatitudeOrigem());
+			chamada.setLogradouroDestino(param.getLogradouroDestino());
+			chamada.setLogradouroOrigem(param.getLogradouroOrigem());
+			chamada.setLongitudeDestino(param.getLatitudeDestino());
+			chamada.setLongitudeOrigem(param.getLongitudeOrigem());
+			chamada.setNumeroDestino(param.getNumeroDestino());
+			chamada.setNumeroOrigem(param.getNumeroOrigem());
+			chamada.setObservacao(param.getObservacao());
+			chamada.setUsuario(new Usuario(param.getCodUsuario()));
+
+
+			 chamada.setArea(validarAreaDoChamado(Double.parseDouble(chamada.getLatitudeOrigem()),
+					Double.parseDouble(chamada.getLongitudeOrigem()), em));
+
+			// chamada.setDestino(destino.getCodigo() == null ? null : destino);
+			chamada.setDataCriacao(new Date());
+			SituacaoChamada situacaChamada = new SituacaoChamada();
+			ISituacaoChamadaDAO situacaoChamadaDAO = fabricaDAO.getPostgresSituacaoChamadaDAO();
+			situacaChamada = situacaoChamadaDAO.findById(SituacaoChamadaEnum.PENDENTE.getCodSituacao(), em);
+			chamada.setSituacaoChamada(situacaChamada);
+
+			chamada = chamadaDAO.save(chamada, em);
+			emUtil.commitTransaction(transaction);
+			return chamada;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar iniciar chamada.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
 	public void enviarMsgChamadaMotorista(Chamada chamada) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();

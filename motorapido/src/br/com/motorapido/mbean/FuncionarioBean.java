@@ -26,7 +26,10 @@ import com.google.gson.Gson;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.bo.FuncionarioBO;
+import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.PerfilBO;
+import br.com.motorapido.entity.BinarioFuncionario;
+import br.com.motorapido.entity.BinarioMotorista;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Perfil;
 import br.com.motorapido.util.EnderecoCep;
@@ -56,8 +59,6 @@ public class FuncionarioBean extends SimpleController {
 
 	private String cep;
 
-	private UploadedFile docCriminais;
-
 	private List<Funcionario> listaFuncionarios;
 
 	private String nomePesquisa;
@@ -70,7 +71,7 @@ public class FuncionarioBean extends SimpleController {
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
 			return;
-		}		
+		}
 		try {
 			String codFuncStr = (String) getRequestParam("codFuncionario");
 			String consultar = (String) getRequestParam("consultaParam");
@@ -98,8 +99,13 @@ public class FuncionarioBean extends SimpleController {
 		try {
 
 			funcionario = FuncionarioBO.getInstance().obterFuncionarioPorCodigo(codFuncionario);
-			if(funcionario.getFoto() != null)
-				streamFoto = new DefaultStreamedContent(new ByteArrayInputStream(funcionario.getFoto()), "image/*");
+			if (funcionario.getCodBinarioFoto() != null) {
+				 BinarioFuncionario binarioFuncionario =	FuncionarioBO.getInstance().obterBinarioFuncionarioPorCodigo(funcionario.getCodBinarioFoto());
+				
+				streamFoto = new DefaultStreamedContent(new ByteArrayInputStream(binarioFuncionario.getBinario()),
+						"image/*");
+			}
+
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -109,7 +115,6 @@ public class FuncionarioBean extends SimpleController {
 		funcionario = new Funcionario();
 		cnh = null;
 		vencimentoCNH = null;
-		docCriminais = null;
 		foto = null;
 		codPerfil = 2;
 		msgSalvar = null;
@@ -119,9 +124,7 @@ public class FuncionarioBean extends SimpleController {
 		setFoto(event.getFile());
 	}
 
-	public void DocCriminaisUploadAction(FileUploadEvent event) {
-		setDocCriminais(event.getFile());
-	}
+	
 
 	public void carregarFotoExibicao() {
 		byte[] fotoExibicao = null;
@@ -141,17 +144,17 @@ public class FuncionarioBean extends SimpleController {
 
 	public void salvarFuncionario() {
 		if (!validarCpf())
-			return;		
+			return;
 		if (!validarRG())
-			return;	
+			return;
 		if (!validarEmail())
-			return;	
+			return;
 		try {
-			if (foto != null && foto.getContents() != null)
-				funcionario.setFoto(foto.getContents());
+			
+			
 			msgSalvar = FuncoesUtil.gerarSenha();
 			funcionario.setSenha(msgSalvar);
-			FuncionarioBO.getInstance().salvarFuncionario(funcionario, codPerfil);
+			FuncionarioBO.getInstance().salvarFuncionario(funcionario, codPerfil, foto != null ? foto.getContents() : null);
 
 			enviarJavascript("PF('dlgSucesso').show();");
 			// addMsg(FacesMessage.SEVERITY_INFO, "Funcionário cadastrado com
@@ -164,16 +167,14 @@ public class FuncionarioBean extends SimpleController {
 
 	public void alterarFuncionario() {
 		if (!validarCpf())
-			return;		
+			return;
 		if (!validarRG())
-			return;	
+			return;
 		if (!validarEmail())
-			return;	
+			return;
 		try {
-			if (foto != null && foto.getContents() != null)
-				funcionario.setFoto(foto.getContents());
-
-			FuncionarioBO.getInstance().alterarFuncionario(funcionario, codPerfil);
+			
+			FuncionarioBO.getInstance().alterarFuncionario(funcionario, codPerfil, foto != null ? foto.getContents() : null);
 
 			enviarJavascript("PF('dlgSucesso').show();");
 		} catch (ExcecaoNegocio e) {
@@ -195,8 +196,9 @@ public class FuncionarioBean extends SimpleController {
 				Funcionario funcio = new Funcionario();
 				funcio.setCpf(funcionario.getCpf());
 				List<Funcionario> lista = FuncionarioBO.getInstance().obterFuncionariosExample(funcio);
-				if (lista != null && lista.size() > 0 && (funcionario.getCodigo() == null || funcionario.getCodigo() != lista.get(0).getCodigo())) {
-						MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF já cadastrado na base de dados!.", "");
+				if (lista != null && lista.size() > 0
+						&& (funcionario.getCodigo() == null || funcionario.getCodigo() != lista.get(0).getCodigo())) {
+					MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF já cadastrado na base de dados!.", "");
 					return false;
 				}
 				return true;
@@ -207,7 +209,7 @@ public class FuncionarioBean extends SimpleController {
 		}
 
 	}
-	
+
 	public boolean validarEmail() {
 
 		try {
@@ -226,27 +228,25 @@ public class FuncionarioBean extends SimpleController {
 		}
 
 	}
-	
+
 	public boolean validarRG() {
-		
-			try {
-				Funcionario funcio = new Funcionario();
-				funcio.setIdentidade(funcionario.getIdentidade());
-				List<Funcionario> lista = FuncionarioBO.getInstance().obterFuncionariosExample(funcio);
-				if (lista != null && lista.size() > 0  && (funcionario.getCodigo() == null || funcionario.getCodigo() != lista.get(0).getCodigo())) {
-					MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "RG já cadastrado na base de dados!.", "");
-					return false;
-				}
-				return true;
-			} catch (ExcecaoNegocio e) {
-				ExcecoesUtil.TratarExcecao(e);
+
+		try {
+			Funcionario funcio = new Funcionario();
+			funcio.setIdentidade(funcionario.getIdentidade());
+			List<Funcionario> lista = FuncionarioBO.getInstance().obterFuncionariosExample(funcio);
+			if (lista != null && lista.size() > 0
+					&& (funcionario.getCodigo() == null || funcionario.getCodigo() != lista.get(0).getCodigo())) {
+				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "RG já cadastrado na base de dados!.", "");
 				return false;
 			}
-		
+			return true;
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return false;
+		}
 
 	}
-
-	
 
 	public void validarCep() {
 		if (this.getCep() != null && this.getCep().replace("-", "").replace("_", "").length() == 8) {
@@ -421,13 +421,7 @@ public class FuncionarioBean extends SimpleController {
 		this.vencimentoCNH = vencimentoCNH;
 	}
 
-	public UploadedFile getDocCriminais() {
-		return docCriminais;
-	}
-
-	public void setDocCriminais(UploadedFile docCriminais) {
-		this.docCriminais = docCriminais;
-	}
+	
 
 	public String getCep() {
 		return cep;
@@ -484,7 +478,4 @@ public class FuncionarioBean extends SimpleController {
 		this.msgSalvar = msgSalvar;
 	}
 
-	
-
-	
 }

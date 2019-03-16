@@ -1,45 +1,30 @@
 package br.com.motorapido.mbean;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
-import javax.faces.component.visit.VisitCallback;
-import javax.faces.component.visit.VisitContext;
-import javax.faces.component.visit.VisitResult;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.MenuElement;
 
 import org.primefaces.component.socket.Socket;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuItem;
 import org.primefaces.model.menu.MenuModel;
 import org.primefaces.model.menu.Submenu;
-import org.primefaces.push.EventBus;
-import org.primefaces.push.EventBusFactory;
-
-import com.sun.faces.component.visit.FullVisitContext;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
-import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.bo.PerfilMenuBO;
 import br.com.motorapido.entity.PerfilMenu;
 import br.com.motorapido.util.ExcecoesUtil;
 
+@SuppressWarnings("deprecation")
 @ManagedBean(name = "menuBean")
-@SessionScoped
+@ViewScoped
 public class MenuBean extends SimpleController implements Serializable {
 
 	private static final long serialVersionUID = -2168554630566444675L;

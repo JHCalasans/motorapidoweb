@@ -158,6 +158,18 @@
 							<h:graphicImage url="/resources/desbloquear.png"
 								style="border-style: none" />
 						</h:commandLink>
+							<h:commandLink title="Liberar Destino da Chamada" immediate="true"
+							style="margin-left:10px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, true)}"							
+							rendered="#{motorista.verDestino eq 'N'}">
+							<h:graphicImage url="/resources/cad_aberto.png"
+								style="border-style: none" />
+						</h:commandLink>
+							<h:commandLink title="Não Ver Destino da Chamada" immediate="true"
+							style="margin-left:10px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, false)}"							
+							rendered="#{motorista.verDestino eq 'S'}">
+							<h:graphicImage url="/resources/cad_fechado.png"
+								style="border-style: none" />
+						</h:commandLink>
 
 					</p:column>
 				</p:dataTable>

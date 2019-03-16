@@ -1,3 +1,4 @@
+
 package br.com.motorapido.bo;
 
 import java.util.ArrayList;
@@ -9,9 +10,13 @@ import javax.persistence.EntityTransaction;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IChamadaDAO;
+import br.com.motorapido.dao.IMotoristaAparelhoDAO;
+import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.dao.IUsuarioAparelhoDAO;
 import br.com.motorapido.dao.IUsuarioDAO;
 import br.com.motorapido.entity.Chamada;
+import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.MotoristaAparelho;
 import br.com.motorapido.entity.Usuario;
 import br.com.motorapido.entity.UsuarioAparelho;
 import br.com.motorapido.enums.ParametroEnum;
@@ -93,6 +98,37 @@ public class UsuarioBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
+	
+	/*public void logoff(String codUsuario) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IUsuarioDAO usuarioDAO = fabricaDAO.getPostgresUsuarioDAO();
+			IUsuarioAparelhoDAO usuarioAparelhoDAO = fabricaDAO.getPostgresUsuarioAparelhoDAO();
+			UsuarioAparelho usuarioAparelho = new UsuarioAparelho();
+			usuarioDAO.findBy
+			usuarioAparelho.setCodUsuario(codUsuario);
+			motoristaAparelho.setIdPush(motorista.getIdPush());
+			List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
+			motoristaAparelho = lista.get(0);
+			motoristaAparelho.setAtivo("N");
+			motoristaAparelhoDAO.save(motoristaAparelho, em);
+
+			motorista = motoristaDAO.findById(motorista.getCodigo(), em);
+
+			motorista.setDisponivel("N");
+
+			motoristaDAO.save(motorista, em);
+
+			emUtil.commitTransaction(transaction);
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar realizar logoff.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}*/
 
 	public Usuario salvarUsuario(Usuario usuario) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();

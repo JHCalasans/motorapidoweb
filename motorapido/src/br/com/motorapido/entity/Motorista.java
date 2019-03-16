@@ -5,15 +5,21 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import br.com.minhaLib.dao.Entidade;
 
@@ -28,7 +34,7 @@ import br.com.minhaLib.dao.Entidade;
 				+ " (select rcm.motorista.codigo from RestricaoClienteMotorista rcm where rcm.cliente.codigo = :codCliente)")		
 		})
 @XmlRootElement
-public class Motorista extends Entidade{
+public class Motorista  extends Entidade {
 
 
 	private static final long serialVersionUID = 8604601906743979251L;
@@ -99,8 +105,10 @@ public class Motorista extends Entidade{
 	@Column(name = "email", nullable = true)
 	private String email;
 	
+	/*@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "foto", nullable = true, referencedColumnName = "cod_binario_motorista")*/
 	@Column(name = "foto", nullable = true)
-	private byte[] foto;
+	private Long codBinarioFoto;
 	
 	@Column(name = "dt_nascimento", nullable = false)
 	private Date dataNascimento;
@@ -111,15 +119,22 @@ public class Motorista extends Entidade{
 	@Column(name = "dt_vencimento_cnh", nullable = false)
 	private Date dataVencimentoCNH;
 	
+	/*@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "documentos_criminais", nullable = true, referencedColumnName = "cod_binario_motorista")
+	@LazyToOne(LazyToOneOption.NO_PROXY)*/
 	@Column(name = "documentos_criminais", nullable = false)
-	private byte[] docCriminais;
+	private Long codBinarioDocCriminal;
 	
 	@Column(name = "flg_disponivel", nullable = false)
 	private String disponivel;
 	
+	/*@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "comprovante_residencia", nullable = true, referencedColumnName = "cod_binario_motorista")*/
 	@Column(name = "comprovante_residencia", nullable = false)
-	private byte[] comprovanteResidencia;
+	private Long codBinarioCompResidencia;	
 	
+	@Column(name = "flg_ver_destino", nullable = false)
+	private String verDestino;
 	
 	@Transient
 	private String chaveServicos;
@@ -166,14 +181,6 @@ public class Motorista extends Entidade{
 	}
 
 
-	public byte[] getDocCriminais() {
-		return docCriminais;
-	}
-
-
-	public void setDocCriminais(byte[] docCriminais) {
-		this.docCriminais = docCriminais;
-	}
 
 
 	public String getDisponivel() {
@@ -368,14 +375,6 @@ public class Motorista extends Entidade{
 	}
 
 
-	public byte[] getFoto() {
-		return foto;
-	}
-
-
-	public void setFoto(byte[] foto) {
-		this.foto = foto;
-	}
 
 
 	public Date getDataNascimento() {
@@ -408,16 +407,7 @@ public class Motorista extends Entidade{
 	}
 
 
-	public byte[] getComprovanteResidencia() {
-		return comprovanteResidencia;
-	}
-
-
-	public void setComprovanteResidencia(byte[] comprovanteResidencia) {
-		this.comprovanteResidencia = comprovanteResidencia;
-	}
-
-
+	
 	public String getIdPush() {
 		return idPush;
 	}
@@ -435,6 +425,46 @@ public class Motorista extends Entidade{
 
 	public void setChaveGoogle(String chaveGoogle) {
 		this.chaveGoogle = chaveGoogle;
+	}
+
+
+	public String getVerDestino() {
+		return verDestino;
+	}
+
+
+	public void setVerDestino(String verDestino) {
+		this.verDestino = verDestino;
+	}
+
+
+	public Long getCodBinarioFoto() {
+		return codBinarioFoto;
+	}
+
+
+	public void setCodBinarioFoto(Long codBinarioFoto) {
+		this.codBinarioFoto = codBinarioFoto;
+	}
+
+
+	public Long getCodBinarioDocCriminal() {
+		return codBinarioDocCriminal;
+	}
+
+
+	public void setCodBinarioDocCriminal(Long codBinarioDocCriminal) {
+		this.codBinarioDocCriminal = codBinarioDocCriminal;
+	}
+
+
+	public Long getCodBinarioCompResidencia() {
+		return codBinarioCompResidencia;
+	}
+
+
+	public void setCodBinarioCompResidencia(Long codBinarioCompResidencia) {
+		this.codBinarioCompResidencia = codBinarioCompResidencia;
 	}
 
 
