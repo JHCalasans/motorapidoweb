@@ -55,12 +55,17 @@ public class Usuario extends Entidade{
 	@Column(name = "num_telefone", nullable = true)
 	private String numeroTelefone;
 	
+	@Column(name = "foto", nullable = false)
+	private Long codBinarioFoto;	
+	
 	@Transient
 	private String chaveServicos;
 	
 	@Transient
-	private String idPush;
-
+	private String idPush;	
+	
+	@Transient
+	private byte[] foto;
 	
 	@Override
 	public Serializable getIdentificador() {
@@ -192,6 +197,22 @@ public class Usuario extends Entidade{
 
 	public String getAtivo() {
 		return ativo;
+	}
+
+	public Long getCodBinarioFoto() {
+		return codBinarioFoto;
+	}
+
+	public void setCodBinarioFoto(Long codBinarioFoto) {
+		this.codBinarioFoto = codBinarioFoto;
+	}
+
+	public byte[] getFoto() {
+		return foto;
+	}
+
+	public void setFoto(byte[] foto) {
+		this.foto = foto;
 	}
 
 }

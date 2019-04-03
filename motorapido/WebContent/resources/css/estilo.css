@@ -123,7 +123,7 @@ form span.p_like input, form span.p_like select, form span.p_like img,
 	    float: left;
 }
 
-.selectDistribuidora .ui-state-default {
+.selectMarcador .ui-state-default {
 	background: #A16838 !important;
 	font-weight: 800 !important;
 }

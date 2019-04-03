@@ -67,7 +67,8 @@
 							<h:panelGroup id="pngCel" styleClass="p_like">
 								<p:outputLabel value="#{bundle.funcionario_celular}:"
 									for="celular" styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:outputLabel value="(79)" style="margin-left:-30px; margin-top: inherit"></p:outputLabel>	
+								<p:outputLabel value="(79)"
+									style="margin-left:-30px; margin-top: inherit"></p:outputLabel>
 								<p:inputMask id="celular" required="true" size="35"
 									mask="99999-9999" value="#{chamadaBean.numCelPesquisa}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_celular}">
@@ -108,7 +109,7 @@
 									itemValue="#{logradouro}" converter="logradouroConverter"
 									size="55" completeMethod="#{chamadaBean.completeText}"
 									maxResults="5">
-									<p:ajax event="itemSelect" 
+									<p:ajax event="itemSelect"
 										listener="#{chamadaBean.logradouroSelecionado}"
 										update="fieldOrigem, gmap" />
 								</p:autoComplete>
@@ -206,7 +207,8 @@
 						<!-- 	Filedset Destino    -->
 						<p:fieldset legend="Destino" toggleable="false" toggleSpeed="600"
 							collapsed="false" id="fieldDestino">
-							<p:ajax event="toggle" listener="#{chamadaBean.controleAbaDestino}"/>
+							<p:ajax event="toggle"
+								listener="#{chamadaBean.controleAbaDestino}" />
 
 							<div class="clear"></div>
 							<h:panelGroup id="pngLogradouroDestino" styleClass="p_like">
@@ -342,6 +344,22 @@
 										update="gmap, :fieldOrigem" />
 
 								</p:gmap>
+
+							</p:panel>
+
+							<p:panel>
+								<h:panelGroup layout="block" >
+									<p:outputLabel value="Marcar:"></p:outputLabel>
+									<p:selectOneMenu styleClass="selectMarcador" value="#{chamadaBean.tipoMarcador}"
+										panelStyle="width:280px" var="marcador"	>
+										
+										<f:selectItem itemLabel="Origem" itemValue="O"/>
+										
+										<f:selectItem itemLabel="Destino" itemValue="D"/>
+										
+									</p:selectOneMenu>
+
+								</h:panelGroup>
 
 							</p:panel>
 						</h:panelGroup>

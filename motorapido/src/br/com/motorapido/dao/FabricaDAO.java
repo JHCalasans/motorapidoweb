@@ -84,6 +84,8 @@ public abstract class FabricaDAO {
 	public abstract IBinarioFuncionarioDAO getPostgresBinarioFuncionarioDAO();
 	
 	public abstract IBinarioVeiculoDAO getPostgresBinarioVeiculoDAO();
+	
+	public abstract IBinarioUsuarioDAO getPostgresBinarioUsuarioDAO();
 
 
 	/**

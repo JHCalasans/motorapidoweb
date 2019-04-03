@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
@@ -19,17 +18,14 @@ import org.primefaces.model.Visibility;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
-import org.primefaces.model.map.Polyline;
 
 import com.google.maps.model.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
-import br.com.motorapido.bo.CaracteristicaBO;
 import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.ClienteBO;
 import br.com.motorapido.bo.EnderecoClienteBO;
 import br.com.motorapido.bo.LocalBO;
-import br.com.motorapido.bo.LogradouroBO;
 import br.com.motorapido.bo.ParametroBO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
@@ -100,7 +96,10 @@ public class ChamadaBean extends SimpleController {
 	private Logradouro logradouroDestSelecionado;
 
 	private String componenteParaUpdate;
-
+	
+	private String tipoMarcador = "O";
+	
+		
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
@@ -108,6 +107,7 @@ public class ChamadaBean extends SimpleController {
 		}
 		try {
 			limparCampos();
+			
 			// iniciarListaLogradouros();
 			mapModel = new DefaultMapModel();
 			logradouro = new Logradouro();
@@ -119,7 +119,7 @@ public class ChamadaBean extends SimpleController {
 				String[] coord = coordenadasIniciais.split(";");
 				setCoordenadas(new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1])));
 			}
-			//atualizarChamadas();
+			// atualizarChamadas();
 			atualizarChamadasInicio();
 
 		} catch (Exception e) {
@@ -242,7 +242,7 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void atualizarChamadasInicio() {
 		try {
 			chamadas = ChamadaBO.getInstance().obterChamadasFiltro(-1);
@@ -257,12 +257,12 @@ public class ChamadaBean extends SimpleController {
 	}
 
 	public void atualizarChamadas() {
-		//try {
-			//chamadas = ChamadaBO.getInstance().obterChamadasAbertas();
-			chamadas = getListaChamadasEmEspera();
-		/*} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
-		}*/
+		// try {
+		// chamadas = ChamadaBO.getInstance().obterChamadasAbertas();
+		chamadas = getListaChamadasEmEspera();
+		/*
+		 * } catch (ExcecaoNegocio e) { ExcecoesUtil.TratarExcecao(e); }
+		 */
 	}
 
 	public void pesquisarClienteDialog() {
@@ -308,7 +308,7 @@ public class ChamadaBean extends SimpleController {
 				cliente.setCelular(numCelPesquisa);
 			chamada.setCliente(getCliente());
 			getListaChamadasEmEspera().add(ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
-					listaCaracteristicasSelecionadas));			
+					listaCaracteristicasSelecionadas));
 			limparCampos();
 			atualizarChamadas();
 			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cadastrada.");
@@ -688,4 +688,14 @@ public class ChamadaBean extends SimpleController {
 		return getListaCaracteristicasMemoria();
 	}
 
+	public String getTipoMarcador() {
+		return tipoMarcador;
+	}
+
+	public void setTipoMarcador(String tipoMarcador) {
+		this.tipoMarcador = tipoMarcador;
+	}
+
+	
+	
 }

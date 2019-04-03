@@ -9,11 +9,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.dao.IBinarioUsuarioDAO;
 import br.com.motorapido.dao.IChamadaDAO;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.dao.IUsuarioAparelhoDAO;
 import br.com.motorapido.dao.IUsuarioDAO;
+import br.com.motorapido.entity.BinarioUsuario;
 import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
@@ -151,6 +153,14 @@ public class UsuarioBO extends MotoRapidoBO {
 			usuarioAparelho.setDataCriacao(new Date());
 			usuarioAparelho.setIdPush(usuario.getIdPush());
 			
+			
+			if(usuario.getFoto() != null){
+				IBinarioUsuarioDAO binarioUsuarioDAO = fabricaDAO.getPostgresBinarioUsuarioDAO();
+				BinarioUsuario binarioUsuario = new BinarioUsuario();
+				binarioUsuario.setBinario(usuario.getFoto());
+				binarioUsuario = binarioUsuarioDAO.save(binarioUsuario, em);
+				usuario.setCodBinarioFoto(binarioUsuario.getCodigo());
+			}
 			
 			usuario = usuarioDAO.save(usuario, em);
 			
