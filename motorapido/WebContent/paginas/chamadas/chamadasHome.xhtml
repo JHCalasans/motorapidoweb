@@ -43,6 +43,8 @@
   
 </script>
 
+
+
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
 
@@ -349,13 +351,14 @@
 
 							<p:panel>
 								<h:panelGroup layout="block" >
-									<p:outputLabel value="Marcar:"></p:outputLabel>
-									<p:selectOneMenu styleClass="selectMarcador" value="#{chamadaBean.tipoMarcador}"
-										panelStyle="width:280px" var="marcador"	>
-										
+									<p:outputLabel value="Marcar:" style="vertical-align: super;" styleClass="OutputLabelCampo"></p:outputLabel>
+									<p:selectOneMenu  value="#{chamadaBean.tipoMarcador}"
+										panelStyle="width:280px" var="marcador"	>										
 										<f:selectItem itemLabel="Origem" itemValue="O"/>
 										
 										<f:selectItem itemLabel="Destino" itemValue="D"/>
+										
+										<p:ajax event="change"></p:ajax>
 										
 									</p:selectOneMenu>
 

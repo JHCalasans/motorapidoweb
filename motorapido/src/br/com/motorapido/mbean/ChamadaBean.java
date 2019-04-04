@@ -132,6 +132,10 @@ public class ChamadaBean extends SimpleController {
 		try {
 			mapModel.getMarkers().clear();
 			Marker marker = new Marker(event.getLatLng(), "Marcador");
+			if(tipoMarcador.equals("O"))
+				marker.setIcon("/motorapido/resources/marcador_verde.png");
+			else
+				marker.setIcon("/motorapido/resources/chegada.png");
 			mapModel.addOverlay(marker);
 			org.primefaces.model.map.LatLng coord = event.getLatLng();
 
