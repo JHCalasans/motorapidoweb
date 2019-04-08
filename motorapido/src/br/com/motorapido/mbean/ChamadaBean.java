@@ -96,10 +96,11 @@ public class ChamadaBean extends SimpleController {
 	private Logradouro logradouroDestSelecionado;
 
 	private String componenteParaUpdate;
-	
+
 	private String tipoMarcador = "O";
-	
-		
+
+	private String tipoMarcadorJaAdicionado;
+
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
@@ -107,7 +108,7 @@ public class ChamadaBean extends SimpleController {
 		}
 		try {
 			limparCampos();
-			
+
 			// iniciarListaLogradouros();
 			mapModel = new DefaultMapModel();
 			logradouro = new Logradouro();
@@ -131,11 +132,31 @@ public class ChamadaBean extends SimpleController {
 
 		try {
 			mapModel.getMarkers().clear();
-			Marker marker = new Marker(event.getLatLng(), "Marcador");
-			if(tipoMarcador.equals("O"))
-				marker.setIcon("/motorapido/resources/marcador_verde.png");
-			else
+			Marker marker = new Marker(event.getLatLng());
+			
+
+			/*if (tipoMarcadorJaAdicionado != null && !tipoMarcadorJaAdicionado.isEmpty() && tipoMarcadorJaAdicionado.equals(tipoMarcador)) {
+				
+				for (Marker mark : mapModel.getMarkers()) {
+					//if(mark.)
+				}
+			}*/
+			
+			for (Marker mark : mapModel.getMarkers()) {
+				if(mark.getId().equals(tipoMarcador)){
+					mapModel.getMarkers().remove(mark);
+					break;
+				}
+			}
+
+			if (!tipoMarcador.equals("O")){
 				marker.setIcon("/motorapido/resources/chegada.png");
+				marker.setTitle("Destino");				
+			}else
+				marker.setTitle("Origem");
+			
+			marker.setId(tipoMarcador);
+
 			mapModel.addOverlay(marker);
 			org.primefaces.model.map.LatLng coord = event.getLatLng();
 
@@ -158,12 +179,12 @@ public class ChamadaBean extends SimpleController {
 
 	}
 
-	public void marcadorSelecionado(OverlaySelectEvent event) {
+	/*public void marcadorSelecionado(OverlaySelectEvent event) {
 		mapModel.getMarkers().clear();
 		logradouro = new Logradouro();
 		enderecoClienteOrigem = new EnderecoCliente();
 		chamada = new Chamada();
-	}
+	}*/
 
 	public void logradouroSelecionado(SelectEvent event) {
 		Logradouro logSelecionado = (Logradouro) event.getObject();
@@ -700,6 +721,12 @@ public class ChamadaBean extends SimpleController {
 		this.tipoMarcador = tipoMarcador;
 	}
 
-	
-	
+	public String getTipoMarcadorJaAdicionado() {
+		return tipoMarcadorJaAdicionado;
+	}
+
+	public void setTipoMarcadorJaAdicionado(String tipoMarcadorJaAdicionado) {
+		this.tipoMarcadorJaAdicionado = tipoMarcadorJaAdicionado;
+	}
+
 }

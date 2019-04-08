@@ -341,9 +341,9 @@
 									model="#{chamadaBean.mapModel}" widgetVar="map">
 									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}"
 										update="gmap, :fieldOrigem"></p:ajax>
-									<p:ajax event="overlaySelect"
+									<!-- <p:ajax event="overlaySelect"
 										listener="#{chamadaBean.marcadorSelecionado}"
-										update="gmap, :fieldOrigem" />
+										update="gmap, :fieldOrigem" /> -->
 
 								</p:gmap>
 
@@ -361,6 +361,8 @@
 										<p:ajax event="change"></p:ajax>
 										
 									</p:selectOneMenu>
+									
+									<p:commandButton value="Remover" disabled="#{chamadaBean}"></p:commandButton>
 
 								</h:panelGroup>
 
