@@ -127,6 +127,19 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
+	
+	public void removerMarcador(){
+		
+		for(Marker mark : mapModel.getMarkers()){
+			if(mark.getId().equals(tipoMarcador)){
+				mapModel.getMarkers().remove(mark);
+				break;
+			}
+		}
+		/*if(tipoMarcador.equals("O"))
+			
+			mapModel.getMarkers().*/
+	}
 
 	public void addMarker(PointSelectEvent event) {
 
