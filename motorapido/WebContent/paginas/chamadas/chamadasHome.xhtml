@@ -331,7 +331,8 @@
 					</p:column>
 
 					<!--  lado direito da tela -->
-					<p:column style="width:50%; vertical-align: initial;">
+					<p:column style="width:50%; vertical-align: initial;"
+						id="colDireita">
 						<h:panelGroup>
 
 							<p:panel>
@@ -340,29 +341,29 @@
 									style="width:600px;height:550px; text-align:center;"
 									model="#{chamadaBean.mapModel}" widgetVar="map">
 									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}"
-										update="gmap, :fieldOrigem"></p:ajax>
-									<!-- <p:ajax event="overlaySelect"
+										update="gmap, :fieldOrigem, :fieldDestino"></p:ajax>
+									<p:ajax event="overlaySelect"
 										listener="#{chamadaBean.marcadorSelecionado}"
-										update="gmap, :fieldOrigem" /> -->
+										update="gmap, :fieldOrigem, :fieldDestino" />
 
 								</p:gmap>
 
 							</p:panel>
 
-							<p:panel>
-								<h:panelGroup layout="block" >
-									<p:outputLabel value="Marcar:" style="vertical-align: super;" styleClass="OutputLabelCampo"></p:outputLabel>
-									<p:selectOneMenu  value="#{chamadaBean.tipoMarcador}"
-										panelStyle="width:280px" var="marcador"	>										
-										<f:selectItem itemLabel="Origem" itemValue="O"/>
-										
-										<f:selectItem itemLabel="Destino" itemValue="D"/>
-										
-										<p:ajax event="change"></p:ajax>
-										
+							<p:panel id="panelMapa">
+								<h:panelGroup layout="block">
+									<p:outputLabel value="Marcar:" style="vertical-align: super;"
+										styleClass="OutputLabelCampo"></p:outputLabel>
+									<p:selectOneMenu value="#{chamadaBean.tipoMarcador}"
+										panelStyle="width:280px" var="marcador">
+										<f:selectItem itemLabel="Origem" itemValue="O" />
+
+										<f:selectItem itemLabel="Destino" itemValue="D" />
+
+										<p:ajax event="change" process="panelMapa"></p:ajax>
+
 									</p:selectOneMenu>
-									
-									<p:commandButton value="Remover" disabled="#{chamadaBean}"></p:commandButton>
+
 
 								</h:panelGroup>
 
@@ -446,6 +447,16 @@
 							<h:outputText value="Status" styleClass="cabecalhoDataTable" />
 						</f:facet>
 						<h:outputText value="#{chamada.situacaoChamada.descricao}">
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width: 60px">
+						<f:facet name="header">
+							<h:outputText value="Valor Previsto"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText value="#{chamada.valorPrevisto}">
+							<f:convertNumber pattern="R$ #.00" locale="pt_BR" />
 						</h:outputText>
 					</p:column>
 

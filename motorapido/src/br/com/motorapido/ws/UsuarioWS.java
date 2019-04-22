@@ -103,13 +103,15 @@ public class UsuarioWS  {
 	@POST
 	@Path("/enviarChamada")
 	public Response enviarChamada(NovaChamadaParam param) {
-		try {
-			
+		try {			
 			
 			/*ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
-					listaCaracteristicasSelecionadas)*/
+					listaCaracteristicasSelecionadas)*/		
 			
-			RetornoChamadaUsuario retorno = new RetornoChamadaUsuario();
+			
+			RetornoChamadaUsuario retorno  = ChamadaBO.getInstance().iniciarChamadaApp(param);
+			
+			/*RetornoChamadaUsuario retorno = new RetornoChamadaUsuario();
 			retorno.setCodChamada(3L);
 			retorno.setCorVeiculo("Branco");
 			retorno.setDataChamada(new Date());
@@ -117,8 +119,7 @@ public class UsuarioWS  {
 			retorno.setModeloVeiculo("Pop");
 			retorno.setNomeMotorista("José da Silva");
 			retorno.setOrigem(param.getLogradouroOrigem() + " - " + param.getBairroOrigem());
-			retorno.setPlacaVeiculo("TYU-6578");
-			
+			retorno.setPlacaVeiculo("TYU-6578");*/
 		   
 			return Response.status(Status.OK).entity(retorno).build();
 		}catch (Exception e) {

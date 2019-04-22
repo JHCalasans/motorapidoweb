@@ -101,6 +101,8 @@ public class ChamadaBean extends SimpleController {
 
 	private String tipoMarcadorJaAdicionado;
 
+	private Boolean showBotaoRemover = false;
+
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
@@ -114,6 +116,7 @@ public class ChamadaBean extends SimpleController {
 			logradouro = new Logradouro();
 			enderecoClienteOrigem = new EnderecoCliente();
 			enderecoDestinoCliente = new EnderecoCliente();
+			cliente = new Cliente();
 			if (coordenadas == null) {
 				String coordenadasIniciais = ParametroBO.getInstance()
 						.getParam(ParametroEnum.COORDENADAS_INICIAIS.getCodigo());
@@ -127,77 +130,126 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	public void removerMarcador(){
-		
-		for(Marker mark : mapModel.getMarkers()){
-			if(mark.getId().equals(tipoMarcador)){
+
+	public void removerMarcador() {
+
+		for (Marker mark : mapModel.getMarkers()) {
+			if (mark.getTitle().startsWith(tipoMarcador)) {
 				mapModel.getMarkers().remove(mark);
 				break;
 			}
 		}
-		/*if(tipoMarcador.equals("O"))
-			
-			mapModel.getMarkers().*/
+		/*
+		 * if(tipoMarcador.equals("O"))
+		 * 
+		 * mapModel.getMarkers().
+		 */
+	}
+
+	public Boolean botaoRemoverHabilitado() {
+		Boolean retorno = false;
+		for (Marker mark : mapModel.getMarkers()) {
+			retorno = mark.getTitle().startsWith(tipoMarcador);
+			if (retorno)
+				break;
+		}
+		return retorno;
+	}
+
+	public void atualizarMarcador() {
+
 	}
 
 	public void addMarker(PointSelectEvent event) {
 
 		try {
-			mapModel.getMarkers().clear();
+			// mapModel.getMarkers().clear();
 			Marker marker = new Marker(event.getLatLng());
-			
 
-			/*if (tipoMarcadorJaAdicionado != null && !tipoMarcadorJaAdicionado.isEmpty() && tipoMarcadorJaAdicionado.equals(tipoMarcador)) {
-				
-				for (Marker mark : mapModel.getMarkers()) {
-					//if(mark.)
-				}
-			}*/
-			
+			/*
+			 * if (tipoMarcadorJaAdicionado != null &&
+			 * !tipoMarcadorJaAdicionado.isEmpty() &&
+			 * tipoMarcadorJaAdicionado.equals(tipoMarcador)) {
+			 * 
+			 * for (Marker mark : mapModel.getMarkers()) { //if(mark.) } }
+			 */
+
 			for (Marker mark : mapModel.getMarkers()) {
-				if(mark.getId().equals(tipoMarcador)){
+				if (mark.getTitle().startsWith(tipoMarcador)) {
 					mapModel.getMarkers().remove(mark);
 					break;
 				}
 			}
-
-			if (!tipoMarcador.equals("O")){
-				marker.setIcon("/motorapido/resources/chegada.png");
-				marker.setTitle("Destino");				
-			}else
-				marker.setTitle("Origem");
-			
-			marker.setId(tipoMarcador);
-
 			mapModel.addOverlay(marker);
 			org.primefaces.model.map.LatLng coord = event.getLatLng();
 
 			RetornoGoogleWSCoordenadas retorno = GoogleWSUtil
 					.buscarCoordenadas(String.valueOf(coord.getLat()) + "," + String.valueOf(coord.getLng()));
-			logradouro = new Logradouro();
-			logradouro.setDescricao(retorno.getResults().get(0).getAddress_components().get(1).getLong_name());
-			chamada.setCidadeOrigem(retorno.getResults().get(0).getAddress_components().get(3).getLong_name());
-			logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + chamada.getCidadeOrigem());
-			chamada.setBairroOrigem(retorno.getResults().get(0).getAddress_components().get(2).getLong_name());
-			chamada.setCepOrigem(retorno.getResults().get(0).getAddress_components().get(6).getLong_name());
-			chamada.setLogradouroOrigem(logradouro.getDescricao());
+			if (!tipoMarcador.equals("O")) {
+				marker.setIcon("/motorapido/resources/chegada.png");
+				marker.setTitle("Destino");
+				logradouroDestino = new Logradouro();
+				logradouroDestino.setDescricao(retorno.getResults().get(0).getAddress_components().get(1).getLong_name());
+				chamada.setCidadeDestino(retorno.getResults().get(0).getAddress_components().get(3).getLong_name());
+				logradouroDestino.setLogradouroComCidade(logradouroDestino.getDescricao() + " - " + chamada.getCidadeDestino());
+				chamada.setBairroDestino(retorno.getResults().get(0).getAddress_components().get(2).getLong_name());
+				chamada.setCepDestino(retorno.getResults().get(0).getAddress_components().get(6).getLong_name());
+				chamada.setLogradouroDestino(logradouroDestino.getDescricao());
 
-			chamada.setLatitudeOrigem(String.valueOf(coord.getLat()));
-			chamada.setLongitudeOrigem(String.valueOf(coord.getLng()));
-			chamada.setComplementoOrigem(null);
+				chamada.setLatitudeDestino(String.valueOf(coord.getLat()));
+				chamada.setLongitudeDestino(String.valueOf(coord.getLng()));
+				chamada.setComplementoDestino(null);
+			} else {
+				marker.setTitle("Origem");
+				logradouro = new Logradouro();
+				logradouro.setDescricao(retorno.getResults().get(0).getAddress_components().get(1).getLong_name());
+				chamada.setCidadeOrigem(retorno.getResults().get(0).getAddress_components().get(3).getLong_name());
+				logradouro.setLogradouroComCidade(logradouro.getDescricao() + " - " + chamada.getCidadeOrigem());
+				chamada.setBairroOrigem(retorno.getResults().get(0).getAddress_components().get(2).getLong_name());
+				chamada.setCepOrigem(retorno.getResults().get(0).getAddress_components().get(6).getLong_name());
+				chamada.setLogradouroOrigem(logradouro.getDescricao());
+
+				chamada.setLatitudeOrigem(String.valueOf(coord.getLat()));
+				chamada.setLongitudeOrigem(String.valueOf(coord.getLng()));
+				chamada.setComplementoOrigem(null);
+			}
 
 		} catch (Exception e) {
 		}
 
 	}
 
-	/*public void marcadorSelecionado(OverlaySelectEvent event) {
-		mapModel.getMarkers().clear();
-		logradouro = new Logradouro();
-		enderecoClienteOrigem = new EnderecoCliente();
-		chamada = new Chamada();
-	}*/
+	public void marcadorSelecionado(OverlaySelectEvent event) {
+		// mapModel.getMarkers().clear();
+		Marker mark = (Marker) event.getOverlay();
+		mapModel.getMarkers().remove(mark);
+		if (mark.getTitle().startsWith("O")) {
+			logradouro = new Logradouro();
+			enderecoClienteOrigem = new EnderecoCliente();
+			chamada.setBairroOrigem(null);
+			chamada.setCepOrigem(null);
+			chamada.setCidadeOrigem(null);
+			chamada.setComplementoOrigem(null);
+			chamada.setLatitudeOrigem(null);
+			chamada.setLogradouroOrigem(null);
+			chamada.setLongitudeOrigem(null);
+			chamada.setNumeroOrigem(null);
+		} else {
+			logradouroDestino = new Logradouro();
+			chamada.setBairroDestino(null);
+			chamada.setCepDestino(null);
+			chamada.setCidadeDestino(null);
+			chamada.setComplementoDestino(null);
+			chamada.setLatitudeDestino(null);
+			chamada.setLogradouroDestino(null);
+			chamada.setLongitudeDestino(null);
+			chamada.setNumeroDestino(null);
+		}
+		/*
+		 * logradouro = new Logradouro(); enderecoClienteOrigem = new
+		 * EnderecoCliente(); chamada = new Chamada();
+		 */
+	}
 
 	public void logradouroSelecionado(SelectEvent event) {
 		Logradouro logSelecionado = (Logradouro) event.getObject();
@@ -345,13 +397,32 @@ public class ChamadaBean extends SimpleController {
 			if (cliente.getCodigo() == null)
 				cliente.setCelular(numCelPesquisa);
 			chamada.setCliente(getCliente());
+			
+			if(chamada.getLogradouroOrigem() == null || chamada.getLogradouroOrigem().isEmpty())
+				throw new ExcecaoNegocio("Informe localização de origem");				
+			
+			
+			if(chamada.getLogradouroDestino() == null || chamada.getLogradouroDestino().isEmpty())
+				throw new ExcecaoNegocio("Informe localização de destino");
+			
+			
 			getListaChamadasEmEspera().add(ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
-					listaCaracteristicasSelecionadas));
+					listaCaracteristicasSelecionadas));		
+			
+			
 			limparCampos();
 			atualizarChamadas();
 			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cadastrada.");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
+			logradouroDestino = new Logradouro();
+			logradouroDestino.setLogradouroComCidade(chamada.getLogradouroDestino());
+			
+			
+			logradouro = new Logradouro();
+			logradouro.setLogradouroComCidade(chamada.getLogradouroOrigem());
+			
+			
 		}
 	}
 
@@ -740,6 +811,14 @@ public class ChamadaBean extends SimpleController {
 
 	public void setTipoMarcadorJaAdicionado(String tipoMarcadorJaAdicionado) {
 		this.tipoMarcadorJaAdicionado = tipoMarcadorJaAdicionado;
+	}
+
+	public Boolean getShowBotaoRemover() {
+		return showBotaoRemover;
+	}
+
+	public void setShowBotaoRemover(Boolean showBotaoRemover) {
+		this.showBotaoRemover = showBotaoRemover;
 	}
 
 }

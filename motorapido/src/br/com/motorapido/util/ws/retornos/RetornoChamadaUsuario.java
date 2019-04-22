@@ -1,6 +1,7 @@
 package br.com.motorapido.util.ws.retornos;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,7 +18,7 @@ public class RetornoChamadaUsuario implements Serializable{
 	
 	private String origem;
 	
-	private Float valor;	
+	private BigDecimal valorPrevisto;	
 	
 	private Long codChamada;
 	
@@ -70,16 +71,6 @@ public class RetornoChamadaUsuario implements Serializable{
 	}
 
 
-
-	public Float getValor() {
-		return valor;
-	}
-
-
-
-	public void setValor(Float valor) {
-		this.valor = valor;
-	}
 
 
 
@@ -139,6 +130,18 @@ public class RetornoChamadaUsuario implements Serializable{
 
 	public void setNomeMotorista(String nomeMotorista) {
 		this.nomeMotorista = nomeMotorista;
+	}
+
+
+
+	public BigDecimal getValorPrevisto() {
+		return valorPrevisto;
+	}
+
+
+
+	public void setValorPrevisto(BigDecimal valorPrevisto) {
+		this.valorPrevisto = valorPrevisto;
 	}
 
 }

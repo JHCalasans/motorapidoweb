@@ -21,6 +21,7 @@ import org.joda.time.Weeks;
 
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBanco;
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
+import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.FabricaDAO;
 import br.com.motorapido.entity.Parametro;
 import br.com.motorapido.entity.ValorParametro;
@@ -215,6 +216,29 @@ public final class FuncoesUtil {
 		c.add(Calendar.DAY_OF_WEEK, amount);
 		return c.getTime();
 	}
+	
+	public static Float formatarFloat(float numero) throws ExcecaoNegocio{
+		  String retorno = "";
+		  DecimalFormat formatter = new DecimalFormat("#.00");
+		  try{
+		    retorno = formatter.format(numero);
+		  }catch(Exception ex){
+		   throw new ExcecaoNegocio("Erro ao formatar numero: " + ex);
+		  }
+		  return Float.parseFloat(retorno);
+		}
+	
+	
+	public static BigDecimal formatarBigDecimal(float numero) throws ExcecaoNegocio{
+		  String retorno = "";
+		  DecimalFormat formatter = new DecimalFormat("#.00");
+		  try{
+		    retorno = formatter.format(numero);
+		  }catch(Exception ex){
+		   throw new ExcecaoNegocio("Erro ao formatar numero: " + ex);
+		  }
+		  return BigDecimal.valueOf(Float.parseFloat(retorno));
+		}
 
 	public static Date sendToNextSunday(Date data) {
 		Calendar c = Calendar.getInstance();

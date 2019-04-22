@@ -1,6 +1,7 @@
 package br.com.motorapido.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -117,7 +119,7 @@ public class Chamada extends Entidade {
 	@Column(name = "longitude_destino")
 	private String longitudeDestino;
 
-	@Column(name = "valor_Final")
+	@Column(name = "valor_final")
 	private Float valorFinal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -151,6 +153,12 @@ public class Chamada extends Entidade {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_area", nullable = true)
 	private Area area;
+	
+	@Column(name = "valor_previsto")
+	private BigDecimal valorPrevisto;
+	
+	@Transient
+	private String distanciaPrevista;
 
 	public Chamada() {
 
@@ -447,6 +455,22 @@ public class Chamada extends Entidade {
 
 	public void setValorFinal(Float valorFinal) {
 		this.valorFinal = valorFinal;
+	}
+
+	public BigDecimal getValorPrevisto() {
+		return valorPrevisto;
+	}
+
+	public void setValorPrevisto(BigDecimal valorPrevisto) {
+		this.valorPrevisto = valorPrevisto;
+	}
+
+	public String getDistanciaPrevista() {
+		return distanciaPrevista;
+	}
+
+	public void setDistanciaPrevista(String distanciaPrevista) {
+		this.distanciaPrevista = distanciaPrevista;
 	}
 
 }
