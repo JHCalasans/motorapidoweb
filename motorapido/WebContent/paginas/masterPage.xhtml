@@ -160,11 +160,31 @@
 	function  ajustaMsg() {
 		document.getElementById('formMenuNorth:btnMsg').click();
 	}
+
+	 function handleMessageChamada(obj) {
+	    	/* var res = facesmessage.detail.split("-");
+	        facesmessage.detail = res[0]; */
+			//facesmessage.severity = 'info';
+	    	//alert(facesmessage);		
+			//myAudio.play();
+							
+			//document.getElementById("formMsg:lblMsg").value = "opa";
+
+			
+				 var jsfCommandLink = document.getElementById("formMenuNorth:link");
+				 jsfCommandLink.click();		
+	    			
+		}
+	 
   
 </script>
 </h:head>
 <h:body>
 	<p:socket channel="/notify" id="socketMsg" onMessage="handleMessage">
+
+	</p:socket>
+	<p:socket channel="/chamadas" id="socketMsgChamada"
+		onMessage="handleMessageChamada">
 
 	</p:socket>
 	<ui:debug hotkey="k" />
@@ -198,8 +218,11 @@
 
 		<p:commandButton actionListener="#{mensagemBean.atualizarMensagens()}"
 			id="btnMsg" style="display:none;" ajax="false">
-
 		</p:commandButton>
+
+		<p:commandButton style="display:none" id="link" update="tbChamadas" ajax="false"
+			action="#{chamadaBean.atualizarChamadasFiltro()}" />
+
 		<p:panel style="width:100%;">
 			<div align="center">
 				<p:panel styleClass="myHeader"
@@ -273,40 +296,50 @@
 		</p:dialog>
 
 		<p:dialog header="Nova Mensagem!" widgetVar="dlgMensagem" height="80"
-			styleClass="nova-mensagem" visible="false" draggable="false" onShow="timerDialog();"
-			resizable="false" width="300" id="dlgMensagem1" onHide="myStopFunction();">
+			styleClass="nova-mensagem" visible="false" draggable="false"
+			onShow="timerDialog();" resizable="false" width="300"
+			id="dlgMensagem1" onHide="myStopFunction();">
 
 			<span class="img-nova-mensagem"></span>
 			<div align="left" style="margin-top: 10px;">
-				<span id="lblOrigemMsg" style="margin-left: 10px;font-size:15px;font-weight: bold;">Mensagem de Mauro</span>
+				<span id="lblOrigemMsg"
+					style="margin-left: 10px; font-size: 15px; font-weight: bold;">Mensagem
+					de Mauro</span>
 			</div>
 			<br />
 			<br />
 			<h:form>
 				<div align="center">
-					<p:commandButton value="Visualizar" style="width: 80px;color:blue;background: antiquewhite;margin-right: 20px;border: transparent;"></p:commandButton>
-					<p:commandButton value="Cancelar" onclick="PF('dlgMensagem').hide()"
-					 style="width: 80px;background: lightcoral;color: white;border: transparent;"></p:commandButton>
+					<p:commandButton value="Visualizar"
+						style="width: 80px;color:blue;background: antiquewhite;margin-right: 20px;border: transparent;"></p:commandButton>
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgMensagem').hide()"
+						style="width: 80px;background: lightcoral;color: white;border: transparent;"></p:commandButton>
 				</div>
 			</h:form>
 
 		</p:dialog>
-		
+
 		<p:dialog header="Nova Mensagem!" widgetVar="dlgMensagem2" height="80"
-			styleClass="nova-mensagem" visible="false" draggable="false" onShow="timerDialog2();"
-			resizable="false" width="300" id="dlgMensagem2" onHide="myStopFunction2();">
+			styleClass="nova-mensagem" visible="false" draggable="false"
+			onShow="timerDialog2();" resizable="false" width="300"
+			id="dlgMensagem2" onHide="myStopFunction2();">
 
 			<span class="img-nova-mensagem"></span>
 			<div align="left" style="margin-top: 10px;">
-				<span id="lblOrigemMsg2" style="margin-left: 10px;font-size:15px;font-weight: bold;">Mensagem de Mauro</span>
+				<span id="lblOrigemMsg2"
+					style="margin-left: 10px; font-size: 15px; font-weight: bold;">Mensagem
+					de Mauro</span>
 			</div>
 			<br />
 			<br />
 			<h:form>
 				<div align="center">
-					<p:commandButton value="Visualizar" style="width: 80px;color:blue;background: antiquewhite;margin-right: 20px;border: transparent;"></p:commandButton>
-					<p:commandButton value="Cancelar" onclick="PF('dlgMensagem2').hide()"
-					 style="width: 80px;background: lightcoral;color: white;border: transparent;"></p:commandButton>
+					<p:commandButton value="Visualizar"
+						style="width: 80px;color:blue;background: antiquewhite;margin-right: 20px;border: transparent;"></p:commandButton>
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgMensagem2').hide()"
+						style="width: 80px;background: lightcoral;color: white;border: transparent;"></p:commandButton>
 				</div>
 			</h:form>
 

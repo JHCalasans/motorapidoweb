@@ -19,4 +19,6 @@ public interface IMotoristaPosicaoAreaDAO extends GenericDAO<MotoristaPosicaoAre
 	
 	public List<MotoristaPosicaoArea> obterMotoristasPorArea(Area area, EntityManager em) throws ExcecaoBancoConexao, ExcecaoBanco;
 
+	public List<MotoristaPosicaoArea> obterMotoristasChamadaPorArea(Area area,Long codChamada ,EntityManager em) throws ExcecaoBancoConexao, ExcecaoBanco;
+
 }

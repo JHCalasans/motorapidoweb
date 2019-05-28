@@ -43,6 +43,15 @@ implements IMotoristaPosicaoAreaDAO{
 		params.put("codArea", area.getCodigo());
 		return findByNamedQueryAndNamedParams("MotoristaPosicaoArea.obterMotoristasPorArea", params, em);
 	}
+
+	@Override
+	public List<MotoristaPosicaoArea> obterMotoristasChamadaPorArea(Area area, Long codChamada, EntityManager em)
+			throws ExcecaoBancoConexao, ExcecaoBanco {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codArea", area.getCodigo());
+		params.put("codChamada", codChamada);
+		return findByNamedQueryAndNamedParams("MotoristaPosicaoArea.obterMotoristasChamadaPorArea", params, em);
+	}
 	
 	
 	

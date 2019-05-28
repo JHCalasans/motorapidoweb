@@ -15,6 +15,9 @@ public interface IVeiculoDAO extends GenericDAO<Veiculo, Integer>{
 	
 	public List<Veiculo> obterVeiculosPorMotorista(Integer codMotorista, EntityManager em) throws ExcecaoBanco;
 	
+	public Veiculo obterVeiculosEmUsoPorMotorista(Integer codMotorista, EntityManager em) throws ExcecaoBanco;
+	
+	
 	public Veiculo obterVeiculoPorPlaca(String placa, EntityManager em) throws ExcecaoBanco;
 	
 	public Veiculo obterVeiculoPorChassi(String chassi, EntityManager em) throws ExcecaoBanco;

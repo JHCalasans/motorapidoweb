@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.Normalizer;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -229,15 +230,15 @@ public final class FuncoesUtil {
 		}
 	
 	
-	public static BigDecimal formatarBigDecimal(float numero) throws ExcecaoNegocio{
+	public static BigDecimal formatarBigDecimal(Float numero) throws ExcecaoNegocio{
 		  String retorno = "";
-		  DecimalFormat formatter = new DecimalFormat("#.00");
+		  DecimalFormat formatter = new DecimalFormat("#,00");		 
 		  try{
 		    retorno = formatter.format(numero);
 		  }catch(Exception ex){
 		   throw new ExcecaoNegocio("Erro ao formatar numero: " + ex);
 		  }
-		  return BigDecimal.valueOf(Float.parseFloat(retorno));
+		  return BigDecimal.valueOf(Double.parseDouble(retorno));
 		}
 
 	public static Date sendToNextSunday(Date data) {

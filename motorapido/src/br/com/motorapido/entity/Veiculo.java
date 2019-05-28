@@ -24,6 +24,8 @@ import br.com.minhaLib.dao.Entidade;
 @NamedQueries(value = { 
 		@NamedQuery(name = "Veiculo.obterVeiculosPorMotorista", query = "select v from Veiculo v join fetch v.motorista m join fetch v.modelo mo "
 				+ " join fetch mo.tipoVeiculo tv join fetch mo.fabricante f where :codMotorista = m.codigo and v.flgAtivo = 'S' "),	
+		@NamedQuery(name = "Veiculo.obterVeiculosEmUsoPorMotorista", query = "select v from Veiculo v join fetch v.motorista m join fetch v.modelo mo "
+				+ " join fetch mo.tipoVeiculo tv join fetch mo.fabricante f where :codMotorista = m.codigo and v.flgAtivo = 'S' and v.emUso = 'S' "),			
 		@NamedQuery(name = "Veiculo.obterVeiculosPorPlaca", query = "select v from Veiculo v join fetch v.motorista m join fetch v.modelo mo "
 				+ " join fetch mo.tipoVeiculo tv join fetch mo.fabricante f where :placa = v.placa and v.flgAtivo = 'S' "),		
 		@NamedQuery(name = "Veiculo.obterVeiculosPorChassi", query = "select v from Veiculo v join fetch v.motorista m join fetch v.modelo mo "
@@ -62,6 +64,9 @@ public class Veiculo extends Entidade{
 	
 	@Column(name = "flg_ativo", nullable = false, length = 1)
 	private String flgAtivo;	
+	
+	@Column(name = "flg_em_uso", nullable = false, length = 1)
+	private String emUso;	
 
 	@Column(name = "documento", nullable = false)
 	private Long codBinarioDocumento;
@@ -76,10 +81,17 @@ public class Veiculo extends Entidade{
 
 	@Override
 	public Serializable getIdentificador() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	public Veiculo(Integer codigo){
+		this.codigo = codigo;
+	}
+	
+	public Veiculo(){
+		
+	}
+	
 	public Integer getCodigo() {
 		return codigo;
 	}
@@ -166,6 +178,14 @@ public class Veiculo extends Entidade{
 
 	public void setCodBinarioDocumento(Long codBinarioDocumento) {
 		this.codBinarioDocumento = codBinarioDocumento;
+	}
+
+	public String getEmUso() {
+		return emUso;
+	}
+
+	public void setEmUso(String emUso) {
+		this.emUso = emUso;
 	}
 	
 	

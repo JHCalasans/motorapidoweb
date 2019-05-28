@@ -9,6 +9,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.primefaces.component.inputtext.InputText;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.ToggleEvent;
@@ -18,6 +21,8 @@ import org.primefaces.model.Visibility;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
 
 import com.google.maps.model.LatLng;
 
@@ -34,6 +39,7 @@ import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Local;
 import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.enums.ParametroEnum;
+import br.com.motorapido.enums.SituacaoChamadaEnum;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.GoogleWSUtil;
 import br.com.motorapido.util.RetornoGoogleWSCoordenadas;
@@ -103,6 +109,10 @@ public class ChamadaBean extends SimpleController {
 
 	private Boolean showBotaoRemover = false;
 
+	private InputText numeroOrigem;
+	
+	private Integer contadorLista;
+
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
@@ -117,6 +127,8 @@ public class ChamadaBean extends SimpleController {
 			enderecoClienteOrigem = new EnderecoCliente();
 			enderecoDestinoCliente = new EnderecoCliente();
 			cliente = new Cliente();
+			contadorLista = new Integer(getListaChamadasEmEspera().size());
+			setSituacaoChamadaFiltro(-1);
 			if (coordenadas == null) {
 				String coordenadasIniciais = ParametroBO.getInstance()
 						.getParam(ParametroEnum.COORDENADAS_INICIAIS.getCodigo());
@@ -146,6 +158,8 @@ public class ChamadaBean extends SimpleController {
 		 */
 	}
 
+	
+
 	public Boolean botaoRemoverHabilitado() {
 		Boolean retorno = false;
 		for (Marker mark : mapModel.getMarkers()) {
@@ -156,8 +170,15 @@ public class ChamadaBean extends SimpleController {
 		return retorno;
 	}
 
-	public void atualizarMarcador() {
-
+	public void teste() {
+		
+	}
+	
+	public void verificarLista(){
+		if(getSituacaoChamadaFiltro().equals(SituacaoChamadaEnum.PENDENTE.getCodigo()) ||
+				getSituacaoChamadaFiltro().equals(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo())){
+			System.out.println("Teste");
+		}
 	}
 
 	public void addMarker(PointSelectEvent event) {
@@ -189,9 +210,11 @@ public class ChamadaBean extends SimpleController {
 				marker.setIcon("/motorapido/resources/chegada.png");
 				marker.setTitle("Destino");
 				logradouroDestino = new Logradouro();
-				logradouroDestino.setDescricao(retorno.getResults().get(0).getAddress_components().get(1).getLong_name());
+				logradouroDestino
+						.setDescricao(retorno.getResults().get(0).getAddress_components().get(1).getLong_name());
 				chamada.setCidadeDestino(retorno.getResults().get(0).getAddress_components().get(3).getLong_name());
-				logradouroDestino.setLogradouroComCidade(logradouroDestino.getDescricao() + " - " + chamada.getCidadeDestino());
+				logradouroDestino
+						.setLogradouroComCidade(logradouroDestino.getDescricao() + " - " + chamada.getCidadeDestino());
 				chamada.setBairroDestino(retorno.getResults().get(0).getAddress_components().get(2).getLong_name());
 				chamada.setCepDestino(retorno.getResults().get(0).getAddress_components().get(6).getLong_name());
 				chamada.setLogradouroDestino(logradouroDestino.getDescricao());
@@ -199,6 +222,7 @@ public class ChamadaBean extends SimpleController {
 				chamada.setLatitudeDestino(String.valueOf(coord.getLat()));
 				chamada.setLongitudeDestino(String.valueOf(coord.getLng()));
 				chamada.setComplementoDestino(null);
+
 			} else {
 				marker.setTitle("Origem");
 				logradouro = new Logradouro();
@@ -346,6 +370,10 @@ public class ChamadaBean extends SimpleController {
 		localOrigem = null;
 	}
 
+	public void limparDestino() {
+		// enderecoClienteDestino = new EnderecoCliente();
+	}
+
 	public void atualizarChamadas() {
 		// try {
 		// chamadas = ChamadaBO.getInstance().obterChamadasAbertas();
@@ -365,6 +393,7 @@ public class ChamadaBean extends SimpleController {
 
 	public void pesquisarClientePorCelular() {
 		try {
+
 			cliente = ClienteBO.getInstance().obterClientePorCelular(numCelPesquisa);
 			if (cliente == null) {
 				addMsg(FacesMessage.SEVERITY_WARN, "Cliente não encontrado.");
@@ -382,8 +411,9 @@ public class ChamadaBean extends SimpleController {
 		try {
 			getListaChamadasEmEspera().removeIf(cha -> cha.getCodigo() == chamadaRemover.getCodigo());
 			ChamadaBO.getInstance().removerChamada(chamadaRemover);
-			atualizarChamadas();
+			atualizarChamadasFiltro();
 			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cancelada com sucesso.");
+
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -397,32 +427,40 @@ public class ChamadaBean extends SimpleController {
 			if (cliente.getCodigo() == null)
 				cliente.setCelular(numCelPesquisa);
 			chamada.setCliente(getCliente());
-			
-			if(chamada.getLogradouroOrigem() == null || chamada.getLogradouroOrigem().isEmpty())
-				throw new ExcecaoNegocio("Informe localização de origem");				
-			
-			
-			if(chamada.getLogradouroDestino() == null || chamada.getLogradouroDestino().isEmpty())
+
+			if (chamada.getLogradouroOrigem() == null || chamada.getLogradouroOrigem().isEmpty())
+				throw new ExcecaoNegocio("Informe localização de origem");
+
+			if (chamada.getLogradouroDestino() == null || chamada.getLogradouroDestino().isEmpty())
 				throw new ExcecaoNegocio("Informe localização de destino");
+
+			/*
+			 * getListaChamadasEmEspera().add(ChamadaBO.getInstance().
+			 * iniciarChamada(getChamada(), getFuncionarioLogado(),
+			 * listaCaracteristicasSelecionadas));
+			 */
+			ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
+					listaCaracteristicasSelecionadas);
+
+		/*	String CHANELL = "/chamadas";
+			EventBus eventBus = EventBusFactory.getDefault().eventBus();
+			eventBus.publish(CHANELL);*/
 			
-			
-			getListaChamadasEmEspera().add(ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
-					listaCaracteristicasSelecionadas));		
-			
-			
+			contadorLista = getListaChamadasEmEspera().size();
+
+			mapModel.getMarkers().clear();
 			limparCampos();
-			atualizarChamadas();
+			atualizarChamadasFiltro();
+
 			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cadastrada.");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 			logradouroDestino = new Logradouro();
 			logradouroDestino.setLogradouroComCidade(chamada.getLogradouroDestino());
-			
-			
+
 			logradouro = new Logradouro();
 			logradouro.setLogradouroComCidade(chamada.getLogradouroOrigem());
-			
-			
+
 		}
 	}
 
@@ -436,6 +474,7 @@ public class ChamadaBean extends SimpleController {
 		// localOrigem = null;
 		chamada = new Chamada();
 
+		logradouro = new Logradouro();
 		/*
 		 * if(mapModel != null && mapModel.getMarkers() != null &&
 		 * mapModel.getMarkers().size() > 0) mapModel.getMarkers().clear();
@@ -819,6 +858,22 @@ public class ChamadaBean extends SimpleController {
 
 	public void setShowBotaoRemover(Boolean showBotaoRemover) {
 		this.showBotaoRemover = showBotaoRemover;
+	}
+
+	public InputText getNumeroOrigem() {
+		return numeroOrigem;
+	}
+
+	public void setNumeroOrigem(InputText numeroOrigem) {
+		this.numeroOrigem = numeroOrigem;
+	}
+
+	public Integer getContadorLista() {
+		return contadorLista;
+	}
+
+	public void setContadorLista(Integer contadorLista) {
+		this.contadorLista = contadorLista;
 	}
 
 }

@@ -26,6 +26,10 @@ import br.com.minhaLib.dao.Entidade;
 		@NamedQuery(name = "ChamadaVeiculo.obterHistoricoMotorista", query = "select cv from ChamadaVeiculo cv join fetch cv.chamada ch join fetch ch.situacaoChamada sch "
 				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
 				+ " where cv.veiculo.motorista.codigo = :codMotorista and  ch.situacaoChamada.codigo in (6,1)"
+				+ " and cv.flgUltimoMovimento = 'S'"),
+		@NamedQuery(name = "ChamadaVeiculo.obterChamadaAtiva", query = "select cv from ChamadaVeiculo cv join fetch cv.chamada ch join fetch ch.situacaoChamada sch "
+				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
+				+ " where ch.codigo = :codChamada and  cv.flgUltimoMovimento = 'S' "
 				+ " and cv.flgUltimoMovimento = 'S'")
 		})
 @XmlRootElement
@@ -43,7 +47,7 @@ public class ChamadaVeiculo extends Entidade{
 	@Column(name = "cod_chamada_veiculo", nullable = false)
 	@SequenceGenerator(name = "chamada_motorista_cod_chamada_motorista_seq", sequenceName = "diego.chamada_motorista_cod_chamada_motorista_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chamada_motorista_cod_chamada_motorista_seq")
-	private Integer codigo;
+	private Long codigo;
 	
 	@Column(name = "dt_hora_decisao", nullable = false)
 	private Date dataDecisao;	
@@ -59,8 +63,7 @@ public class ChamadaVeiculo extends Entidade{
 	
 	@ManyToOne(fetch = FetchType.LAZY )
 	@JoinColumn(name = "cod_veiculo", nullable = false)
-	private Veiculo veiculo;
-	
+	private Veiculo veiculo;	
 
 	@ManyToOne(fetch = FetchType.LAZY )
 	@JoinColumn(name = "cod_chamada", nullable = false)
@@ -71,11 +74,11 @@ public class ChamadaVeiculo extends Entidade{
 		return getCodigo();
 	}
 
-	public Integer getCodigo() {
+	public Long getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(Integer codigo) {
+	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
 

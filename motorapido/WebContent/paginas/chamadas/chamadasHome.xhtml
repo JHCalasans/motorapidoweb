@@ -21,6 +21,13 @@
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnSw7uj9P9oZIc_7c74peSmkmkYU1O5s"
 		defer="defer" type="text/javascript"></script>
 
+
+
+
+
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+
 	<script type="text/javascript">
     var currentMarker = null;
  
@@ -39,14 +46,10 @@
  
         }   
     }
- 
+
+   
   
 </script>
-
-
-
-</h:head>
-<ui:composition template="/paginas/masterPage.xhtml">
 
 	<ui:param name="tituloPagina" value="#{bundle.chamadas_titulo}" />
 	<ui:param name="headerConteudo" value="#{bundle.chamadas_titulo}" />
@@ -60,7 +63,10 @@
 
 	<ui:define name="conteudo">
 		<h:form prependId="false" id="formConsulta">
-			<p:panelGrid style="width:100%">
+
+		
+		
+			<p:panelGrid style="width:100%" id="pngEsquerda">
 				<p:row>
 					<p:column style="width:50%" id="colNovaChamada">
 						<p:fieldset legend="Cliente">
@@ -234,6 +240,7 @@
 								<p:outputLabel value="#{bundle.cliente_numero}:"
 									styleClass="OutputLabelCampo" style="width:80px;" />
 								<p:inputText id="numDestino" size="15"
+									binding="#{chamadaBean.numeroOrigem}"
 									value="#{chamadaBean.chamada.numeroDestino}" />
 
 							</h:panelGroup>
@@ -466,7 +473,7 @@
 						</f:facet>
 
 						<p:commandLink title="Cancelar" process="@this"
-							rendered="#{chamada.situacaoChamada.descricao eq 'PENDENTE'}"
+							rendered="#{chamada.situacaoChamada.descricao eq 'PENDENTE' or chamada.situacaoChamada.descricao eq 'PENDENTE_GERAL'}"
 							style="margin-left:10px;" update="conteudo"
 							actionListener="#{chamadaBean.removerChamada(chamada)}">
 							<h:graphicImage url="/resources/delete.png"

@@ -82,7 +82,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 	}
 
-	public MotoristaPosicaoArea obterPosicaoMotoristaArea(VerificaPosicaoParam param) throws ExcecaoNegocio {
+	public MotoristaPosicaoArea obterPosicaoMotoristaArea(VerificaPosicaoParam param) throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -102,7 +102,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 					if (motoPos.getArea().getCodigo() != area.getCodigo()) {
 						// desativa o motorista na área antiga
 						lista.get(0).setAtivo("N");
-						motoristaPosicaoAreaDAO.save(motoPos, em);
+						motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em);
 					} else if (motoPos.getAtivo().equals("N")) { //Verifico se o motorista estava desativado na área atual e ativo ele
 						motoPos.setAtivo("S");
 						motoPos.setEntrada(new Date());
@@ -126,10 +126,10 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			return motoristaPosicao;
 		} catch (ExcecaoMotoristaPosicaoArea e) {
 			emUtil.rollbackTransaction(transaction);
-			throw new ExcecaoNegocio(e.getMessage());
+			throw e;
 		} catch (ExcecaoNegocio e) {
 			emUtil.rollbackTransaction(transaction);
-			throw new ExcecaoNegocio(e.getMessage());
+			throw e;
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar obter posição na área do motorista.", e);

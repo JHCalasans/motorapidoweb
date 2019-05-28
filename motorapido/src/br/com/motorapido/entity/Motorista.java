@@ -2,6 +2,7 @@ package br.com.motorapido.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +23,7 @@ import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 
 import br.com.minhaLib.dao.Entidade;
+import br.com.motorapido.util.ws.retornos.RetornoVeiculosMotorista;
 
 @Entity
 @Table(name = Motorista.nomeTabela, schema = Motorista.esquema, catalog = "diego")
@@ -144,6 +146,9 @@ public class Motorista  extends Entidade {
 	
 	@Transient
 	private String chaveGoogle;
+	
+	@Transient
+	private List<RetornoVeiculosMotorista> veiculos;
 
 	@Override
 	public Serializable getIdentificador() {
@@ -465,6 +470,16 @@ public class Motorista  extends Entidade {
 
 	public void setCodBinarioCompResidencia(Long codBinarioCompResidencia) {
 		this.codBinarioCompResidencia = codBinarioCompResidencia;
+	}
+
+
+	public List<RetornoVeiculosMotorista> getVeiculos() {
+		return veiculos;
+	}
+
+
+	public void setVeiculos(List<RetornoVeiculosMotorista> veiculos) {
+		this.veiculos = veiculos;
 	}
 
 

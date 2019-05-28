@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -36,6 +37,7 @@ import br.com.motorapido.bo.LogradouroBO;
 import br.com.motorapido.dao.FabricaDAO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
+import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
@@ -51,7 +53,7 @@ public abstract class SimpleController implements Serializable {
 
 	private int ROWS_DATATABLE = 20;
 
-	private static Funcionario funcionarioLogado;
+	private  Funcionario funcionarioLogado;
 
 	// código do ultimo motorista que enviou mensagem
 	private static Integer ultimoMotMsg;
@@ -69,7 +71,7 @@ public abstract class SimpleController implements Serializable {
 	private static List<Chamada> listaChamadasEmEspera = new ArrayList<Chamada>();
 	
 	//lista de chamadas em espera
-	private static List<Chamada> listaChamadasEmEsperaGeral = new ArrayList<Chamada>();
+	private static List<ChamadaVeiculo> listaChamadasAceitas = new ArrayList<ChamadaVeiculo>();
 
 	public SimpleController() {
 		super();
@@ -98,11 +100,16 @@ public abstract class SimpleController implements Serializable {
 	public static void iniciarListaChamadasEmEsperaGeral() {
 		try {
 			
-			if(listaChamadasEmEsperaGeral != null)
+			/*if(listaChamadasEmEsperaGeral != null)
 				listaChamadasEmEsperaGeral.clear();
 			
-			listaChamadasEmEsperaGeral = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.PENDENTE_GERAL.getCodSituacao());
+			listaChamadasEmEsperaGeral = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.PENDENTE_GERAL.getCodSituacao());*/
 						
+			if(listaChamadasEmEspera != null)
+				listaChamadasEmEspera.clear();
+			
+			listaChamadasEmEspera = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.PENDENTE.getCodSituacao());
+			listaChamadasEmEspera.addAll( ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.PENDENTE_GERAL.getCodSituacao()));
 			/*
 			 * for (Logradouro logradouro : listaLogradouro) {
 			 * autoComplete.add(logradouro.getDescricao()); }
@@ -284,8 +291,8 @@ public abstract class SimpleController implements Serializable {
 		return funcionarioLogado;
 	}
 
-	public static void setFuncionarioLogado(Funcionario funcionarioLogado) {
-		SimpleController.funcionarioLogado = funcionarioLogado;
+	public  void setFuncionarioLogado(Funcionario funcionarioLogado) {
+		this.funcionarioLogado = funcionarioLogado;
 	}
 
 	public Integer getUltimoMotMsg() {
@@ -329,11 +336,17 @@ public abstract class SimpleController implements Serializable {
 	}
 
 	public static List<Chamada> getListaChamadasEmEsperaGeral() {
-		return listaChamadasEmEsperaGeral;
+		return listaChamadasEmEspera.stream().filter(ch -> ch.getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo())).collect(Collectors.toList());
+		//return listaChamadasEmEsperaGeral;
 	}
 
-	public static void setListaChamadasEmEsperaGeral(List<Chamada> listaChamadasEmEsperaGeral) {
-		SimpleController.listaChamadasEmEsperaGeral = listaChamadasEmEsperaGeral;
+	public static List<ChamadaVeiculo> getListaChamadasAceitas() {
+		return listaChamadasAceitas;
 	}
 
+	public static void setListaChamadasAceitas(List<ChamadaVeiculo> listaChamadasAceitas) {
+		SimpleController.listaChamadasAceitas = listaChamadasAceitas;
+	}
+
+	
 }

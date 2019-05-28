@@ -10,9 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.minhaLib.dao.Entidade;
 
+@XmlRootElement
 @Entity
 @Table(name = Area.nomeTabela, schema = Area.esquema, catalog = "diego")
 public class Area extends Entidade{
@@ -47,6 +49,9 @@ public class Area extends Entidade{
 		return this.codigo;
 	}
 
+	public Area(){
+		
+	}
 
 	public Integer getCodigo() {
 		return codigo;

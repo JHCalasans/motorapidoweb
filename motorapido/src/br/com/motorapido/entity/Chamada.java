@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.minhaLib.dao.Entidade;
+import br.com.motorapido.util.GoogleDirection;
 
 @Entity
 @Table(name = Chamada.nomeTabela, schema = Chamada.esquema, catalog = "diego")
@@ -29,7 +30,7 @@ import br.com.minhaLib.dao.Entidade;
 				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
 				+ " where ch.situacaoChamada.codigo in (2,3,5)"),
 		@NamedQuery(name = "Chamada.obterChamadasFiltro", query = "select ch from Chamada ch join fetch ch.situacaoChamada sc left join fetch ch.cliente cl"
-				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori "
+				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori join fetch ch.area ar"
 				+ " where (:codSituacao = -1 or ch.situacaoChamada.codigo = :codSituacao)"),
 		@NamedQuery(name = "Chamada.obterHistoricoUsuario", query = "select c from Chamada c join fetch c.situacaoChamada sch "
 				+ " where c.usuario.codigo = :codUsuario and  c.situacaoChamada.codigo in (6,1)") })
@@ -159,6 +160,10 @@ public class Chamada extends Entidade {
 	
 	@Transient
 	private String distanciaPrevista;
+	
+	@Transient
+	private String polylines;
+	
 
 	public Chamada() {
 
@@ -440,7 +445,7 @@ public class Chamada extends Entidade {
 		this.dataCancelamento = dataCancelamento;
 	}
 
-	@XmlTransient
+	
 	public Area getArea() {
 		return area;
 	}
@@ -473,4 +478,15 @@ public class Chamada extends Entidade {
 		this.distanciaPrevista = distanciaPrevista;
 	}
 
+
+
+	public String getPolylines() {
+		return polylines;
+	}
+
+	public void setPolylines(String polylines) {
+		this.polylines = polylines;
+	}
+
+	
 }

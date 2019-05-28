@@ -25,7 +25,11 @@ import br.com.minhaLib.dao.Entidade;
 @Table(name = MotoristaPosicaoArea.nomeTabela, schema = MotoristaPosicaoArea.esquema, catalog = "diego")
 @NamedQueries(value = {
 		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristasPorArea", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
-				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' order by mpa.posicao asc")})
+				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' order by mpa.posicao asc"),
+		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristasChamadaPorArea", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
+				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' "
+				+ " and moto.codigo not in (select mo.codigo from ChamadaVeiculo cv join cv.veiculo ve join ve.motorista mo where cv.chamada.codigo = :codChamada) "
+				+ "order by mpa.posicao asc")})
 
 public class MotoristaPosicaoArea extends Entidade{
 

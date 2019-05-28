@@ -51,6 +51,7 @@ public class VeiculoBO extends MotoRapidoBO {
 			transaction.begin();
 			IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
 			veiculo.setFlgAtivo("S");
+			veiculo.setEmUso("N");
 			veiculo.setDataCadastro(new Date());
 			veiculo.setChassi(veiculo.getChassi().toUpperCase());
 			veiculo.setPlaca(veiculo.getPlaca().toUpperCase());
@@ -88,6 +89,7 @@ public class VeiculoBO extends MotoRapidoBO {
 		}
 		return retorno;
 	}
+	
 	
 	public Veiculo obterVeiculosPorPlaca(String placa) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();

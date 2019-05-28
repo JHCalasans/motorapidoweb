@@ -1,7 +1,6 @@
 package br.com.motorapido.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +34,13 @@ public class SituacaoChamada extends Entidade{
 	@Column(name = "descricao", nullable = false)
 	private String descricao;	
 	
+	public  SituacaoChamada(Integer codigo) {
+		this.codigo = codigo;
+	}
+	
+	public SituacaoChamada() {
+		
+	}
 
 	@Override
 	public Serializable getIdentificador() {

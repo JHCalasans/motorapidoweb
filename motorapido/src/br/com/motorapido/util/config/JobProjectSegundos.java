@@ -7,6 +7,7 @@ import org.quartz.JobExecutionException;
 import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.entity.Chamada;
+import br.com.motorapido.enums.SituacaoChamadaEnum;
 import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.ExcecoesUtil;
 
@@ -22,7 +23,8 @@ public class JobProjectSegundos implements Job {
 		try {
 			
 			for(Chamada chamada : SimpleController.getListaChamadasEmEspera()){
-				ChamadaBO.getInstance().enviarMsgChamadaMotorista(chamada);
+				if(chamada.getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.PENDENTE.getCodigo()))
+					ChamadaBO.getInstance().enviarMsgChamadaMotorista(chamada);
 			}
 			
 			
