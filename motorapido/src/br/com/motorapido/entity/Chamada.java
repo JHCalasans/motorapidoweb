@@ -178,6 +178,12 @@ public class Chamada extends Entidade {
 	@Transient
 	private Long codChamadaVeiculo;
 	
+	@Transient
+	private Float valorPorDistancia;
+	
+	@Transient
+	private Float distanciaInicial;
+	
 
 	public Chamada() {
 
@@ -539,6 +545,22 @@ public class Chamada extends Entidade {
 
 	public void setCodChamadaVeiculo(Long codChamadaVeiculo) {
 		this.codChamadaVeiculo = codChamadaVeiculo;
+	}
+
+	public Float getValorPorDistancia() {
+		return valorPorDistancia;
+	}
+
+	public void setValorPorDistancia(Float valorPorDistancia) {
+		this.valorPorDistancia = valorPorDistancia;
+	}
+
+	public Float getDistanciaInicial() {
+		return distanciaInicial;
+	}
+
+	public void setDistanciaInicial(Float distanciaInicial) {
+		this.distanciaInicial = distanciaInicial;
 	}
 
 	

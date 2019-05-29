@@ -351,7 +351,14 @@ public class ChamadaBean extends SimpleController {
 
 	public void atualizarChamadasFiltro() {
 		try {
-			chamadas = ChamadaBO.getInstance().obterChamadasFiltro(getSituacaoChamadaFiltro());
+			if(getSituacaoChamadaFiltro() == SituacaoChamadaEnum.ACEITA.getCodigo())
+				chamadas = getListaChamadasAceitas();
+			else if (getSituacaoChamadaFiltro() == SituacaoChamadaEnum.PENDENTE.getCodigo())
+				chamadas = getListaChamadasEmEspera();
+			else if (getSituacaoChamadaFiltro() == SituacaoChamadaEnum.EM_CORRIDA.getCodigo())
+				chamadas = getListaChamadasEmCorrida();
+			else			
+				chamadas = ChamadaBO.getInstance().obterChamadasFiltro(getSituacaoChamadaFiltro());
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}

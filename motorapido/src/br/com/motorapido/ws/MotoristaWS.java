@@ -21,7 +21,6 @@ import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
 import br.com.motorapido.bo.VeiculoBO;
 import br.com.motorapido.entity.Chamada;
-import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
@@ -181,6 +180,21 @@ public class MotoristaWS {
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar corrida").build();
+		}
+	}
+	
+	@POST
+	@Path("/finalizarCorrida")
+	public Response finalizarCorrida(CancelarChamadaParam param) {
+		try {
+			ChamadaBO.getInstance().finalizarCorrida(param);
+			return Response.status(Status.OK).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar finalizar corrida").build();
 		}
 	}
 

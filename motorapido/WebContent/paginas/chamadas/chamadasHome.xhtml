@@ -394,7 +394,6 @@
 					<f:selectItem itemLabel="PENDENTE" itemValue="2" />
 					<f:selectItem itemLabel="ACEITA" itemValue="3" />
 					<f:selectItem itemLabel="EXPIRADA" itemValue="4" />
-					<f:selectItem itemLabel="PENDENTE GERAL" itemValue="5" />
 					<f:selectItem itemLabel="FINALIZADA" itemValue="6" />
 
 					<p:ajax event="change"
@@ -457,7 +456,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width: 60px">
+					<p:column style="width: 60px" >
 						<f:facet name="header">
 							<h:outputText value="Valor Previsto"
 								styleClass="cabecalhoDataTable" />
@@ -466,8 +465,18 @@
 							<f:convertNumber pattern="R$ #.00" locale="pt_BR" />
 						</h:outputText>
 					</p:column>
+					
+					<p:column style="width: 60px" >
+						<f:facet name="header">
+							<h:outputText value="Valor Final"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText value="#{chamada.valorFinal}">
+							<f:convertNumber pattern="R$ #.00" locale="pt_BR" />
+						</h:outputText>
+					</p:column>
 
-					<p:column style="width:130px">
+					<p:column style="width:100px">
 						<f:facet name="header">
 							<h:outputText value="Operação" styleClass="cabecalhoDataTable" />
 						</f:facet>

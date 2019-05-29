@@ -10,7 +10,7 @@ public enum SituacaoChamadaEnum implements IEnum {
 	EXPIRADA(4,"EXPIRADA"),
 	PENDENTE_GERAL(5,"PENDENTE_GERAL"),
 	FINALIZADA(6,"FINALIZADA"),
-	EM_CORRIDA(6,"EM CORRIDA")
+	EM_CORRIDA(7,"EM CORRIDA")
 	;
 	private final int codSituacao;
 	private final String descricao;

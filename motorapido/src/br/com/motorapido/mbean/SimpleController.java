@@ -117,7 +117,7 @@ public abstract class SimpleController implements Serializable {
 			
 			listaChamadasAceitas = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.ACEITA.getCodSituacao());
 			
-			if(listaChamadasEmCorrida!= null)
+			if(listaChamadasEmCorrida != null)
 				listaChamadasEmCorrida.clear();
 			
 			listaChamadasEmCorrida = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.EM_CORRIDA.getCodSituacao());
