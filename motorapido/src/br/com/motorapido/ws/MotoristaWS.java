@@ -30,6 +30,7 @@ import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.GoogleWSUtil;
+import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.MensagemParam;
 import br.com.motorapido.util.ws.params.SelecaoChamadaParam;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
@@ -165,6 +166,21 @@ public class MotoristaWS {
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar iniciar corrida").build();
+		}
+	}
+	
+	@POST
+	@Path("/cancelarChamada")
+	public Response cancelarChamada(CancelarChamadaParam param) {
+		try {
+			ChamadaBO.getInstance().cancelarChamadaMotorista(param);
+			return Response.status(Status.OK).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar corrida").build();
 		}
 	}
 

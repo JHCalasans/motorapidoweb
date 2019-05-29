@@ -47,6 +47,7 @@ import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.GoogleWSUtil;
 import br.com.motorapido.util.PushNotificationUtil;
 import br.com.motorapido.util.RetornoMatrixGoogleAPI;
+import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.NovaChamadaParam;
 import br.com.motorapido.util.ws.params.SelecaoChamadaParam;
 import br.com.motorapido.util.ws.retornos.RetornoChamadaUsuario;
@@ -181,15 +182,20 @@ public class ChamadaBO extends MotoRapidoBO {
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
+			Chamada retorno = SimpleController.getListaChamadasAceitas().stream()
+					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
 			
+			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.EM_CORRIDA.getCodigo()));
+			retorno.setDataInicioCorrida(param.getInicioCorrida());			
 
-			param.getChamada().setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.EM_CORRIDA.getCodigo()));
-			param.getChamada().setDataInicioCorrida(param.getInicioCorrida());			
-			
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
-			chamadaDAO.save(param.getChamada(), em);		
-
+			chamadaDAO.save(retorno, em);		
+			
 			emUtil.commitTransaction(transaction);
+			
+			SimpleController.getListaChamadasAceitas().remove(retorno);
+			SimpleController.getListaChamadasEmCorrida().add(retorno);	
+			
 
 
 		} catch (Exception e) {
@@ -416,7 +422,7 @@ public class ChamadaBO extends MotoRapidoBO {
 
 			// IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			Chamada retorno = SimpleController.getListaChamadasEmEsperaGeral().stream()
-					.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
+					.filter(ch -> ch.getCodigo()==param.getChamada().getCodigo()).findFirst().get();
 			if (retorno == null)
 				throw new ExcecaoNegocio("Chamada já foi aceita por outro motorista.");
 
@@ -435,16 +441,58 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamadaVeiculo.setFlgUltimoMovimento("S");
 			chamadaVeiculo.setVeiculo(new Veiculo(param.getCodVeiculo()));
 			chamadaVeiculo.setChamada(retorno);
-			chamadaVeiculoDAO.save(chamadaVeiculo, em);
+			chamadaVeiculo = chamadaVeiculoDAO.save(chamadaVeiculo, em);
 
 			
 			emUtil.commitTransaction(transaction);
 			SimpleController.getListaChamadasEmEsperaGeral().remove(retorno);
-			SimpleController.getListaChamadasAceitas().add(chamadaVeiculo);
+			SimpleController.getListaChamadasAceitas().add(retorno);
+			retorno.setCodChamadaVeiculo(chamadaVeiculo.getCodigo());
 			return retorno;
 		} catch (ExcecaoNegocio e) {
 			emUtil.rollbackTransaction(transaction);
 			throw e;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar selecionar chamada.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	
+	
+	public void cancelarChamadaMotorista(CancelarChamadaParam param) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+
+			Chamada retorno = SimpleController.getListaChamadasAceitas().stream()
+					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();				
+			
+			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo()));
+
+			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
+			chamadaDAO.save(retorno, em);
+
+			IChamadaVeiculoDAO chamadaVeiculoDAO = fabricaDAO.getPostgresChamadaVeiculoDAO();
+			ChamadaVeiculo chamadaVeiculo =  chamadaVeiculoDAO.findById(param.getCodChamadaVeiculo(), em);
+			chamadaVeiculo.setFlgUltimoMovimento("N");
+			chamadaVeiculoDAO.save(chamadaVeiculo, em);
+			chamadaVeiculo = new ChamadaVeiculo();		
+			chamadaVeiculo.setDataDecisao(param.getDataCancelamento());
+			chamadaVeiculo.setFlgAceita("N");
+			chamadaVeiculo.setFlgUltimoMovimento("S");
+			chamadaVeiculo.setChamada(retorno);
+			chamadaVeiculo.setVeiculo(new Veiculo(param.getCodVeiculo()));
+			chamadaVeiculoDAO.save(chamadaVeiculo, em);
+			
+			emUtil.commitTransaction(transaction);
+			
+			SimpleController.getListaChamadasAceitas().remove(retorno);
+			SimpleController.getListaChamadasEmEsperaGeral().add(retorno);
+			
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar selecionar chamada.", e);

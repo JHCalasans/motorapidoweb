@@ -37,7 +37,6 @@ import br.com.motorapido.bo.LogradouroBO;
 import br.com.motorapido.dao.FabricaDAO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
-import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
@@ -71,7 +70,9 @@ public abstract class SimpleController implements Serializable {
 	private static List<Chamada> listaChamadasEmEspera = new ArrayList<Chamada>();
 	
 	//lista de chamadas em espera
-	private static List<ChamadaVeiculo> listaChamadasAceitas = new ArrayList<ChamadaVeiculo>();
+	private static List<Chamada> listaChamadasAceitas = new ArrayList<Chamada>();
+	
+	private static List<Chamada> listaChamadasEmCorrida = new ArrayList<Chamada>();
 
 	public SimpleController() {
 		super();
@@ -97,7 +98,7 @@ public abstract class SimpleController implements Serializable {
 
 	}
 	
-	public static void iniciarListaChamadasEmEsperaGeral() {
+	public static void iniciarListaChamadas() {
 		try {
 			
 			/*if(listaChamadasEmEsperaGeral != null)
@@ -110,10 +111,17 @@ public abstract class SimpleController implements Serializable {
 			
 			listaChamadasEmEspera = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.PENDENTE.getCodSituacao());
 			listaChamadasEmEspera.addAll( ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.PENDENTE_GERAL.getCodSituacao()));
-			/*
-			 * for (Logradouro logradouro : listaLogradouro) {
-			 * autoComplete.add(logradouro.getDescricao()); }
-			 */
+			
+			if(listaChamadasAceitas != null)
+				listaChamadasAceitas.clear();
+			
+			listaChamadasAceitas = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.ACEITA.getCodSituacao());
+			
+			if(listaChamadasEmCorrida!= null)
+				listaChamadasEmCorrida.clear();
+			
+			listaChamadasEmCorrida = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.EM_CORRIDA.getCodSituacao());
+			
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -340,12 +348,20 @@ public abstract class SimpleController implements Serializable {
 		//return listaChamadasEmEsperaGeral;
 	}
 
-	public static List<ChamadaVeiculo> getListaChamadasAceitas() {
+	public static List<Chamada> getListaChamadasAceitas() {
 		return listaChamadasAceitas;
 	}
 
-	public static void setListaChamadasAceitas(List<ChamadaVeiculo> listaChamadasAceitas) {
+	public static void setListaChamadasAceitas(List<Chamada> listaChamadasAceitas) {
 		SimpleController.listaChamadasAceitas = listaChamadasAceitas;
+	}
+
+	public static List<Chamada> getListaChamadasEmCorrida() {
+		return listaChamadasEmCorrida;
+	}
+
+	public static void setListaChamadasEmCorrida(List<Chamada> listaChamadasEmCorrida) {
+		SimpleController.listaChamadasEmCorrida = listaChamadasEmCorrida;
 	}
 
 	

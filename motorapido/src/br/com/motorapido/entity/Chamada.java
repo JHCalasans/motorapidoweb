@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.minhaLib.dao.Entidade;
-import br.com.motorapido.util.GoogleDirection;
 
 @Entity
 @Table(name = Chamada.nomeTabela, schema = Chamada.esquema, catalog = "diego")
@@ -122,6 +121,18 @@ public class Chamada extends Entidade {
 
 	@Column(name = "valor_final")
 	private Float valorFinal;
+	
+	@Column(name = "latitude_inicio_corrida")
+	private String latitudeInicioCorrida;
+	
+	@Column(name = "longitude_inicio_corrida")
+	private String longitudeInicioCorrida;
+	
+	@Column(name = "latitude_final_corrida")
+	private String latitudeFinalCorrida;
+	
+	@Column(name = "longitude_final_corrida")
+	private String longitudeFinalCorrida;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_usuario", nullable = true)
@@ -163,6 +174,9 @@ public class Chamada extends Entidade {
 	
 	@Transient
 	private String polylines;
+	
+	@Transient
+	private Long codChamadaVeiculo;
 	
 
 	public Chamada() {
@@ -444,7 +458,6 @@ public class Chamada extends Entidade {
 	public void setDataCancelamento(Date dataCancelamento) {
 		this.dataCancelamento = dataCancelamento;
 	}
-
 	
 	public Area getArea() {
 		return area;
@@ -486,6 +499,46 @@ public class Chamada extends Entidade {
 
 	public void setPolylines(String polylines) {
 		this.polylines = polylines;
+	}
+
+	public String getLatitudeInicioCorrida() {
+		return latitudeInicioCorrida;
+	}
+
+	public void setLatitudeInicioCorrida(String latitudeInicioCorrida) {
+		this.latitudeInicioCorrida = latitudeInicioCorrida;
+	}
+
+	public String getLongitudeInicioCorrida() {
+		return longitudeInicioCorrida;
+	}
+
+	public void setLongitudeInicioCorrida(String longitudeInicioCorrida) {
+		this.longitudeInicioCorrida = longitudeInicioCorrida;
+	}
+
+	public String getLatitudeFinalCorrida() {
+		return latitudeFinalCorrida;
+	}
+
+	public void setLatitudeFinalCorrida(String latitudeFinalCorrida) {
+		this.latitudeFinalCorrida = latitudeFinalCorrida;
+	}
+
+	public String getLongitudeFinalCorrida() {
+		return longitudeFinalCorrida;
+	}
+
+	public void setLongitudeFinalCorrida(String longitudeFinalCorrida) {
+		this.longitudeFinalCorrida = longitudeFinalCorrida;
+	}
+
+	public Long getCodChamadaVeiculo() {
+		return codChamadaVeiculo;
+	}
+
+	public void setCodChamadaVeiculo(Long codChamadaVeiculo) {
+		this.codChamadaVeiculo = codChamadaVeiculo;
 	}
 
 	
