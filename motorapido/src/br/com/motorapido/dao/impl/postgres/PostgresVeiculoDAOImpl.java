@@ -51,4 +51,17 @@ implements IVeiculoDAO{
 			return null;
 	}
 
+	@Override
+	public Veiculo obterVeiculoPorId(Integer codigo, EntityManager em) throws ExcecaoBanco {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codVeiculo", codigo);
+		List<Veiculo> lista = findByNamedQueryAndNamedParams("Veiculo.obterVeiculosPorId", params, em);
+		if(lista != null && lista.size() > 0)
+			return lista.get(0);
+		else
+			return null;
+	}
+	
+	
+	
 }

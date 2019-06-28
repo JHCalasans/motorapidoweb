@@ -63,9 +63,9 @@ public class MensagemFuncionarioBO extends MotoRapidoBO {
 			}			
 			
 			
-			PushNotificationUtil.enviarNotificacaoPlayerId(FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em), 
+			/*PushNotificationUtil.enviarNotificacaoPlayerId(FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em), 
 					FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em), listaParaNotificacao, mensagem.getDescricao());
-		
+		*/
 			emUtil.commitTransaction(transaction);
 			return mensagem;
 		}catch (Exception e) {

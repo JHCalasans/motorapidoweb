@@ -129,5 +129,42 @@ public class GoogleWSUtil {
 			throw new ExcecaoNegocio("Erro ao buscar rotas no mapa");
 		}
 	}
+	
+	public static String buscarRota(String latOrigem, String longOrigem, String latDestino, String longDestino) throws ExcecaoNegocio{
+		try {
+			HttpClient httpClient = HttpClients.custom().build();
+
+			// Buscando distância e tempo entre a origem e destino passados
+			HttpUriRequest requestCoordenadas = RequestBuilder.get()
+					.setUri("https://maps.googleapis.com/maps/api/directions/json?origin=" + latOrigem
+							+ ","+ longOrigem +"&destination=" + latDestino +
+							","+longDestino + "&alternatives=false&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo()))
+					.setHeader("accept", "application/json").build();
+
+
+			System.out.println(requestCoordenadas.getURI());
+			HttpResponse response;
+			response = httpClient.execute(requestCoordenadas);
+			if (response.getStatusLine().getStatusCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+			}
+
+			BufferedReader br = new BufferedReader(new InputStreamReader((response.getEntity().getContent())));
+			String output;
+			String json = "";
+			while ((output = br.readLine()) != null) {
+				json += output + "\n";
+			}
+
+			Gson gson = new Gson();
+			GoogleDirection googleDirection = gson.fromJson(json, GoogleDirection.class);
+		
+			return googleDirection.getRoutes()[0].getOverview_polyline().getPoints();
+			
+
+		} catch (Exception e) {
+			throw new ExcecaoNegocio("Erro ao buscar rotas no mapa");
+		}
+	}
 
 }

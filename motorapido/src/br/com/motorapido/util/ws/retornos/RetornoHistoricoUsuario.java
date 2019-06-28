@@ -21,7 +21,7 @@ public class RetornoHistoricoUsuario implements Serializable{
 	
 	private String origem;
 	
-	private Float valor;	
+	private String valor;	
 	
 	
 	public RetornoHistoricoUsuario(){
@@ -79,13 +79,13 @@ public class RetornoHistoricoUsuario implements Serializable{
 
 
 
-	public Float getValor() {
+	public String getValor() {
 		return valor;
 	}
 
 
 
-	public void setValor(Float valor) {
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
 

@@ -30,6 +30,7 @@ import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
+import br.com.motorapido.util.PushNotificationUtil;
 import br.com.motorapido.util.ws.retornos.RetornoHistoricoMotorista;
 import br.com.motorapido.util.ws.retornos.RetornoVeiculosMotorista;
 
@@ -258,13 +259,25 @@ public class MotoristaBO extends MotoRapidoBO {
 					motoristaAparelho.setEntrada(new Date());
 					motoristaAparelhoDAO.save(motoristaAparelho, em);
 				}
-				//Desativo qualquer outro registro deste motorista
+				// Desativo qualquer outro registro deste motorista
 				listaAparelho = motoristaAparelhoDAO.obterOutrosAparelhosMotorista(motorista.getCodigo(), idPush, em);
-				for(MotoristaAparelho motoAp : listaAparelho){
+				List<String> listaParaNotificacao = new ArrayList<String>();
+				for (MotoristaAparelho motoAp : listaAparelho) {
+					// envio push para desativar a sessão no aparelho registrado
+					// anteriormente para este motorista
+					if (motoAp.getAtivo().equals("S")) {
+						motoAp.setDesativacao(new Date());
+						listaParaNotificacao.add(motoAp.getIdPush());
+					}
 					motoAp.setAtivo("N");
 					motoristaAparelhoDAO.save(motoAp, em);
 				}
-				
+				if (listaParaNotificacao.size() > 0)
+					PushNotificationUtil.enviarNotificacaoPlayerId(
+							FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
+							FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
+							listaParaNotificacao, "Login realizado em outro aparelho!", "logout", "logout");
+
 				// Chave de segurança para uso dos ws
 				String chave = FuncoesUtil.getParam(ParametroEnum.CHAVE_SEGURANCA.getCodigo(), em);
 				motorista.setChaveServicos(JWTUtil.create(motorista.getLogin(), chave));
@@ -272,12 +285,12 @@ public class MotoristaBO extends MotoRapidoBO {
 				// Chave para uso do google maps
 				String chaveGoogle = FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo(), em);
 				motorista.setChaveGoogle(chaveGoogle);
-				
-				//Busca por veículos cadastrados do motorista
+
+				// Busca por veículos cadastrados do motorista
 				IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
 				List<Veiculo> listaVeiculos = veiculoDAO.obterVeiculosPorMotorista(motorista.getCodigo(), em);
 				motorista.setVeiculos(new ArrayList<RetornoVeiculosMotorista>());
-				for(Veiculo veiculo : listaVeiculos){
+				for (Veiculo veiculo : listaVeiculos) {
 					RetornoVeiculosMotorista retornoVeiculo = new RetornoVeiculosMotorista();
 					retornoVeiculo.setModelo(veiculo.getModelo().getDescricao());
 					retornoVeiculo.setPlaca(veiculo.getPlaca());
@@ -394,16 +407,16 @@ public class MotoristaBO extends MotoRapidoBO {
 
 			if (compResidencia != null) {
 
-				BinarioMotorista binarioMotorista = binarioMotoristaDAO.findById(motorista.getCodBinarioCompResidencia(),
-						em);
+				BinarioMotorista binarioMotorista = binarioMotoristaDAO
+						.findById(motorista.getCodBinarioCompResidencia(), em);
 				binarioMotorista.setBinario(compResidencia);
 				binarioMotoristaDAO.save(binarioMotorista, em);
 			}
 
 			if (foto != null) {
 				BinarioMotorista binarioMotorista = new BinarioMotorista();
-				
-				if(motorista.getCodBinarioFoto() != null)
+
+				if (motorista.getCodBinarioFoto() != null)
 					binarioMotorista = binarioMotoristaDAO.findById(motorista.getCodBinarioFoto(), em);
 
 				binarioMotorista.setBinario(foto);

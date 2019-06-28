@@ -1,6 +1,5 @@
 package br.com.motorapido.bo;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +55,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			}
 		}
 		if (areaOrigem == null)
-			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área cadastrada");
+			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área!");
 
 		return areaOrigem;
 
@@ -97,6 +96,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 			// motoristaPosicao.setAtivo("S");
 			List<MotoristaPosicaoArea> lista = motoristaPosicaoAreaDAO.findByExample(motoristaPosicao, em);
+			boolean encontrouMoto = false;
 			if (lista != null && lista.size() > 0) {
 				for (MotoristaPosicaoArea motoPos : lista) {
 					if (motoPos.getArea().getCodigo() != area.getCodigo()) {
@@ -109,11 +109,17 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 						Integer maiorPosicao = motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(), em);
 						motoPos.setPosicao(maiorPosicao == null ? 1 : maiorPosicao + 1);
 						motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em);
-					}else //Se o motorista já estava ativo na área atual retorno o registro atual
+						encontrouMoto = true;
+					}else{ //Se o motorista já estava ativo na área atual retorno o registro atual
 						motoristaPosicao = motoPos;
+						encontrouMoto = true;
+					}
 					
 				}
-			}else{ //se o motorista ainda não estava cadastrado na área atual cadastro ele
+			}
+			if (!encontrouMoto){ //se o motorista ainda não estava cadastrado na área atual cadastro ele
+				motoristaPosicao = new MotoristaPosicaoArea();
+				motoristaPosicao.setMotorista(motorista);
 				motoristaPosicao.setArea(area);
 				motoristaPosicao.setAtivo("S");
 				motoristaPosicao.setEntrada(new Date());
@@ -135,6 +141,73 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			throw new ExcecaoNegocio("Falha ao tentar obter posição na área do motorista.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	
+	public MotoristaPosicaoArea obterPosicaoMotoristaArea(VerificaPosicaoParam param, EntityManager em) throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea {
+		
+		try {
+			
+			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
+			Area area = validarAreaDoMotorista(Double.parseDouble(param.getLatitude()),
+					Double.parseDouble(param.getLongitude()), em);
+			Motorista motorista = new Motorista();
+			motorista.setCodigo(param.getCodMotorista());
+			MotoristaPosicaoArea motoristaPosicao = new MotoristaPosicaoArea();
+			motoristaPosicao.setMotorista(motorista);
+
+			List<MotoristaPosicaoArea> listOrdem = motoristaPosicaoAreaDAO.obterMotoristasPorArea(area, em);
+			//reordena a lista de posição na área
+			int count = 1;
+			for(MotoristaPosicaoArea motPos : listOrdem){
+				motPos.setPosicao(count);
+				motoristaPosicaoAreaDAO.save(motPos, em);
+				count++;
+			}
+			// motoristaPosicao.setAtivo("S");
+			List<MotoristaPosicaoArea> lista = motoristaPosicaoAreaDAO.findByExample(motoristaPosicao, em);
+			boolean encontrouMoto = false;
+			
+			if (lista != null && lista.size() > 0) {
+				for (MotoristaPosicaoArea motoPos : lista) {
+					if (motoPos.getArea().getCodigo() != area.getCodigo()) {
+						// desativa o motorista na área antiga
+						lista.get(0).setAtivo("N");
+						motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em);
+					} else if (motoPos.getAtivo().equals("N")) { //Verifico se o motorista estava desativado na área atual e ativo ele
+						motoPos.setAtivo("S");
+						motoPos.setEntrada(new Date());
+						//Integer maiorPosicao = motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(), em);
+						motoPos.setPosicao(count);
+						motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em);
+						encontrouMoto = true;
+					}else{ //Se o motorista já estava ativo na área atual retorno o registro atual						
+						motoristaPosicao = motoPos;
+						encontrouMoto = true;
+					}
+					
+				}
+			}
+			if (!encontrouMoto){ //se o motorista ainda não estava cadastrado na área atual cadastro ele
+				motoristaPosicao = new MotoristaPosicaoArea();
+				motoristaPosicao.setMotorista(motorista);
+				motoristaPosicao.setArea(area);
+				motoristaPosicao.setAtivo("S");
+				motoristaPosicao.setEntrada(new Date());
+				//Integer maiorPosicao = motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(), em);
+				motoristaPosicao.setPosicao(count);
+				motoristaPosicao = motoristaPosicaoAreaDAO.save(motoristaPosicao, em);
+			}
+
+			
+			return motoristaPosicao;
+		} catch (ExcecaoMotoristaPosicaoArea e) {			
+			throw e;
+		} catch (ExcecaoNegocio e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ExcecaoNegocio("Falha ao tentar obter posição na área do motorista.", e);
 		}
 	}
 

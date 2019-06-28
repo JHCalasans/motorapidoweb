@@ -29,7 +29,10 @@ import br.com.minhaLib.dao.Entidade;
 		@NamedQuery(name = "Veiculo.obterVeiculosPorPlaca", query = "select v from Veiculo v join fetch v.motorista m join fetch v.modelo mo "
 				+ " join fetch mo.tipoVeiculo tv join fetch mo.fabricante f where :placa = v.placa and v.flgAtivo = 'S' "),		
 		@NamedQuery(name = "Veiculo.obterVeiculosPorChassi", query = "select v from Veiculo v join fetch v.motorista m join fetch v.modelo mo "
-				+ " join fetch mo.tipoVeiculo tv join fetch mo.fabricante f where :chassi = v.chassi and v.flgAtivo = 'S' ")
+				+ " join fetch mo.tipoVeiculo tv join fetch mo.fabricante f where :chassi = v.chassi and v.flgAtivo = 'S' "),
+		@NamedQuery(name = "Veiculo.obterVeiculosPorId", query = "select v from Veiculo v join fetch v.motorista m join fetch v.modelo mo "
+				+ " join fetch mo.tipoVeiculo tv join fetch mo.fabricante f where :codVeiculo = v.codigo ")
+	
 		})
 public class Veiculo extends Entidade{
 

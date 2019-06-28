@@ -28,7 +28,7 @@ implements IMotoristaPosicaoAreaDAO{
 	@Override
 	public Integer obterMaiorPosicaoArea(Integer codArea, EntityManager em) {
 		
-		Query sql = em.createNativeQuery("select max(posicao) from motorista_posicao_area  where cod_area = :codArea");
+		Query sql = em.createNativeQuery("select max(posicao) from diego.motorista_posicao_area  where cod_area = :codArea");
 		sql.setParameter("codArea", codArea);
 		//String sql = " select max(posicao) from diego.motorista_posicao_area where codArea = " + codArea;
 		
@@ -51,6 +51,14 @@ implements IMotoristaPosicaoAreaDAO{
 		params.put("codArea", area.getCodigo());
 		params.put("codChamada", codChamada);
 		return findByNamedQueryAndNamedParams("MotoristaPosicaoArea.obterMotoristasChamadaPorArea", params, em);
+	}
+
+	@Override
+	public List<MotoristaPosicaoArea> obterMotoristaAtivoCodigo(Integer codigo, EntityManager em)
+			throws ExcecaoBancoConexao, ExcecaoBanco {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codMotorista", codigo);
+		return findByNamedQueryAndNamedParams("MotoristaPosicaoArea.obterMotoristaAtivoCodigo", params, em);
 	}
 	
 	

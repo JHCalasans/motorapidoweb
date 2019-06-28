@@ -10,6 +10,7 @@ import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IBinarioVeiculoDAO;
 import br.com.motorapido.dao.IVeiculoDAO;
 import br.com.motorapido.entity.BinarioVeiculo;
+import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.Veiculo;
 
 public class VeiculoBO extends MotoRapidoBO {
@@ -159,6 +160,33 @@ public class VeiculoBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar remover veículo.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+
+	}
+	
+	public void selecionarVeiculo(Integer codMotorista, Integer codVeiculo) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();	
+			Veiculo veiculo = new Veiculo();
+			veiculo.setMotorista(new Motorista(codMotorista));
+			List<Veiculo> lista =veiculoDAO.findByExample(veiculo, em);
+			for(Veiculo vei : lista){
+				vei.setEmUso("N");
+				veiculoDAO.save(vei, em);
+			}
+			veiculo = lista.stream().filter(ve -> ve.getCodigo() == codVeiculo).findFirst().get();
+			veiculo.setEmUso("S");
+			veiculoDAO.save(veiculo, em);
+			emUtil.commitTransaction(transaction);
+			
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar selecionar veículo.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}

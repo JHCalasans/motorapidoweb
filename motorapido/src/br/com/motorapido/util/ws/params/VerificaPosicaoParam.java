@@ -16,7 +16,7 @@ public class VerificaPosicaoParam implements Serializable{
 	private Integer codMotorista;
 	
 	
-	VerificaPosicaoParam(){
+	public VerificaPosicaoParam(){
 		
 	}
 

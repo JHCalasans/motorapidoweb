@@ -26,8 +26,12 @@ import br.com.minhaLib.dao.Entidade;
 @NamedQueries(value = {
 		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristasPorArea", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
 				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' order by mpa.posicao asc"),
+		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristaAtivoCodigo", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
+				+ " where moto.codigo = :codMotorista and mpa.ativo = 'S' "),
+		@NamedQuery(name = "MotoristaPosicaoArea.obterSituacaoMotoristaAnterior", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
+				+ " where mpa.area.codigo = :codArea and mpa.posicao < :posicao "),
 		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristasChamadaPorArea", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
-				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' "
+				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' and moto.disponivel = 'S' "
 				+ " and moto.codigo not in (select mo.codigo from ChamadaVeiculo cv join cv.veiculo ve join ve.motorista mo where cv.chamada.codigo = :codChamada) "
 				+ "order by mpa.posicao asc")})
 

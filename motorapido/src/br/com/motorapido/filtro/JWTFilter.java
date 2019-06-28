@@ -40,7 +40,7 @@ public class JWTFilter implements Filter {
 			String resul = FuncaoBO.getInstance().getParam(ParametroEnum.SERVICOS_LIBERADOS_SEGURANCA);
 			List<String> servicos = Arrays.asList(resul.split(";"));
 			for(String servico : servicos){
-				if((req.getRequestURI().endsWith("/"+servico))){
+				if((req.getRequestURI().contains("/"+servico))){
 					filterChain.doFilter(servletRequest, servletResponse);
 					return;
 				}

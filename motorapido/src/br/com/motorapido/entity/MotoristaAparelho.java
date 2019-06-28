@@ -49,6 +49,10 @@ public class MotoristaAparelho extends Entidade{
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_entrada", nullable = false)
 	private Date entrada;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "dt_desativacao", nullable = false)
+	private Date desativacao;
 
 	@Override
 	public Serializable getIdentificador() {
@@ -109,6 +113,16 @@ public class MotoristaAparelho extends Entidade{
 
 	public void setEntrada(Date entrada) {
 		this.entrada = entrada;
+	}
+
+
+	public Date getDesativacao() {
+		return desativacao;
+	}
+
+
+	public void setDesativacao(Date desativacao) {
+		this.desativacao = desativacao;
 	}
 
 

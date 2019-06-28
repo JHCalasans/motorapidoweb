@@ -206,6 +206,10 @@ public class ChamadaBean extends SimpleController {
 
 			RetornoGoogleWSCoordenadas retorno = GoogleWSUtil
 					.buscarCoordenadas(String.valueOf(coord.getLat()) + "," + String.valueOf(coord.getLng()));
+		/*	Logradouro logra = getListaLogradouro().stream()
+					.filter(lo -> lo.getLatitude().substring(0, 8).equals(String.valueOf(-10.9289523).substring(0, 8)))
+					.filter(lo -> lo.getLongitude().substring(0, 8).equals(String.valueOf(-37.0503594).substring(0,8)))
+					.findFirst().get();*/
 			if (!tipoMarcador.equals("O")) {
 				marker.setIcon("/motorapido/resources/chegada.png");
 				marker.setTitle("Destino");
@@ -430,6 +434,10 @@ public class ChamadaBean extends SimpleController {
 		try {
 			if (cliente == null)
 				throw new ExcecaoNegocio("Nenhum cliente selecionado");
+			if (cliente.getNome() == null)
+				throw new ExcecaoNegocio("Nome do cliente obrigatório");
+			if (numCelPesquisa == null || numCelPesquisa.isEmpty())
+				throw new ExcecaoNegocio("Número de telefone obrigatório");
 
 			if (cliente.getCodigo() == null)
 				cliente.setCelular(numCelPesquisa);

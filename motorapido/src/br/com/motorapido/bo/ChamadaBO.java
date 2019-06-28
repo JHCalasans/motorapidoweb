@@ -17,6 +17,7 @@ import br.com.motorapido.dao.IChamadaVeiculoDAO;
 import br.com.motorapido.dao.IClienteDAO;
 import br.com.motorapido.dao.IEnderecoClienteDAO;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
+import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
 import br.com.motorapido.dao.ISituacaoChamadaDAO;
 import br.com.motorapido.dao.IVeiculoDAO;
@@ -40,6 +41,7 @@ import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.GoogleWSUtil;
 import br.com.motorapido.util.PushNotificationUtil;
 import br.com.motorapido.util.RetornoMatrixGoogleAPI;
+import br.com.motorapido.util.ws.params.CalculoValorParam;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.NovaChamadaParam;
 import br.com.motorapido.util.ws.params.SelecaoChamadaParam;
@@ -117,7 +119,6 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamada.setValorPrevisto(FuncoesUtil.formatarBigDecimal(
 					calculoValorPrevisto(retornoMatrix.getRows()[0].getElements()[0].getDistance().getValue(), em)));
 
-			
 			chamada = chamadaDAO.save(chamada, em);
 
 			emUtil.commitTransaction(transaction);
@@ -132,7 +133,6 @@ public class ChamadaBO extends MotoRapidoBO {
 		}
 	}
 
-	
 	public void iniciarCorrida(SelecaoChamadaParam param) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -140,20 +140,19 @@ public class ChamadaBO extends MotoRapidoBO {
 			transaction.begin();
 			Chamada retorno = SimpleController.getListaChamadasAceitas().stream()
 					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
-			
+
 			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.EM_CORRIDA.getCodigo()));
-			retorno.setDataInicioCorrida(param.getInicioCorrida());		
+			retorno.setDataInicioCorrida(param.getInicioCorrida());
 			retorno.setLatitudeInicioCorrida(param.getChamada().getLatitudeInicioCorrida());
 			retorno.setLongitudeInicioCorrida(param.getChamada().getLongitudeInicioCorrida());
 
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
-			chamadaDAO.save(retorno, em);		
-			
-			emUtil.commitTransaction(transaction);
-			
-			SimpleController.getListaChamadasAceitas().remove(retorno);
-			SimpleController.getListaChamadasEmCorrida().add(retorno);				
+			chamadaDAO.save(retorno, em);
 
+			emUtil.commitTransaction(transaction);
+
+			SimpleController.getListaChamadasAceitas().remove(retorno);
+			SimpleController.getListaChamadasEmCorrida().add(retorno);
 
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
@@ -162,7 +161,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public void finalizarCorrida(CancelarChamadaParam param) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -170,24 +169,55 @@ public class ChamadaBO extends MotoRapidoBO {
 			transaction.begin();
 
 			Chamada retorno = SimpleController.getListaChamadasEmCorrida().stream()
-					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();				
-			
+					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
+
 			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.FINALIZADA.getCodigo()));
 			retorno.setDataFimCorrida(param.getChamada().getDataFimCorrida());
 			retorno.setLatitudeFinalCorrida(param.getChamada().getLatitudeFinalCorrida());
 			retorno.setLongitudeFinalCorrida(param.getChamada().getLongitudeFinalCorrida());
-			retorno.setValorFinal(param.getChamada().getValorFinal());
-			
+			// DecimalFormat dc = new DecimalFormat("0.00");
+			//retorno.setValorFinal(Float.parseFloat(dc.format(param.getChamada().getValorFinal()).replace(",", ".")));
+			retorno.setValorFinal(String.format("%.2f", Float.parseFloat(param.getChamada().getValorFinal())));
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			chamadaDAO.save(retorno, em);
 			
+			IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
+			Veiculo veiculo = veiculoDAO.obterVeiculoPorId(param.getCodVeiculo(), em);
+			veiculo.getMotorista().setDisponivel("S");
+
 			emUtil.commitTransaction(transaction);
-			
+
 			SimpleController.getListaChamadasEmCorrida().remove(retorno);
-			
+
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar finalizar chamada.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public Float servicoCalculaValor(CalculoValorParam param) throws ExcecaoNegocio{
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+		
+		RetornoMatrixGoogleAPI retornoMatrix = GoogleWSUtil.buscarDistanciaAPercorrer(
+				param.getLatitudeOrigem() + "," + param.getLongitudeOrigem(),
+				param.getLatitudeDestino() + "," + param.getLongitudeDestino(),
+				FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo(), em));
+
+
+		Float retorno = 	calculoValorPrevisto(retornoMatrix.getRows()[0].getElements()[0].getDistance().getValue(), em);
+		
+		
+		emUtil.commitTransaction(transaction);
+		
+		return retorno;
+		}catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar calcular valor.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}
@@ -204,30 +234,44 @@ public class ChamadaBO extends MotoRapidoBO {
 		Float valorInicio = Float.parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_INICIO_CORRIDA.getCodigo(), em));
 
 		// Obtém distância que será considerada o início da corrida
-		String distanciaInicio = FuncoesUtil.getParam(ParametroEnum.DISTANCIA_INICIO_CORRIDA.getCodigo(), em);
-		Float distanciInicioKM = Float.parseFloat(distanciaInicio.split("KM")[0]);
+		// String distanciaInicio =
+		// FuncoesUtil.getParam(ParametroEnum.DISTANCIA_INICIO_CORRIDA.getCodigo(),
+		// em);
+		// Float distanciInicioKM =
+		// Float.parseFloat(distanciaInicio.split("KM")[0]);
 
 		// Verifico a distancia da corrida em KM para usar no cálculo
 		Float distanciaKm = Float.parseFloat(distanciaExata) / 1000;
-		if (distanciaKm > distanciInicioKM) {
-			valor = valorInicio;
 
-			// Obtém distância que será considerada como fator de valor final
-			Float valorPorDistancia = Float
-					.parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_POR_DISTANCIA.getCodigo(), em));
+		// Obtém distância que será considerada como fator de valor final
+		Float valorPorDistancia = Float
+				.parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_POR_DISTANCIA.getCodigo(), em));
 
-			/*
-			 * String metricaDistancia =
-			 * FuncoesUtil.getParam(ParametroEnum.METRICA_DISTANCIA_CALCULO.
-			 * getCodigo(), em); Float metricaDistanciaKM =
-			 * Float.parseFloat(metricaDistancia.split("KM")[0]);
-			 */
+		//String metricaDistancia = FuncoesUtil.getParam(ParametroEnum.METRICA_DISTANCIA_CALCULO.getCodigo(), em);
+		//Float metricaDistanciaKM = Float.parseFloat(metricaDistancia.split("KM")[0]);
+		
+		 valor = valorInicio + (distanciaKm * valorPorDistancia);
 
-			distanciaKm = distanciaKm - distanciInicioKM;
-
-			valor = valor + (distanciaKm * valorPorDistancia);
-		} else
-			valor = valorInicio;
+		/*
+		 * if (distanciaKm > distanciInicioKM) { valor = valorInicio;
+		 * 
+		 * // Obtém distância que será considerada como fator de valor final
+		 * Float valorPorDistancia = Float
+		 * .parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_POR_DISTANCIA.
+		 * getCodigo(), em));
+		 * 
+		 * 
+		 * String metricaDistancia =
+		 * FuncoesUtil.getParam(ParametroEnum.METRICA_DISTANCIA_CALCULO.
+		 * getCodigo(), em); Float metricaDistanciaKM =
+		 * Float.parseFloat(metricaDistancia.split("KM")[0]);
+		 * 
+		 * 
+		 * distanciaKm = distanciaKm - distanciInicioKM;
+		 * 
+		 * valor = valor + (distanciaKm * valorPorDistancia); } else valor =
+		 * valorInicio;
+		 */
 
 		return valor;
 	}
@@ -251,7 +295,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamada.setLatitudeOrigem(param.getLatitudeOrigem());
 			chamada.setLogradouroDestino(param.getLogradouroDestino());
 			chamada.setLogradouroOrigem(param.getLogradouroOrigem());
-			chamada.setLongitudeDestino(param.getLatitudeDestino());
+			chamada.setLongitudeDestino(param.getLongitudeDestino());
 			chamada.setLongitudeOrigem(param.getLongitudeOrigem());
 			chamada.setNumeroDestino(param.getNumeroDestino());
 			chamada.setNumeroOrigem(param.getNumeroOrigem());
@@ -263,10 +307,8 @@ public class ChamadaBO extends MotoRapidoBO {
 
 			// chamada.setDestino(destino.getCodigo() == null ? null : destino);
 			chamada.setDataCriacao(new Date());
-			SituacaoChamada situacaChamada = new SituacaoChamada();
-			ISituacaoChamadaDAO situacaoChamadaDAO = fabricaDAO.getPostgresSituacaoChamadaDAO();
-			situacaChamada = situacaoChamadaDAO.findById(SituacaoChamadaEnum.PENDENTE.getCodSituacao(), em);
-			chamada.setSituacaoChamada(situacaChamada);
+		
+			chamada.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.PENDENTE.getCodigo()));
 
 			RetornoMatrixGoogleAPI retornoMatrix = GoogleWSUtil.buscarDistanciaAPercorrer(
 					chamada.getLatitudeOrigem().toString() + "," + chamada.getLongitudeOrigem(),
@@ -281,6 +323,9 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamada.setDataCriacao(new Date());
 			chamada.setDataInicioEspera(new Date());
 			chamada = chamadaDAO.save(chamada, em);
+			ISituacaoChamadaDAO situacaoChamadaDAO = fabricaDAO.getPostgresSituacaoChamadaDAO();
+			SituacaoChamada situacaChamada = situacaoChamadaDAO.findById(SituacaoChamadaEnum.PENDENTE.getCodSituacao(), em);
+			chamada.setSituacaoChamada(situacaChamada);
 
 			RetornoChamadaUsuario retorno = new RetornoChamadaUsuario();
 			retorno.setCodChamada(chamada.getCodigo());
@@ -294,6 +339,9 @@ public class ChamadaBO extends MotoRapidoBO {
 			SimpleController.getListaChamadasEmEspera().add(chamada);
 
 			return retorno;
+		} catch (ExcecaoNegocio e) {
+			emUtil.rollbackTransaction(transaction);
+			throw e;
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar iniciar chamada.", e);
@@ -310,27 +358,29 @@ public class ChamadaBO extends MotoRapidoBO {
 
 			Area area = validarAreaDoChamado(Double.parseDouble(chamada.getLatitudeOrigem()),
 					Double.parseDouble(chamada.getLongitudeOrigem()), em);
-			/*MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
-			motoristaPosicaoArea.setArea(area);
-			motoristaPosicaoArea.setAtivo("S");*/
+			/*
+			 * MotoristaPosicaoArea motoristaPosicaoArea = new
+			 * MotoristaPosicaoArea(); motoristaPosicaoArea.setArea(area);
+			 * motoristaPosicaoArea.setAtivo("S");
+			 */
 			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
-			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.obterMotoristasChamadaPorArea(area,chamada.getCodigo(), em);
+			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.obterMotoristasChamadaPorArea(area,
+					chamada.getCodigo(), em);
 
-			
-			IChamadaVeiculoDAO chamadaVeiculoDAO  = fabricaDAO.getPostgresChamadaVeiculoDAO();
+			IChamadaVeiculoDAO chamadaVeiculoDAO = fabricaDAO.getPostgresChamadaVeiculoDAO();
 			ChamadaVeiculo chamadaVeiculo = new ChamadaVeiculo();
-			//Busco chamadas anteriores de outros motoristas e desativo elas				
+			// Busco chamadas anteriores de outros motoristas e desativo elas
 			List<ChamadaVeiculo> listaChamada = chamadaVeiculoDAO.obterChamadaAtiva(chamada.getCodigo(), em);
-			for(ChamadaVeiculo chamadaV : listaChamada){
+			for (ChamadaVeiculo chamadaV : listaChamada) {
 				chamadaV.setFlgUltimoMovimento("N");
 				chamadaV.setFlgAceita("N");
 				chamadaVeiculoDAO.save(chamadaV, em);
-			}			
-			
+			}
+
 			if (listaMotoristas != null && listaMotoristas.size() > 0) {
 
-				List<String> listaParaNotificacao = new ArrayList<String>();				
-				
+				List<String> listaParaNotificacao = new ArrayList<String>();
+
 				// Busco aparelho do motorista para enviar notificação
 				IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
 				MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
@@ -338,23 +388,25 @@ public class ChamadaBO extends MotoRapidoBO {
 				motoristaAparelho.setCodMotorista(listaMotoristas.get(0).getMotorista().getCodigo());
 				List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
 				if (lista != null && lista.size() > 0) {
-					
+
 					listaParaNotificacao.add(lista.get(0).getIdPush());
 
 					IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
-					Veiculo veiculo = veiculoDAO.obterVeiculosEmUsoPorMotorista(lista.get(0).getCodMotorista(), em);									
+					Veiculo veiculo = veiculoDAO.obterVeiculosEmUsoPorMotorista(lista.get(0).getCodMotorista(), em);
 					chamadaVeiculo.setChamada(chamada);
 					chamadaVeiculo.setFlgAceita("N");
 					chamadaVeiculo.setFlgUltimoMovimento("S");
+					if(veiculo == null)
+						throw new ExcecaoNegocio("Não existe veículo em uso para o motorista " + lista.get(0).getCodMotorista());
 					chamadaVeiculo.setVeiculo(veiculo);
-					
-					chamadaVeiculo  = chamadaVeiculoDAO.save(chamadaVeiculo, em);
-					
+
+					chamadaVeiculo = chamadaVeiculoDAO.save(chamadaVeiculo, em);
+
 					PushNotificationUtil.enviarNotificacaoPlayerId(
 							FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
 							FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
-							listaParaNotificacao, "Nova Chamada");
-					
+							listaParaNotificacao, "Nova Chamada", chamada.getCodigo().toString());
+
 				}
 			}
 			// Se não tiver nenhum motorista disponível na área a chamada vai
@@ -368,7 +420,7 @@ public class ChamadaBO extends MotoRapidoBO {
 				// situacaoChamadaDAO.findById(SituacaoChamadaEnum.PENDENTE_GERAL.getCodSituacao(),
 				// em);
 				chamada.setDataInicioEspera(new Date());
-				
+
 				chamada.setSituacaoChamada(situacaChamada);
 				IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 				chamadaDAO.save(chamada, em);
@@ -410,11 +462,9 @@ public class ChamadaBO extends MotoRapidoBO {
 
 			// IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			Chamada retorno = SimpleController.getListaChamadasEmEsperaGeral().stream()
-					.filter(ch -> ch.getCodigo()==param.getChamada().getCodigo()).findFirst().get();
+					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
 			if (retorno == null)
 				throw new ExcecaoNegocio("Chamada já foi aceita por outro motorista.");
-
-			
 
 			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.ACEITA.getCodigo()));
 
@@ -422,7 +472,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamadaDAO.save(retorno, em);
 
 			IChamadaVeiculoDAO chamadaVeiculoDAO = fabricaDAO.getPostgresChamadaVeiculoDAO();
-			ChamadaVeiculo chamadaVeiculo =  new ChamadaVeiculo();
+			ChamadaVeiculo chamadaVeiculo = new ChamadaVeiculo();
 			chamadaVeiculo.setDataDecisao(param.getDataDecisao());
 			chamadaVeiculo.setDataRecebimento(param.getDataDecisao());
 			chamadaVeiculo.setFlgAceita("S");
@@ -434,12 +484,35 @@ public class ChamadaBO extends MotoRapidoBO {
 			Float valor = Float.parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_POR_DISTANCIA.getCodigo(), em));
 			String distanciaInicio = FuncoesUtil.getParam(ParametroEnum.DISTANCIA_INICIO_CORRIDA.getCodigo(), em);
 			Float distancia = Float.parseFloat(distanciaInicio.split("KM")[0]);
+			Float valorInicial =  Float.parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_INICIO_CORRIDA.getCodigo(), em));
+			
+			retorno.setPolylines(GoogleWSUtil.buscarRota(retorno));			
+			retorno.setPolylinesParaOrigem(GoogleWSUtil.buscarRota(param.getLatitudeAtual(), param.getLongitudeAtual(), retorno.getLatitudeOrigem(), retorno.getLongitudeOrigem()));
+
+			//atualizo a base para que o motorista não esteja disponível enquanto não cancelar ou finalizar esta chamada
+			IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
+			Veiculo veiculo = veiculoDAO.obterVeiculoPorId(param.getCodVeiculo(), em);
+			veiculo.getMotorista().setDisponivel("N");
+			
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			motoristaDAO.save(veiculo.getMotorista(), em);
+			
+			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
+			
+			//Desativo motorista na área para nao receber chamada enquanto estiver em corrida
+			List<MotoristaPosicaoArea> lista = motoristaPosicaoAreaDAO.obterMotoristaAtivoCodigo(veiculo.getMotorista().getCodigo(), em);
+			for(MotoristaPosicaoArea motoPos : lista){
+				motoPos.setAtivo("N");
+				motoristaPosicaoAreaDAO.save(motoPos, em);
+			}
+			
 			emUtil.commitTransaction(transaction);
 			SimpleController.getListaChamadasEmEsperaGeral().remove(retorno);
 			SimpleController.getListaChamadasAceitas().add(retorno);
 			retorno.setCodChamadaVeiculo(chamadaVeiculo.getCodigo());
 			retorno.setValorPorDistancia(valor);
 			retorno.setDistanciaInicial(distancia);
+			retorno.setValorFinal(valorInicial.toString()); 
 			return retorno;
 		} catch (ExcecaoNegocio e) {
 			emUtil.rollbackTransaction(transaction);
@@ -451,9 +524,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
-	
-	
+
 	public void cancelarChamadaMotorista(CancelarChamadaParam param) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -461,18 +532,18 @@ public class ChamadaBO extends MotoRapidoBO {
 			transaction.begin();
 
 			Chamada retorno = SimpleController.getListaChamadasAceitas().stream()
-					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();				
-			
+					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
+
 			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo()));
 
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			chamadaDAO.save(retorno, em);
 
 			IChamadaVeiculoDAO chamadaVeiculoDAO = fabricaDAO.getPostgresChamadaVeiculoDAO();
-			ChamadaVeiculo chamadaVeiculo =  chamadaVeiculoDAO.findById(param.getCodChamadaVeiculo(), em);
+			ChamadaVeiculo chamadaVeiculo = chamadaVeiculoDAO.findById(param.getCodChamadaVeiculo(), em);
 			chamadaVeiculo.setFlgUltimoMovimento("N");
 			chamadaVeiculoDAO.save(chamadaVeiculo, em);
-			chamadaVeiculo = new ChamadaVeiculo();		
+			chamadaVeiculo = new ChamadaVeiculo();
 			chamadaVeiculo.setDataDecisao(param.getDataCancelamento());
 			chamadaVeiculo.setFlgAceita("N");
 			chamadaVeiculo.setFlgUltimoMovimento("S");
@@ -480,11 +551,26 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamadaVeiculo.setVeiculo(new Veiculo(param.getCodVeiculo()));
 			chamadaVeiculoDAO.save(chamadaVeiculo, em);
 			
-			emUtil.commitTransaction(transaction);
+			//recoloco motorista como disponível
+			IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
+			Veiculo veiculo = veiculoDAO.obterVeiculoPorId(param.getCodVeiculo(), em);
+			veiculo.getMotorista().setDisponivel("S");
 			
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			motoristaDAO.save(veiculo.getMotorista(), em);
+
+			/*VerificaPosicaoParam verificaParam = new VerificaPosicaoParam();
+			verificaParam.setCodMotorista(veiculo.getMotorista().getCodigo());
+			verificaParam.setLatitude(param.getLatitudeAtual());
+			verificaParam.setLongitude(param.getLongitudeAtual());
+			
+			MotoristaPosicaoAreaBO.getInstance().obterPosicaoMotoristaArea(verificaParam, em);*/
+			
+			emUtil.commitTransaction(transaction);
+
 			SimpleController.getListaChamadasAceitas().remove(retorno);
 			SimpleController.getListaChamadasEmEsperaGeral().add(retorno);
-			
+
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar cancelar chamada.", e);

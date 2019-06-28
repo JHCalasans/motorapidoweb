@@ -24,6 +24,10 @@ public class SelecaoChamadaParam implements Serializable{
 	
 	private Integer codVeiculo;
 	
+	private String latitudeAtual;
+	
+	private String longitudeAtual;
+	
 	public SelecaoChamadaParam() {
 	}
 
@@ -74,6 +78,22 @@ public class SelecaoChamadaParam implements Serializable{
 
 	public void setCodVeiculo(Integer codVeiculo) {
 		this.codVeiculo = codVeiculo;
+	}
+
+	public String getLatitudeAtual() {
+		return latitudeAtual;
+	}
+
+	public void setLatitudeAtual(String latitudeAtual) {
+		this.latitudeAtual = latitudeAtual;
+	}
+
+	public String getLongitudeAtual() {
+		return longitudeAtual;
+	}
+
+	public void setLongitudeAtual(String longitudeAtual) {
+		this.longitudeAtual = longitudeAtual;
 	}
 
 	

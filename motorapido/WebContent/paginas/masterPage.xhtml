@@ -52,6 +52,18 @@
          document.getElementById("msgLoad").innerHTML = texto;
         
     }
+
+    function handlePointClickChamada(event) {
+    	
+        currentMarker = new google.maps.Marker({
+            position:new google.maps.LatLng(event.latLng.lat(), event.latLng.lng())
+        });
+       
+        PF('map').addOverlay(currentMarker);
+        
+       
+	}
+
     function handlePointClick(event) {
 
     	 currentMarker = new google.maps.Marker({
@@ -220,8 +232,8 @@
 			id="btnMsg" style="display:none;" ajax="false">
 		</p:commandButton>
 
-		<p:commandButton style="display:none" id="link" update="tbChamadas" ajax="false"
-			action="#{chamadaBean.atualizarChamadasFiltro()}" />
+		<p:commandButton style="display:none" id="link" update="tbChamadas"
+			ajax="false" action="#{chamadaBean.atualizarChamadasFiltro()}" />
 
 		<p:panel style="width:100%;">
 			<div align="center">

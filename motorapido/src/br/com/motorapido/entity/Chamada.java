@@ -30,6 +30,7 @@ import br.com.minhaLib.dao.Entidade;
 				+ " where ch.situacaoChamada.codigo in (2,3,5)"),
 		@NamedQuery(name = "Chamada.obterChamadasFiltro", query = "select ch from Chamada ch join fetch ch.situacaoChamada sc left join fetch ch.cliente cl"
 				+ " left join fetch ch.origem ori left join fetch ch.enderecoClienteOrigem eclori join fetch ch.area ar"
+				+ " left join fetch ch.usuario usu "
 				+ " where (:codSituacao = -1 or ch.situacaoChamada.codigo = :codSituacao)"),
 		@NamedQuery(name = "Chamada.obterHistoricoUsuario", query = "select c from Chamada c join fetch c.situacaoChamada sch "
 				+ " where c.usuario.codigo = :codUsuario and  c.situacaoChamada.codigo in (6,1)") })
@@ -120,7 +121,7 @@ public class Chamada extends Entidade {
 	private String longitudeDestino;
 
 	@Column(name = "valor_final")
-	private Float valorFinal;
+	private String valorFinal;
 	
 	@Column(name = "latitude_inicio_corrida")
 	private String latitudeInicioCorrida;
@@ -183,6 +184,12 @@ public class Chamada extends Entidade {
 	
 	@Transient
 	private Float distanciaInicial;
+	
+	@Transient
+	private String polylinesParaOrigem;
+	
+	@Transient 
+	private String valorFinalAjustado;
 	
 
 	public Chamada() {
@@ -473,11 +480,11 @@ public class Chamada extends Entidade {
 		this.area = area;
 	}
 
-	public Float getValorFinal() {
+	public String getValorFinal() {
 		return valorFinal;
 	}
 
-	public void setValorFinal(Float valorFinal) {
+	public void setValorFinal(String valorFinal) {
 		this.valorFinal = valorFinal;
 	}
 
@@ -498,6 +505,13 @@ public class Chamada extends Entidade {
 	}
 
 
+	@XmlTransient
+	public String getValorFinalFormatado(){
+		if(valorFinal != null)
+			return String.format("%.2f", Float.parseFloat(valorFinal));
+		else
+			return null;
+	}
 
 	public String getPolylines() {
 		return polylines;
@@ -562,6 +576,24 @@ public class Chamada extends Entidade {
 	public void setDistanciaInicial(Float distanciaInicial) {
 		this.distanciaInicial = distanciaInicial;
 	}
+
+	public String getPolylinesParaOrigem() {
+		return polylinesParaOrigem;
+	}
+
+	public void setPolylinesParaOrigem(String polylinesParaOrigem) {
+		this.polylinesParaOrigem = polylinesParaOrigem;
+	}
+
+	public String getValorFinalAjustado() {
+		return valorFinalAjustado;
+	}
+
+	public void setValorFinalAjustado(String valorFinalAjustado) {
+		this.valorFinalAjustado = valorFinalAjustado;
+	}
+
+
 
 	
 }

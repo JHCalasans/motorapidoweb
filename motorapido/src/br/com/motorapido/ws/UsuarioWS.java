@@ -19,6 +19,7 @@ import br.com.motorapido.bo.UsuarioBO;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.Usuario;
 import br.com.motorapido.util.ExcecoesUtil;
+import br.com.motorapido.util.ws.params.CalculoValorParam;
 import br.com.motorapido.util.ws.params.NovaChamadaParam;
 import br.com.motorapido.util.ws.retornos.RetornoChamadaUsuario;
 import br.com.motorapido.util.ws.retornos.RetornoHistoricoUsuario;
@@ -122,6 +123,9 @@ public class UsuarioWS  {
 			retorno.setPlacaVeiculo("TYU-6578");*/
 		   
 			return Response.status(Status.OK).entity(retorno).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		}catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar realizar chamada").build();
@@ -129,6 +133,24 @@ public class UsuarioWS  {
 		
 	}
 	
+	
+	@POST
+	@Path("/calcularValor")
+	public Response calcularValor(CalculoValorParam param ) {
+		try {									
+			
+			Float retorno  = ChamadaBO.getInstance().servicoCalculaValor(param);			
+		   
+			return Response.status(Status.OK).entity(retorno.toString()).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		}catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar calcular valor").build();
+		}
+		
+	}
 	
 
 

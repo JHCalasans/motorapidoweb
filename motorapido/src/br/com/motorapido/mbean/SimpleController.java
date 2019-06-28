@@ -73,6 +73,8 @@ public abstract class SimpleController implements Serializable {
 	private static List<Chamada> listaChamadasAceitas = new ArrayList<Chamada>();
 	
 	private static List<Chamada> listaChamadasEmCorrida = new ArrayList<Chamada>();
+	
+	
 
 	public SimpleController() {
 		super();
@@ -364,5 +366,6 @@ public abstract class SimpleController implements Serializable {
 		SimpleController.listaChamadasEmCorrida = listaChamadasEmCorrida;
 	}
 
+	
 	
 }

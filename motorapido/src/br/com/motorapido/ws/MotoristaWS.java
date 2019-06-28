@@ -7,6 +7,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
@@ -120,6 +121,24 @@ public class MotoristaWS {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
 					.entity("Falha ao tentar obter informações dos veículos").build();
+		}
+	}
+	
+	@POST
+	@Path("/selecionarVeiculo/{codMotorista}/{codVeiculo}")
+	public Response selecionarVeiculo(@PathParam("codMotorista") Integer codMotorista, @PathParam("codVeiculo") Integer codVeiculo) {
+		
+		
+		try {
+			VeiculoBO.getInstance().selecionarVeiculo(codMotorista, codVeiculo);			
+			return Response.status(Status.OK).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Falha ao tentar obter selecionar veículo").build();
 		}
 	}
 
@@ -299,8 +318,6 @@ public class MotoristaWS {
 	public Response selecionarChamada(SelecaoChamadaParam param) {
 		try {
 			Chamada chamada = ChamadaBO.getInstance().selecionarChamadaPendentePeloApp(param);
-
-			chamada.setPolylines(GoogleWSUtil.buscarRota(chamada));
 
 			return Response.status(Status.OK).entity(chamada).build();
 		} catch (ExcecaoNegocio e) {

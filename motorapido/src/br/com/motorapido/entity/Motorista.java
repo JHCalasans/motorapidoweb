@@ -6,21 +6,15 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 
 import br.com.minhaLib.dao.Entidade;
 import br.com.motorapido.util.ws.retornos.RetornoVeiculosMotorista;
@@ -155,7 +149,13 @@ public class Motorista  extends Entidade {
 		return getCodigo();
 	}
 
+	
+	public Motorista(){}
 
+	public Motorista(Integer codigo){
+		this.codigo = codigo;
+	}
+	
 	public Integer getCodigo() {
 		return codigo;
 	}

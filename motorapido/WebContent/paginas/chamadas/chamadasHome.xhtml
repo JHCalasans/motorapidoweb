@@ -28,28 +28,6 @@
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
 
-	<script type="text/javascript">
-    var currentMarker = null;
- 
-    function handlePointClick(event) {
-
-    	
-        if(currentMarker === null) {
-          
- 
-            currentMarker = new google.maps.Marker({
-                position:new google.maps.LatLng(event.latLng.lat(), event.latLng.lng())
-            });
-
-           
-            PF('map').addOverlay(currentMarker);
- 
-        }   
-    }
-
-   
-  
-</script>
 
 	<ui:param name="tituloPagina" value="#{bundle.chamadas_titulo}" />
 	<ui:param name="headerConteudo" value="#{bundle.chamadas_titulo}" />
@@ -77,7 +55,7 @@
 									for="celular" styleClass="OutputLabelCampo" style="width:80px;" />
 								<p:outputLabel value="(79)"
 									style="margin-left:-30px; margin-top: inherit"></p:outputLabel>
-								<p:inputMask id="celular" required="true" size="35"
+								<p:inputMask id="celular"  size="35"
 									mask="99999-9999" value="#{chamadaBean.numCelPesquisa}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_celular}">
 									<p:ajax event="blur" update=":formConsulta"
@@ -92,7 +70,7 @@
 							<h:panelGroup id="pngNome" styleClass="p_like">
 								<p:outputLabel value="#{bundle.funcionario_nome}:" for="nome"
 									styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputText id="nome" required="true" size="55"
+								<p:inputText id="nome"  size="55"
 									value="#{chamadaBean.cliente.nome}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_nome}" />
 
@@ -111,18 +89,18 @@
 								<p:outputLabel value="#{bundle.funcionario_logradouro}:"
 									for="logradouro" styleClass="OutputLabelCampo"
 									style="width:80px;" />
-								<p:autoComplete id="logradouro" cache="true"
+								<p:autoComplete id="logradouro" cache="true" 
 									cacheTimeout="30000" value="#{chamadaBean.logradouro}"
 									var="logradouro" itemLabel="#{logradouro.logradouroComCidade}"
 									itemValue="#{logradouro}" converter="logradouroConverter"
 									size="55" completeMethod="#{chamadaBean.completeText}"
 									maxResults="5">
-									<p:ajax event="itemSelect"
+									<p:ajax event="query" global="false"/>
+									<p:ajax event="itemSelect"  
 										listener="#{chamadaBean.logradouroSelecionado}"
 										update="fieldOrigem, gmap" />
 								</p:autoComplete>
-
-
+								
 							</h:panelGroup>
 
 							<br />
@@ -228,6 +206,7 @@
 									itemValue="#{logradouro}" converter="logradouroConverter"
 									size="55" completeMethod="#{chamadaBean.completeText}"
 									maxResults="5">
+									<p:ajax event="query" global="false"/>
 									<p:ajax event="itemSelect"
 										listener="#{chamadaBean.logradouroDestinoSelecionado}"
 										update="fieldDestino" />
@@ -344,11 +323,11 @@
 
 							<p:panel>
 								<p:gmap id="gmap" center="#{chamadaBean.coordenadas}" zoom="14"
-									type="terrain"
+									type="terrain" onPointClick="handlePointClickChamada(event)" 
 									style="width:600px;height:550px; text-align:center;"
 									model="#{chamadaBean.mapModel}" widgetVar="map">
-									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}"
-										update="gmap, :fieldOrigem, :fieldDestino"></p:ajax>
+									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}" global="false"
+										update="gmap, :fieldOrigem, :fieldDestino" ></p:ajax>
 									<p:ajax event="overlaySelect"
 										listener="#{chamadaBean.marcadorSelecionado}"
 										update="gmap, :fieldOrigem, :fieldDestino" />
@@ -471,8 +450,8 @@
 							<h:outputText value="Valor Final"
 								styleClass="cabecalhoDataTable" />
 						</f:facet>
-						<h:outputText value="#{chamada.valorFinal}">
-							<f:convertNumber pattern="R$ #.00" locale="pt_BR" />
+						<h:outputText value="R$ #{chamada.valorFinalFormatado}">
+							
 						</h:outputText>
 					</p:column>
 

@@ -11,8 +11,10 @@ import org.primefaces.model.map.LatLng;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IAreaDAO;
 import br.com.motorapido.dao.ICoordenadasAreaDAO;
+import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.CoordenadasArea;
+import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 
 public class AreaBO extends MotoRapidoBO {
@@ -57,9 +59,7 @@ public class AreaBO extends MotoRapidoBO {
 		}
 
 	}
-	
 
-	
 	public Area alterarArea(Area area) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -77,7 +77,7 @@ public class AreaBO extends MotoRapidoBO {
 		}
 
 	}
-	
+
 	public void excluirArea(Area area) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -92,9 +92,22 @@ public class AreaBO extends MotoRapidoBO {
 			coordenadas.setOrdem(null);
 			List<CoordenadasArea> resultado = coordenadasAreaDAO.findByExample(coordenadas, em);
 			coordenadasAreaDAO.deleteLista(resultado, em);
+			IMotoristaPosicaoAreaDAO motoPosicaoDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
+			MotoristaPosicaoArea motori = new MotoristaPosicaoArea();
+			motori.setArea(area);
+			List<MotoristaPosicaoArea> result = motoPosicaoDAO.findByExample(motori, em);
+			for (MotoristaPosicaoArea mo : result) {
+				if (mo.getAtivo().equals("S"))
+					throw new ExcecaoNegocio("Não foi possível excluir. Existem motoristas ativos na área");
+			}
+			motoPosicaoDAO.deleteLista(result, em);
+
 			areaDAO.delete(area, em);
 			emUtil.commitTransaction(transaction);
-			
+
+		} catch (ExcecaoNegocio e) {
+			emUtil.rollbackTransaction(transaction);
+			throw e;
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar remover área.", e);
@@ -116,18 +129,19 @@ public class AreaBO extends MotoRapidoBO {
 			CoordenadasAreaUtil coordenadasAreaUtil = new CoordenadasAreaUtil();
 			List<CoordenadasAreaUtil> retorno = new ArrayList<CoordenadasAreaUtil>();
 			for (CoordenadasArea coordenada : resultado) {
-				if (ultimoCodigoArea == null){
+				if (ultimoCodigoArea == null) {
 					ultimoCodigoArea = coordenada.getArea().getCodigo();
 					coordenadasAreaUtil.setArea(coordenada.getArea());
 					retorno.add(coordenadasAreaUtil);
-				}else if (ultimoCodigoArea != coordenada.getArea().getCodigo()) {
-					 ultimoCodigoArea = coordenada.getArea().getCodigo();
-					 
-					 coordenadasAreaUtil = new CoordenadasAreaUtil();
-					 coordenadasAreaUtil.setArea(coordenada.getArea());
-					 retorno.add(coordenadasAreaUtil);
+				} else if (ultimoCodigoArea != coordenada.getArea().getCodigo()) {
+					ultimoCodigoArea = coordenada.getArea().getCodigo();
+
+					coordenadasAreaUtil = new CoordenadasAreaUtil();
+					coordenadasAreaUtil.setArea(coordenada.getArea());
+					retorno.add(coordenadasAreaUtil);
 				}
-				coordenadasAreaUtil.getCoordenadas().add(new LatLng(coordenada.getLatitude(), coordenada.getLongitude()));
+				coordenadasAreaUtil.getCoordenadas()
+						.add(new LatLng(coordenada.getLatitude(), coordenada.getLongitude()));
 			}
 			emUtil.commitTransaction(transaction);
 			return retorno;
@@ -139,11 +153,10 @@ public class AreaBO extends MotoRapidoBO {
 		}
 
 	}
-	
-	
+
 	@SuppressWarnings("static-access")
 	public List<CoordenadasAreaUtil> obterAreas(EntityManager em) throws ExcecaoNegocio {
-		
+
 		try {
 			ICoordenadasAreaDAO coordenadasAreaDAO = fabricaDAO.getPostgresCoordenadasAreaDAO();
 			List<CoordenadasArea> resultado = coordenadasAreaDAO.findAll(em, coordenadasAreaDAO.BY_AREA_ASC);
@@ -151,26 +164,25 @@ public class AreaBO extends MotoRapidoBO {
 			CoordenadasAreaUtil coordenadasAreaUtil = new CoordenadasAreaUtil();
 			List<CoordenadasAreaUtil> retorno = new ArrayList<CoordenadasAreaUtil>();
 			for (CoordenadasArea coordenada : resultado) {
-				if (ultimoCodigoArea == null){
+				if (ultimoCodigoArea == null) {
 					ultimoCodigoArea = coordenada.getArea().getCodigo();
 					coordenadasAreaUtil.setArea(coordenada.getArea());
 					retorno.add(coordenadasAreaUtil);
-				}else if (ultimoCodigoArea != coordenada.getArea().getCodigo()) {
-					 ultimoCodigoArea = coordenada.getArea().getCodigo();
-					 
-					 coordenadasAreaUtil = new CoordenadasAreaUtil();
-					 coordenadasAreaUtil.setArea(coordenada.getArea());
-					 retorno.add(coordenadasAreaUtil);
+				} else if (ultimoCodigoArea != coordenada.getArea().getCodigo()) {
+					ultimoCodigoArea = coordenada.getArea().getCodigo();
+
+					coordenadasAreaUtil = new CoordenadasAreaUtil();
+					coordenadasAreaUtil.setArea(coordenada.getArea());
+					retorno.add(coordenadasAreaUtil);
 				}
-				coordenadasAreaUtil.getCoordenadas().add(new LatLng(coordenada.getLatitude(), coordenada.getLongitude()));
+				coordenadasAreaUtil.getCoordenadas()
+						.add(new LatLng(coordenada.getLatitude(), coordenada.getLongitude()));
 			}
 			return retorno;
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			throw new ExcecaoNegocio("Falha ao tentar obter áreas.", e);
 		}
-		
 
 	}
-
 
 }
