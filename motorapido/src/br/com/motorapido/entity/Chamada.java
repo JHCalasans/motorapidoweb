@@ -33,7 +33,10 @@ import br.com.minhaLib.dao.Entidade;
 				+ " left join fetch ch.usuario usu "
 				+ " where (:codSituacao = -1 or ch.situacaoChamada.codigo = :codSituacao)"),
 		@NamedQuery(name = "Chamada.obterHistoricoUsuario", query = "select c from Chamada c join fetch c.situacaoChamada sch "
-				+ " where c.usuario.codigo = :codUsuario and  c.situacaoChamada.codigo in (6,1)") })
+				+ " where c.usuario.codigo = :codUsuario and  c.situacaoChamada.codigo in (6,1)"),
+		@NamedQuery(name = "Chamada.obterChamadaPorCodigo", query = "select c from Chamada c join fetch c.situacaoChamada sch "
+				+ " join fetch c.cliente cli join fetch c.area ar "
+				+ " where c.codigo = :codChamada ")})
 @XmlRootElement
 public class Chamada extends Entidade {
 

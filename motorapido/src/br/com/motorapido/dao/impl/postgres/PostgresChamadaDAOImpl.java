@@ -15,7 +15,7 @@ import br.com.motorapido.entity.Chamada;
 
 
 @PersistenceContext(unitName = "postgresPU")
-public class PostgresChamadaDAOImpl  extends GenericDAOImpl<Chamada, Integer>
+public class PostgresChamadaDAOImpl  extends GenericDAOImpl<Chamada, Long>
 implements IChamadaDAO{
 
 	PostgresChamadaDAOImpl() {
@@ -48,6 +48,16 @@ implements IChamadaDAO{
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("codUsuario", codUsuario);
 		return findByNamedQueryAndNamedParams("Chamada.obterHistoricoUsuario", params, em);
+	}
+
+
+
+	@Override
+	public Chamada obterChamadaPorCodigo(Long codChamda, EntityManager em) throws ExcecaoBanco, ExcecaoNegocio {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codChamada", codChamda);
+		List<Chamada> lista = findByNamedQueryAndNamedParams("Chamada.obterChamadaPorCodigo", params, em);
+		return lista.get(0);
 	}
 
 }

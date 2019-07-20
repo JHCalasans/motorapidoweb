@@ -21,6 +21,8 @@ public abstract class FabricaDAO {
 	
 	public abstract ILogErroDAO getPostgresLogErroDAO();
 	
+	public abstract ILogErroMotoristaDAO getPostgresLogErroMotoristaDAO();
+	
 	public abstract IMenuDAO getPostgresMenuDAO();
 	
 	public abstract IPerfilMenuDAO getPostgresPerfilMenuDAO();
@@ -86,6 +88,8 @@ public abstract class FabricaDAO {
 	public abstract IBinarioVeiculoDAO getPostgresBinarioVeiculoDAO();
 	
 	public abstract IBinarioUsuarioDAO getPostgresBinarioUsuarioDAO();
+	
+	public abstract ILogRequisicaoSocketDAO getPostgresLogRequisicaoSocketDAO();
 
 
 	/**

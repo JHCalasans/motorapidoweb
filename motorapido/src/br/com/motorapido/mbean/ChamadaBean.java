@@ -226,6 +226,7 @@ public class ChamadaBean extends SimpleController {
 				chamada.setLatitudeDestino(String.valueOf(coord.getLat()));
 				chamada.setLongitudeDestino(String.valueOf(coord.getLng()));
 				chamada.setComplementoDestino(null);
+				
 
 			} else {
 				marker.setTitle("Origem");
@@ -241,6 +242,9 @@ public class ChamadaBean extends SimpleController {
 				chamada.setLongitudeOrigem(String.valueOf(coord.getLng()));
 				chamada.setComplementoOrigem(null);
 			}
+			
+			coordenadas.lat = coord.getLat();
+			coordenadas.lng = coord.getLng();
 
 		} catch (Exception e) {
 		}

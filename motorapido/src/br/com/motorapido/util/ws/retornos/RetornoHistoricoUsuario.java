@@ -11,9 +11,7 @@ public class RetornoHistoricoUsuario implements Serializable{
 	
 	private static final long serialVersionUID = 2111794576087352560L;
 	
-	private Date dataChamada;
-	
-	
+	private Date dataChamada;	
 	
 	private String situacao;
 	

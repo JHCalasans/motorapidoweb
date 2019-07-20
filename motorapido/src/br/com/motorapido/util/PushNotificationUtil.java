@@ -13,8 +13,8 @@ import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 
 public class PushNotificationUtil {
 
-		public static void enviarNotificacaoPlayerId(String authorization, String appId,
-				List<String> playersIds, String msg, String codChamada) throws ExcecaoNegocio {
+		public static void enviarNotificacaoPlayerIdChamada(String authorization, String appId,
+				List<String> playersIds, String msg, String codChamadaVeiculo, String tempoEsperaAceitacao) throws ExcecaoNegocio {
 
 			if (playersIds == null || playersIds.size() < 1)
 				throw new ExcecaoNegocio("Players Ids não podem estar vazios");
@@ -31,12 +31,10 @@ public class PushNotificationUtil {
 						finalPleyrsIds += "\"" + playersIds.get(i) + "\"";
 				}
 				
-				String btnOk = "btnOk";
-				String textoAceitar = "Aceitar";
-
+			
 				String strJsonBody = "{" + "\"app_id\": \"" + appId + "\","
 						+ "\"include_player_ids\": [" + finalPleyrsIds + "],"
-						+ "\"data\": {\"id_chamada\": " + codChamada +"},"
+						+ "\"data\": {\"codChamadaVeiculo\": " + codChamadaVeiculo +", \"tempoEsperaAceitacao\": " + tempoEsperaAceitacao +"},"
 						+ "\"contents\": {\"en\": \"" + msg + "\"}"
 						+ "}";
 

@@ -9,7 +9,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -29,7 +28,6 @@ import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.ExcecoesUtil;
-import br.com.motorapido.util.GoogleWSUtil;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.MensagemParam;
 import br.com.motorapido.util.ws.params.SelecaoChamadaParam;
@@ -78,10 +76,11 @@ public class MotoristaWS {
 	}
 
 	@GET
-	@Path("/alterarDisponivel")
-	public Response alterarDisponivel(@QueryParam("codMotorista") Integer codMotorista) {
+	@Path("/alterarDisponivel/{codMotorista}/{situacao}")
+	public Response alterarDisponivel(@PathParam("codMotorista") Integer codMotorista, 
+			@PathParam("situacao") String situacao) {
 		try {
-			MotoristaBO.getInstance().alterarDisponivel(codMotorista);
+			MotoristaBO.getInstance().alterarDisponivel(codMotorista, situacao);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -326,6 +325,57 @@ public class MotoristaWS {
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar selecionar chamada").build();
+		}
+
+	}
+	
+	@POST
+	@Path("/aceitarChamada")
+	public Response aceitarChamada(SelecaoChamadaParam param) {
+		try {
+			Chamada chamada = ChamadaBO.getInstance().aceitarChamadaPeloApp(param);
+
+			return Response.status(Status.OK).entity(chamada).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar aceitar chamada").build();
+		}
+
+	}
+	
+	@POST
+	@Path("/recusarChamada")
+	public Response recusarChamada(CancelarChamadaParam param) {
+		try {
+			ChamadaBO.getInstance().cancelarChamadaMotorista(param);
+
+			return Response.status(Status.OK).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar chamada").build();
+		}
+
+	}
+	
+	@GET
+	@Path("/buscarDetalhesChamada/{codChamadaVeiculo}")
+	public Response buscarDetalhesChamada(@PathParam("codChamadaVeiculo") Long codChamadaVeiculo) {
+		try {
+			Chamada chamada = ChamadaBO.getInstance().obterDetalhesChamada(codChamadaVeiculo);
+
+			return Response.status(Status.OK).entity(chamada).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter detalhes da chamada").build();
 		}
 
 	}

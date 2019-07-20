@@ -1,0 +1,121 @@
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="Consultar Parâmetro" />
+	<ui:define name="conteudo">
+		<p:messages closable="true" id="msgs" showDetail="false" />
+
+		<h:form prependId="false" id="formConsulta">
+			<p:panel>
+
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel for="chave" value="#{bundle.parametro_chave}"
+						styleClass="OutputLabelCampo" style="width:80px" />
+					<p:inputText id="chave" value="#{parametroBean.chaveSelecionada}"
+						style="width:100px" />
+				</h:panelGroup>
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel for="descricao"
+						value="#{bundle.parametro_descricao}"
+						styleClass="OutputLabelCampo" style="width:80px" />
+					<p:inputText id="descricao"
+						value="#{parametroBean.descricaoSelecionada}" style="width:200px" />
+				</h:panelGroup>
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<p:commandButton
+						actionListener="#{parametroBean.pesquisarParametro}"
+						value="#{bundle.pesquisarRegistro}" update="panelPesquisa,:msgs"
+						ajax="true" icon="ui-icon ui-icon-search" styleClass="botao" />
+					<p:button value="#{bundle.novoRegistro}"
+						icon="ui-icon ui-icon-plus" styleClass="botao"
+						outcome="cadastrarParametro.tjse" />
+				</h:panelGroup>
+				<div class="clear"></div>
+			</p:panel>
+
+			<h:panelGroup id="panelPesquisa" styleClass="p_like" layout="block">
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="pesquisa" var="parametro"
+					value="#{parametroBean.listaParameroOperacao}"
+					style="width: 100%;text-align: center;" first="0"
+					paginatorAlwaysVisible="false" lazy="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
+					rowsPerPageTemplate="10,20,50" sortBy="#{parametro.chave}"
+					sortOrder="ascending" rows="#{parametroBean.itensPorPagina}"
+					rendered="#{parametroBean.listaParameroOperacao ne null}">
+
+					<p:column sortBy="#{parametro.chave}">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.parametro_chave}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<div style="text-align: left;">
+							<h:outputText value="#{parametro.chave}" />
+						</div>
+					</p:column>
+
+					<p:column sortBy="#{parametro.descricao}">
+						<f:facet name="header">
+							<h:outputText value="#{bundle.parametro_descricao}"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<div style="text-align: left;">
+							<h:outputText value="#{parametro.descricao}" />
+						</div>
+					</p:column>
+
+					<p:column style="width: 60px;">
+
+						<h:link icon="ui-icon-document" id="alterar"
+							title="#{bundle.editar}" outcome="editarParametro.tjse">
+							<h:graphicImage url="/resources/edit.png"
+								style="border-style: none" />
+
+							<f:param name="id" value="#{parametro.codParametro}" />
+						</h:link>
+
+						<p:commandLink id="excluir" title="#{bundle.excluirRegistro}"
+							update=":dlgdelId" oncomplete="PF('dlgdel').show()"
+							process="@this" partialSubmit="true">
+							<h:graphicImage url="/resources/delete.png"
+								style="border-style: none" />
+							<f:setPropertyActionListener target="#{parametroBean.parametro}"
+								value="#{parametro}" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGroup>
+		</h:form>
+
+		<p:dialog id="dlgdelId" header="#{bundle.parametro_tituloExclusao}"
+			widgetVar="dlgdel" width="470" resizable="false" showEffect="fade"
+			hideEffect="fade" draggable="false" modal="true">
+			<h:form id="formdel" prependId="false">
+				<p:panel>
+					<h:panelGroup styleClass="p_like buttonPosition">
+						<h:outputLabel id="labelExcluir"
+							value="#{bundle.confirmacaoExclusao}"
+							style="text-align: center; width: 100%" />
+					</h:panelGroup>
+					<h:panelGroup layout="block" style="text-align: center;" >
+						<p:commandButton id="sim" value="#{bundle.sim}" 
+							actionListener="#{parametroBean.excluir}" icon="ui-icon-check"
+							update=":msgs, :formConsulta:pesquisa" onclick="PF('dlg').hide()" />
+						<p:commandButton process="@this" value="#{bundle.nao}" style="margin-left: 13px"
+							icon="ui-icon-close" oncomplete="PF('dlgdel').hide()"
+							partialSubmit="true">
+							<f:setPropertyActionListener target="#{parametroBean.parametro}"
+								value="#{null}" />
+						</p:commandButton>
+					</h:panelGroup>
+					<div class="clear"></div>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
+</h:html>

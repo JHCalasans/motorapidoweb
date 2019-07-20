@@ -122,7 +122,7 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 
-	public void alterarDisponivel(Integer codMotorista) throws ExcecaoNegocio {
+	public void alterarDisponivel(Integer codMotorista, String situacao) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -132,20 +132,23 @@ public class MotoristaBO extends MotoRapidoBO {
 
 			// Busca se o motorista estava ativo em alguma área para também
 			// desativar
-			MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
+			/*MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
 			motoristaPosicaoArea.setMotorista(motorista);
-			motoristaPosicaoArea.setAtivo("S");
+			motoristaPosicaoArea.setAtivo("S");*/
 			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
-			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.findByExample(motoristaPosicaoArea, em,
-					motoristaPosicaoAreaDAO.BY_POS_ASC);
-
+			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.obterMotoristaAtivoCodigo(codMotorista, em);
+			
 			for (MotoristaPosicaoArea motoPosicao : listaMotoristas) {
-				motoPosicao.setAtivo("N");
-				motoristaPosicaoAreaDAO.save(motoPosicao, em);
+				if(motoPosicao.getAtivo().equals("S")){
+					motoPosicao.setAtivo("N");
+					motoristaPosicaoAreaDAO.save(motoPosicao, em);
+					MotoristaPosicaoAreaBO.getInstance().atualizarPosicoesArea(motoPosicao.getArea(), em);
+				}
 			}
 
-			motorista.setDisponivel(motorista.getDisponivel().equals("S") ? "N" : "S");
-			motoristaDAO.save(motorista, em);
+			motorista.setDisponivel(situacao.equals("S") ? "N" : "S");
+			motoristaDAO.save(motorista, em);				
+			
 			emUtil.commitTransaction(transaction);
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
@@ -154,6 +157,9 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
+	
+	
+	
 
 	public List<Motorista> obterMotoristasExample(Motorista motorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();

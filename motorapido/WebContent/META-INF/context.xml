@@ -15,19 +15,24 @@
 		url="jdbc:postgresql://localhost:5432/diego" 
 		username="postgres"	
 		password="jota01"
+		
+		
+		
 			
 		/>
 			<!-- 
 		url="jdbc:postgresql://104.248.186.97:5432/diego" 
 		username="diego" 
-		password="d16082017" 	  -->
+		password="d16082017"   -->
 	<ResourceLink global="jdbc/postgresapp" 
 		name="jdbc/postgresapp" 
 		factory="org.apache.naming.factory.DataSourceLinkFactory" 
 		type="javax.sql.DataSource"
-	username="postgres"	
-		password="jota01" />
+		username="postgres"	
+		password="jota01" 
+		 />
 		
-		<!-- username="diego" 
-		password="d16082017"  -->
+		<!-- 
+	username="diego" 
+		password="d16082017"   -->
 </Context>

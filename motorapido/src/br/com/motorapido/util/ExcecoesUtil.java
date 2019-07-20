@@ -19,7 +19,7 @@ public class ExcecoesUtil {
 
 	private static final int MAX_SIZE = 32 * 1024 - 1;
 	private static final Logger log = Logger.getLogger(ExcecoesUtil.class);
-	private static final String GENERAL_ERROR = "Sistema indispon�vel";
+	private static final String GENERAL_ERROR = "Sistema indisponível";
 
 	public static void TratarExcecao(Exception ex) {
 		log.error("Erro", ex);
@@ -56,5 +56,17 @@ public class ExcecoesUtil {
 			res = res.substring(0, MAX_SIZE);
 		}
 		FabricaDAO.getFabricaDAO().getPostgresLogErroDAO().logarErro(res);
+	}
+	
+	public static void logarErroMotorista(final Exception ex, final Integer codMotorista, final String servico) {
+		final Writer result = new StringWriter();
+		final PrintWriter printWriter = new PrintWriter(result);
+		ex.printStackTrace(printWriter);
+		ex.printStackTrace();
+		String res = result.toString();
+		if (res.length() > MAX_SIZE) {
+			res = res.substring(0, MAX_SIZE);
+		}
+		FabricaDAO.getFabricaDAO().getPostgresLogErroMotoristaDAO().logarErroMotorista(res, codMotorista, servico);
 	}
 }

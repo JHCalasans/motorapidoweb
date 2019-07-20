@@ -61,7 +61,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>jwtFilter</filter-name>
-		<url-pattern>/ws/*</url-pattern>
+		<url-pattern>/wes/*</url-pattern>
 	</filter-mapping>
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
@@ -81,7 +81,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Web Service</servlet-name>
-		<url-pattern>/ws/*</url-pattern>
+		<url-pattern>/wes/*</url-pattern>
 	</servlet-mapping>
 	<security-constraint>
 		<display-name>Restrict XHTML Documents</display-name>
@@ -101,11 +101,11 @@
 		<servlet-name>Push Servlet</servlet-name>
 		<servlet-class>org.primefaces.push.PushServlet</servlet-class>
 		<init-param>
-            <param-name>org.atmosphere.cpr.broadcasterCacheClass</param-name>
-            <param-value>org.atmosphere.cache.UUIDBroadcasterCache</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-        <async-supported>true</async-supported>
+			<param-name>org.atmosphere.cpr.broadcasterCacheClass</param-name>
+			<param-value>org.atmosphere.cache.UUIDBroadcasterCache</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Push Servlet</servlet-name>

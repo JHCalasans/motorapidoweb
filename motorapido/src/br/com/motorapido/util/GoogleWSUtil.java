@@ -3,6 +3,8 @@ package br.com.motorapido.util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import javax.persistence.EntityManager;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -12,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import com.google.gson.Gson;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
+import br.com.motorapido.bo.FuncaoBO;
 import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.enums.ParametroEnum;
 
@@ -25,7 +28,7 @@ public class GoogleWSUtil {
 			// Buscando coordenadas pelo cep passado
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
 					.setUri("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + coordenadas
-							+ "&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo()))
+							+ "&key=" + FuncaoBO.getInstance().getParam(ParametroEnum.CHAVE_MAPS))
 					.setHeader("accept", "application/json").build();
 
 		
@@ -93,7 +96,7 @@ public class GoogleWSUtil {
 		}
 	}
 	
-	public static String buscarRota(Chamada chamada) throws ExcecaoNegocio{
+	public static String buscarRota(Chamada chamada, EntityManager em) throws ExcecaoNegocio{
 		try {
 			HttpClient httpClient = HttpClients.custom().build();
 
@@ -101,7 +104,7 @@ public class GoogleWSUtil {
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
 					.setUri("https://maps.googleapis.com/maps/api/directions/json?origin=" + chamada.getLatitudeOrigem()
 							+ ","+ chamada.getLongitudeOrigem() +"&destination=" + chamada.getLatitudeDestino() +
-							","+chamada.getLongitudeDestino() + "&alternatives=false&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo()))
+							","+chamada.getLongitudeDestino() + "&alternatives=false&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo(), em))
 					.setHeader("accept", "application/json").build();
 
 
@@ -130,7 +133,7 @@ public class GoogleWSUtil {
 		}
 	}
 	
-	public static String buscarRota(String latOrigem, String longOrigem, String latDestino, String longDestino) throws ExcecaoNegocio{
+	public static String buscarRota(String latOrigem, String longOrigem, String latDestino, String longDestino, EntityManager em) throws ExcecaoNegocio{
 		try {
 			HttpClient httpClient = HttpClients.custom().build();
 
@@ -138,7 +141,7 @@ public class GoogleWSUtil {
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
 					.setUri("https://maps.googleapis.com/maps/api/directions/json?origin=" + latOrigem
 							+ ","+ longOrigem +"&destination=" + latDestino +
-							","+longDestino + "&alternatives=false&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo()))
+							","+longDestino + "&alternatives=false&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo(),em))
 					.setHeader("accept", "application/json").build();
 
 

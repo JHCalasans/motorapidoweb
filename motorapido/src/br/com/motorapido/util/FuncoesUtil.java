@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -107,6 +108,7 @@ public final class FuncoesUtil {
 	}
 
 	public static String getParam(String chave) throws ExcecaoBancoConexao, ExcecaoBanco {
+		
 		try {
 			final List<String> params = FuncoesUtil.getParams(chave);
 			if (params.size() > 0)

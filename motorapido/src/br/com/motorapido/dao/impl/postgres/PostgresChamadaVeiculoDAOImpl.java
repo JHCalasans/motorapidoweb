@@ -40,4 +40,14 @@ implements IChamadaVeiculoDAO{
 		return findByNamedQueryAndNamedParams("ChamadaVeiculo.obterChamadaAtiva", params, em);
 	}
 
+
+	@Override
+	public ChamadaVeiculo obterChamadaVeiculoPorCodigo(Long codChamadavEICULO, EntityManager em)
+			throws ExcecaoBanco, ExcecaoNegocio {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codChamadaVeiculo", codChamadavEICULO);
+		List<ChamadaVeiculo> lista = findByNamedQueryAndNamedParams("ChamadaVeiculo.obterChamadaVeiculoPorCodigo", params, em);
+		return lista.get(0);
+	}
+
 }

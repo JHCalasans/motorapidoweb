@@ -24,6 +24,7 @@ public class JobProjectSegundos implements Job {
 			
 			for(Chamada chamada : SimpleController.getListaChamadasEmEspera()){
 				if(chamada.getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.PENDENTE.getCodigo()))
+					
 					ChamadaBO.getInstance().enviarMsgChamadaMotorista(chamada);
 			}
 			

@@ -19,7 +19,7 @@ import br.com.motorapido.entity.LogErro;
 
 
 @PersistenceContext(unitName = "postgresPU")
-class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Integer> implements ILogErroDAO, Log {
+class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Long> implements ILogErroDAO, Log {
 	
 	private static final int MAX_SIZE = 32 * 1024 - 1;
 
@@ -61,6 +61,8 @@ class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Integer> implements
 		}
 		this.logarErro(res);
 	}
+
+
 
 	
 

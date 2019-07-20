@@ -1,19 +1,24 @@
 package br.com.motorapido.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import br.com.minhaLib.dao.Entidade;
 
 @Entity
 @Table(name = ValorParametro.nomeTabela, schema = ValorParametro.esquema, catalog = "diego")
+/*@NamedQueries(value = { 
+		@NamedQuery(name = "ValorParametro.obterValorParametroFiltro",
+				query = "select vp from ValorParametro vp join fetch vp.parametro p"
+						+ " where (p.descricao != null and p.descricao like '' ")
+		})*/
 public class ValorParametro extends Entidade{
 
 

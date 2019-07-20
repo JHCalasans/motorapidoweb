@@ -15,6 +15,8 @@ public class VerificaPosicaoParam implements Serializable{
 	
 	private Integer codMotorista;
 	
+	private Integer codUltimaArea;
+	
 	
 	public VerificaPosicaoParam(){
 		
@@ -48,6 +50,16 @@ public class VerificaPosicaoParam implements Serializable{
 
 	public void setCodMotorista(Integer codMotorista) {
 		this.codMotorista = codMotorista;
+	}
+
+
+	public Integer getCodUltimaArea() {
+		return codUltimaArea;
+	}
+
+
+	public void setCodUltimaArea(Integer codUltimaArea) {
+		this.codUltimaArea = codUltimaArea;
 	}
 	
 

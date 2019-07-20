@@ -7,11 +7,13 @@ import br.com.motorapido.entity.LogErro;
 
 
 
-public interface ILogErroDAO extends GenericDAO<LogErro, Integer> {
+public interface ILogErroDAO extends GenericDAO<LogErro, Long> {
 	public static CriterioOrdenacao BY_DTHORAERRO_ASC = CriterioOrdenacao
 			.asc("dataHoraErro");
 
 	public void logarErro(String erro);
+	
+
 	
 
 }

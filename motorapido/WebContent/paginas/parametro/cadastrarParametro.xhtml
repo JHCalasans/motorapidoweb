@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="Cadastrar Parâmetro" />
+	<ui:define name="conteudo">
+		<p:messages closable="true" id="msgs" showDetail="false" />
+		<h:form prependId="false" id="formCadastro">
+
+			<p:panel>
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel for="Chave" value="#{bundle.parametro_chave}"
+						styleClass="OutputLabelCampo" style="width: 70px" />
+					<p:inputText id="Chave" value="#{parametroBean.parametro.chave}"
+						required="true"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.parametro_chave}"
+						maxlength="18" style="width:100px">
+
+					</p:inputText>
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel for="descricao"
+						value="#{bundle.parametro_descricao}"
+						styleClass="OutputLabelCampo" style="width: 70px" />
+					<p:inputText id="descricao"
+						value="#{parametroBean.parametro.descricao}" required="true"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.parametro_descricao}"
+						maxlength="195" style="width:600px" />
+				</h:panelGroup>
+				<div class="clear"></div>
+				<br></br>
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<p:commandButton action="#{parametroBean.salvar}"
+						value="#{bundle.salvarRegistro}" ajax="true"
+						icon="ui-icon ui-icon-disk" update=":msgs,formCadastro"
+						styleClass="botao" />
+					<p:button value="#{bundle.voltarTela}" styleClass="botao"
+						icon="ui-icon ui-icon-arrowreturnthick-1-w"
+						outcome="consultarParametro.tjse" />
+				</h:panelGroup>
+
+				<div class="clear"></div>
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

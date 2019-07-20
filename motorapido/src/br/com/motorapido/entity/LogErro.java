@@ -7,10 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,7 +27,7 @@ public class LogErro extends Entidade {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "log_erro_cod_erro_seq")
 	@SequenceGenerator(name = "log_erro_cod_erro_seq", allocationSize = 1, sequenceName ="diego.log_erro_cod_erro_seq")
 	@Column(name = "cod_erro", nullable = false)
-	private Integer codigo;
+	private Long codigo;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_hora_erro", nullable = false)
@@ -39,13 +35,15 @@ public class LogErro extends Entidade {
 
 	@Column(name = "descricao", nullable = false)
 	private String erro;
+	
+	
 
 
-	public Integer getCodLogErro() {
+	public Long getCodLogErro() {
 		return codigo;
 	}
 
-	public void setCodLogOperacao(Integer codigo) {
+	public void setCodLogOperacao(Long codigo) {
 		this.codigo = codigo;
 	}
 
@@ -60,7 +58,7 @@ public class LogErro extends Entidade {
 	
 
 	@Override
-	public Integer getIdentificador() {
+	public Long getIdentificador() {
 		return codigo;
 	}
 

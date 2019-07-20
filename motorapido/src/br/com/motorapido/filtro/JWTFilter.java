@@ -77,6 +77,10 @@ public class JWTFilter implements Filter {
 			res.setContentType("aplication/json");
 			res.setStatus(500);
 			res.getWriter().write(e.getMessage());
+		}catch(Exception e){
+			res.setContentType("aplication/json");
+			res.setStatus(500);
+			res.getWriter().write("Falha ao decriptografar chave de serviços");
 		}
 
 	}

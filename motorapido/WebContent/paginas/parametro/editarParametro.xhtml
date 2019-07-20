@@ -1,0 +1,116 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="Alterar Parâmetro" />
+	<ui:define name="conteudo">	
+		<p:messages closable="true" id="msgs" showDetail="false" />
+		<p:panel>
+			<h:form prependId="false" id="formCadastro">
+				<h:panelGroup styleClass="p_like">
+					<h:outputLabel for="chave" value="#{bundle.parametro_chave}"
+						styleClass="OutputLabelCampo" style="width: 70px" />
+					<h:outputLabel id="chave" value="#{parametroBean.parametro.chave}"
+						styleClass="OutputLabelValor" />
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel for="descricao"
+						value="#{bundle.parametro_descricao}"
+						styleClass="OutputLabelCampo" style="width: 70px" />
+					<p:inputText id="descricao"
+						value="#{parametroBean.parametro.descricao}" required="true"
+						requiredMessage="#{bundle.campoObrigatorio} : #{bundle.parametro_descricao}"
+						maxlenght="195" style="width:600px" />
+				</h:panelGroup>
+				<div class="clear"></div>
+				<br></br>
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<p:commandButton action="#{parametroBean.alterar}"
+						value="#{bundle.alterarRegistro}" ajax="true"
+						icon="ui-icon ui-icon-disk" update=":msgs,formCadastro"
+						styleClass="botao" />
+				</h:panelGroup>
+				<div class="clear"></div>
+				<br></br>
+			</h:form>
+
+			<h:outputLabel value="#{bundle.parametro_tituloValores}"
+				styleClass="subtitulo" />
+			<hr></hr>
+			<h:form prependId="false" id="formValores">
+				<p:panel>
+					<h:panelGroup styleClass="p_like">
+						<p:outputLabel for="valor" value="#{bundle.parametro_valor}"
+							styleClass="OutputLabelCampo" style="width: 50px" />
+						<p:inputText id="valor"
+							value="#{parametroBean.valorParametro.valor}" required="true"
+							requiredMessage="#{bundle.campoObrigatorio} : #{bundle.parametro_valor}"
+							maxlength="195" style="width:600px;" />
+					</h:panelGroup>
+					<div class="clear"></div>
+					<br></br>
+					<h:panelGroup styleClass="p_like buttonPosition">
+						<p:commandButton
+							actionListener="#{parametroBean.adicionarValorParametro}"
+							value="#{bundle.adicionarRegistro}" ajax="true"
+							icon="ui-icon ui-icon-plus" update="valores, :msgs,formValores"
+							styleClass="botao" />
+					</h:panelGroup>
+					
+					<div class="clear"></div>
+					<br></br>
+					<h:panelGroup styleClass="p_like" layout="block">
+						<p:dataTable tableStyle="table-layout:auto;width: 100%;" id="valores" var="valor"
+							value="#{parametroBean.listaValorParametro}"
+							style="width: 100%;text-align: center;" first="0"
+							paginatorAlwaysVisible="false" lazy="true"
+							emptyMessage="#{bundle.nenhumRegistroEncontrado}"
+							paginator="true" rowsPerPageTemplate="10,20,50"
+							sortBy="#{valor.valor}" sortOrder="ascending"
+							rows="#{parametroBean.itensPorPagina}"
+							rendered="#{parametroBean.listaValorParametro ne null}">
+
+
+							<p:column sortBy="#{valor.valor}">
+								<f:facet name="header">
+									<h:outputText value="#{bundle.parametro_valor}"
+										styleClass="cabecalhoDataTable" />
+								</f:facet>
+								<div style="text-align: left;">
+									<h:outputText value="#{valor.valor}" />
+								</div>
+							</p:column>
+
+							<p:column style="width:20px">
+
+								<p:commandLink id="excluir"
+									actionListener="#{parametroBean.excluirValorParametro}"
+									title="#{bundle.excluirRegistro}"
+									update="valores, :msgs, :formValores" immediate="true">
+									<h:graphicImage url="/resources/delete.png"
+										style="border-style: none" />
+									<f:attribute name="row" value="#{valor}" />
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>
+					</h:panelGroup>
+					<div class="clear"></div>
+				</p:panel>
+				<br></br>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<p:button value="#{bundle.voltarTela}" styleClass="botao"
+						icon="ui-icon ui-icon-arrowreturnthick-1-w"
+						outcome="consultarParametro.tjse" />
+				</h:panelGroup>
+				<div class="clear"></div>
+			</h:form>
+
+		</p:panel>
+	</ui:define>
+</ui:composition>
+</html>

@@ -29,8 +29,10 @@ import br.com.minhaLib.dao.Entidade;
 				+ " and cv.flgUltimoMovimento = 'S'"),
 		@NamedQuery(name = "ChamadaVeiculo.obterChamadaAtiva", query = "select cv from ChamadaVeiculo cv join fetch cv.chamada ch join fetch ch.situacaoChamada sch "
 				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
-				+ " where ch.codigo = :codChamada and  cv.flgUltimoMovimento = 'S' "
-				+ " and cv.flgUltimoMovimento = 'S'")
+				+ " where ch.codigo = :codChamada and  cv.flgUltimoMovimento = 'S' "),
+		@NamedQuery(name = "ChamadaVeiculo.obterChamadaVeiculoPorCodigo", query = "select cv from ChamadaVeiculo cv join fetch cv.chamada ch join fetch ch.situacaoChamada sch "
+				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
+				+ " where cv.codigo = :codChamadaVeiculo ")
 		})
 @XmlRootElement
 public class ChamadaVeiculo extends Entidade{
@@ -54,6 +56,9 @@ public class ChamadaVeiculo extends Entidade{
 	
 	@Column(name = "dt_hora_recebimento", nullable = true)
 	private Date dataRecebimento;
+	
+	@Column(name = "dt_criacao", nullable = true)
+	private Date dataCriacao;
 		
 	@Column(name = "flg_aceita", nullable = false)
 	private String flgAceita;
@@ -130,6 +135,14 @@ public class ChamadaVeiculo extends Entidade{
 
 	public void setFlgUltimoMovimento(String flgUltimoMovimento) {
 		this.flgUltimoMovimento = flgUltimoMovimento;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 
 }

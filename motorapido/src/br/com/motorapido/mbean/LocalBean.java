@@ -27,6 +27,7 @@ import com.google.maps.model.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.excecao.MsgUtil;
+import br.com.motorapido.bo.FuncaoBO;
 import br.com.motorapido.bo.LocalBO;
 import br.com.motorapido.entity.Local;
 import br.com.motorapido.enums.ParametroEnum;
@@ -306,7 +307,7 @@ public class LocalBean extends SimpleController {
 			// Buscando coordenadas pelo cep passado
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
 					.setUri("https://maps.googleapis.com/maps/api/geocode/json?address=" + this.cep.replace("-", "")
-							+ "+BR&key=" + FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo()))
+							+ "+BR&key=" + FuncaoBO.getInstance().getParam(ParametroEnum.CHAVE_MAPS))
 					.setHeader("accept", "application/json").build();
 
 			/*
