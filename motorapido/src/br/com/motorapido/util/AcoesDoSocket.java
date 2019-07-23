@@ -42,6 +42,19 @@ public class AcoesDoSocket {
 		}	
 		
 	}
+	
+	
+	public static void fechouApp(Session session) {
+		try {
+			session.close();
+			SessaoWS ses = ControleSessaoWS.obterPorSessao(session.getId());
+			ControleSessaoWS.remove(ses.getCodMotorista());
+			System.out.println("removeu - " + ses.getCodMotorista());
+		} catch (Exception e) {
+			ExcecoesUtil.logarErroMotorista(e, 	ControleSessaoWS.obterPorSessao(session.getId()).getCodMotorista(), "fecharAppo");
+		}
+		
+	}
 
 	public static void informarLocalizacao(Session session, String json)
 			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea, IOException {

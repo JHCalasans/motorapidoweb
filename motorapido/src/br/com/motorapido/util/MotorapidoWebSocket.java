@@ -32,7 +32,7 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 	@OnOpen
 	public void onOpen(Session session, EndpointConfig config) {
 
-
+		System.out.println("sessão iniciada - " + session.getId());
 		//Map<String, List<String>> params = session.getRequestParameterMap();
 
 		Integer codMotorista = (Integer) config.getUserProperties().get("codMotorista");
@@ -49,6 +49,7 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 
 	@OnClose
 	public void onClose(Session session) {
+		System.out.println("sessão encerrada - " + session.getId());
 		ControleSessaoWS.remove(session);
 	}
 
@@ -68,6 +69,9 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 				break;
 			case "InformacaoPendente":
 				AcoesDoSocket.tratarInformacaoPendente(session, msg[1], msg[2], msg[3]);
+				break;
+			case "FehouApp":
+				AcoesDoSocket.fechouApp(session);
 				break;
 
 			}

@@ -15,8 +15,7 @@
 		url="jdbc:postgresql://localhost:5432/diego" 
 		username="postgres"	
 		password="jota01"
-		
-		
+			
 		
 			
 		/>
