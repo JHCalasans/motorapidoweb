@@ -48,9 +48,10 @@ public class AcoesDoSocket {
 		Gson gson = new Gson();
 		VerificaPosicaoParam param = gson.fromJson(json, VerificaPosicaoParam.class);
 		MotoristaPosicaoArea motoPosicao = MotoristaPosicaoAreaBO.getInstance().obterPosicaoMotoristaArea(param);
-		if (motoPosicao != null) {
+		System.out.println("Posição motorista " + motoPosicao.getMotorista().getNome());
+		/*if (motoPosicao != null) {
 			session.getBasicRemote().sendText("LocalizacaoResp=>" + gson.toJson(motoPosicao));
-		}
+		}*/
 	}
 
 	public static void logOut(Session session, String json) throws ExcecaoNegocio, IOException {

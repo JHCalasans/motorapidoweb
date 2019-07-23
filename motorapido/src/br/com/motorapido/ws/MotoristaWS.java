@@ -201,6 +201,18 @@ public class MotoristaWS {
 		}
 	}
 	
+	@GET
+	@Path("/ping")
+	public Response ping() {
+		try {
+			System.out.println("PONG");
+			return Response.status(Status.OK).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar corrida").build();
+		}
+	}
+	
 	@POST
 	@Path("/finalizarCorrida")
 	public Response finalizarCorrida(CancelarChamadaParam param) {

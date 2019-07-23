@@ -31,12 +31,7 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 
 	@OnOpen
 	public void onOpen(Session session, EndpointConfig config) {
-		// System.out.println("onOpen::" + session.getId());
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Access request parameters from URL query String.
-		// If a client subscribes, add Session to PushTimeService.
-		//
 
 		//Map<String, List<String>> params = session.getRequestParameterMap();
 
@@ -49,27 +44,17 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 		ControleSessaoWS.initialize();
 		ControleSessaoWS.add(sessao);
 
-		// if (params.get("push") != null &&
-		// (params.get("push").get(0).equals("TIME"))) {
 
-		/*
-		 * PushTimeService.initialize(); PushTimeService.add(session);
-		 */
-		// }
-		// sessao = new SessaoWS();
-
-		/////////////////////////////////////////////////////////////////////////////
 	}
 
 	@OnClose
 	public void onClose(Session session) {
-		// System.out.println("onClose::" + session.getId());
+		ControleSessaoWS.remove(session);
 	}
 
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		// System.out.println("onMessage::From=" + session.getId() + " Message="
-		// + message);
+		
 
 		try {
 

@@ -1,5 +1,6 @@
 package br.com.motorapido.mbean;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import br.com.motorapido.entity.Local;
 import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.enums.SituacaoChamadaEnum;
+import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.GoogleWSUtil;
 import br.com.motorapido.util.RetornoGoogleWSCoordenadas;
@@ -409,6 +411,8 @@ public class ChamadaBean extends SimpleController {
 	public void pesquisarClientePorCelular() {
 		try {
 
+			
+			ControleSessaoWS.enviarMensagemMotoristaChamada(2, "teste");
 			cliente = ClienteBO.getInstance().obterClientePorCelular(numCelPesquisa);
 			if (cliente == null) {
 				addMsg(FacesMessage.SEVERITY_WARN, "Cliente não encontrado.");
@@ -419,6 +423,9 @@ public class ChamadaBean extends SimpleController {
 
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

@@ -35,10 +35,12 @@ import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.enums.SituacaoChamadaEnum;
 import br.com.motorapido.mbean.SimpleController;
+import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.CoordenadaPontoUtil;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.GoogleWSUtil;
+import br.com.motorapido.util.MotorapidoWebSocket;
 import br.com.motorapido.util.PushNotificationUtil;
 import br.com.motorapido.util.RetornoMatrixGoogleAPI;
 import br.com.motorapido.util.ws.params.CalculoValorParam;
@@ -384,20 +386,20 @@ public class ChamadaBO extends MotoRapidoBO {
 			List<ChamadaVeiculo> listaChamada = chamadaVeiculoDAO.obterChamadaAtiva(chamada.getCodigo(), em);
 			boolean passouLimite = true;
 			for (ChamadaVeiculo chamadaV : listaChamada) {
-				//verifico se o tempo de resposta já ultrapassou o tempo limite mais 10 segundos
+				// verifico se o tempo de resposta já ultrapassou o tempo limite
+				// mais 10 segundos
 				if (tempoMaiorQueLimite(
-						Integer.parseInt(FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo(),em)),
-						chamadaV.getDataCriacao())) 
-				{
+						Integer.parseInt(FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo(), em)),
+						chamadaV.getDataCriacao())) {
 
 					chamadaV.setFlgUltimoMovimento("N");
 					chamadaV.setFlgAceita("N");
 					chamadaVeiculoDAO.save(chamadaV, em);
-				}else
+				} else
 					passouLimite = false;
 			}
-			//Se não passou o limite de espera + 10 segundos saio do método
-			if(!passouLimite){
+			// Se não passou o limite de espera + 10 segundos saio do método
+			if (!passouLimite) {
 				emUtil.commitTransaction(transaction);
 				return;
 			}
@@ -428,11 +430,16 @@ public class ChamadaBO extends MotoRapidoBO {
 
 					chamadaVeiculo = chamadaVeiculoDAO.save(chamadaVeiculo, em);
 
-					PushNotificationUtil.enviarNotificacaoPlayerIdChamada(
-							FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
-							FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
-							listaParaNotificacao, "Nova Chamada", chamadaVeiculo.getCodigo().toString(),
-							FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo(), em));
+					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(lista.get(0).getCodMotorista(),
+							chamadaVeiculo.getCodigo().toString() + "=>"
+									+ FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo()));
+
+					if (!enviou)
+						PushNotificationUtil.enviarNotificacaoPlayerIdChamada(
+								FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
+								FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
+								listaParaNotificacao, "Nova Chamada", chamadaVeiculo.getCodigo().toString(),
+								FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo(), em));
 
 				}
 			}
@@ -536,9 +543,9 @@ public class ChamadaBO extends MotoRapidoBO {
 			Float valorInicial = Float
 					.parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_INICIO_CORRIDA.getCodigo(), em));
 
-			retorno.setPolylines(GoogleWSUtil.buscarRota(retorno,em));
+			retorno.setPolylines(GoogleWSUtil.buscarRota(retorno, em));
 			retorno.setPolylinesParaOrigem(GoogleWSUtil.buscarRota(param.getLatitudeAtual(), param.getLongitudeAtual(),
-					retorno.getLatitudeOrigem(), retorno.getLongitudeOrigem(),em));
+					retorno.getLatitudeOrigem(), retorno.getLongitudeOrigem(), em));
 
 			// atualizo a base para que o motorista não esteja disponível
 			// enquanto não cancelar ou finalizar esta chamada
@@ -618,7 +625,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			Float valorInicial = Float
 					.parseFloat(FuncoesUtil.getParam(ParametroEnum.VALOR_INICIO_CORRIDA.getCodigo(), em));
 
-			retorno.setPolylines(GoogleWSUtil.buscarRota(retorno,em));
+			retorno.setPolylines(GoogleWSUtil.buscarRota(retorno, em));
 			retorno.setPolylinesParaOrigem(GoogleWSUtil.buscarRota(param.getLatitudeAtual(), param.getLongitudeAtual(),
 					retorno.getLatitudeOrigem(), retorno.getLongitudeOrigem(), em));
 
