@@ -30,26 +30,35 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 	private SessaoWS sessao;
 
 	@OnOpen
-	public void onOpen(Session session, EndpointConfig config) {
+	public void onOpen(Session session, EndpointConfig config)  {
 
-		System.out.println("sess„o iniciada - " + session.getId());
+		
 		//Map<String, List<String>> params = session.getRequestParameterMap();
 
 		Integer codMotorista = (Integer) config.getUserProperties().get("codMotorista");
 
 		config.getUserProperties().remove("codMotorista");
-		sessao = new SessaoWS();
-		sessao.setCodMotorista(codMotorista);
-		sessao.setSessao(session);
-		ControleSessaoWS.initialize();
-		ControleSessaoWS.add(sessao);
-
+		
+		try {
+			ControleSessaoWS.initialize();
+			ControleSessaoWS.remove(codMotorista);
+			sessao = new SessaoWS();
+			sessao.setCodMotorista(codMotorista);
+			sessao.setSessao(session);
+			ControleSessaoWS.initialize();
+			ControleSessaoWS.add(sessao);
+			System.out.println("sess√£o iniciada - " + session.getId());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 	}
 
 	@OnClose
 	public void onClose(Session session) {
-		System.out.println("sess„o encerrada - " + session.getId());
+		System.out.println("sess√£o encerrada - " + session.getId());
 		ControleSessaoWS.remove(session);
 	}
 
@@ -71,6 +80,9 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 				AcoesDoSocket.tratarInformacaoPendente(session, msg[1], msg[2], msg[3]);
 				break;
 			case "FehouApp":
+				AcoesDoSocket.fechouApp(session);
+				break;
+			case "AlterarDisponibilidade":
 				AcoesDoSocket.fechouApp(session);
 				break;
 
@@ -139,10 +151,12 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 		// System.out.println("modifyHandshake " + httpSession.getId());
 
 	}
+			
+		
 
 	@OnError
 	public void onError(Throwable t) {
-		// System.out.println("onError::" + t.getMessage());
+		 System.out.println("onError::" + t.getMessage());
 	}
 
 	@Override

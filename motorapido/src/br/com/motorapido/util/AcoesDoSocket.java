@@ -30,6 +30,8 @@ public class AcoesDoSocket {
 			ExcecoesUtil.logarErro(e);
 		}
 	}
+	
+	
 
 	private static void cancelarChamada(Session session,String json, String codInformacaoPendente) {
 		Gson gson = new Gson();
@@ -41,7 +43,7 @@ public class AcoesDoSocket {
 			ExcecoesUtil.logarErroMotorista(e, 	ControleSessaoWS.obterPorSessao(session.getId()).getCodMotorista(), "cancelarChamada");
 		}	
 		
-	}
+	}	
 	
 	
 	public static void fechouApp(Session session) {
@@ -61,7 +63,7 @@ public class AcoesDoSocket {
 		Gson gson = new Gson();
 		VerificaPosicaoParam param = gson.fromJson(json, VerificaPosicaoParam.class);
 		MotoristaPosicaoArea motoPosicao = MotoristaPosicaoAreaBO.getInstance().obterPosicaoMotoristaArea(param);
-		System.out.println("Posição motorista " + motoPosicao.getMotorista().getNome());
+		System.out.println("Posi��o motorista " + motoPosicao.getMotorista().getNome());
 		/*if (motoPosicao != null) {
 			session.getBasicRemote().sendText("LocalizacaoResp=>" + gson.toJson(motoPosicao));
 		}*/
@@ -74,6 +76,7 @@ public class AcoesDoSocket {
 		session.close();
 		SessaoWS ses = ControleSessaoWS.obterPorSessao(session.getId());
 		ControleSessaoWS.remove(ses.getCodMotorista());
+		System.out.println("sessão encerrada - " + session.getId());
 	}
 
 }

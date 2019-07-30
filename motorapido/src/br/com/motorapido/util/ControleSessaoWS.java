@@ -20,12 +20,20 @@ public class ControleSessaoWS {
 		sMap.put(s.getCodMotorista(), s);
 	}
 
-	public static void remove(Integer codMotorista) {
+	public static void remove(Integer codMotorista) throws IOException {
+		SessaoWS sessao =  obterPorChave(codMotorista);
+		if(sessao != null)
+			sessao.getSessao().close();
+		else
+			return;
+		
 		sMap.remove(codMotorista);
+		System.out.println("sessão encerrada - " + sessao.getSessao().getId());
 	}
 
 	public static void remove(Session session) {
-		obterPorSessao(session.getId());
+		//obterPorSessao(session.getId());
+		
 		sMap.remove(obterPorSessao(session.getId()).getCodMotorista());
 	}
 

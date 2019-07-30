@@ -249,6 +249,7 @@ public class ChamadaBean extends SimpleController {
 			coordenadas.lng = coord.getLng();
 
 		} catch (Exception e) {
+			
 		}
 
 	}

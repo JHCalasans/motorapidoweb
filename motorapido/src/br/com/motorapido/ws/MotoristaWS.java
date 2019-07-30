@@ -27,6 +27,7 @@ import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.mbean.SimpleController;
+import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.MensagemParam;
@@ -65,6 +66,7 @@ public class MotoristaWS {
 		try {
 
 			MotoristaBO.getInstance().logoff(motorista);
+			//ControleSessaoWS.remove(motorista.getCodigo());
 			return Response.status(Status.OK).entity(motorista).build();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);

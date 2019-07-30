@@ -9,6 +9,8 @@ import javax.persistence.EntityTransaction;
 
 import org.primefaces.model.map.LatLng;
 
+import com.google.gson.Gson;
+
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBanco;
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
@@ -430,8 +432,12 @@ public class ChamadaBO extends MotoRapidoBO {
 
 					chamadaVeiculo = chamadaVeiculoDAO.save(chamadaVeiculo, em);
 
+					
+					chamada.setCodChamadaVeiculo(chamadaVeiculo.getCodigo());
+					Gson gson = new Gson();
+					
 					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(lista.get(0).getCodMotorista(),
-							chamadaVeiculo.getCodigo().toString() + "=>"
+							gson.toJson(chamada) + "=>"
 									+ FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo()));
 
 					if (!enviou)
