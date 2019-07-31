@@ -6,6 +6,9 @@ import javax.websocket.Session;
 
 import com.google.gson.Gson;
 
+import br.com.minhaLib.excecao.excecaobanco.ExcecaoBanco;
+import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
+import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoEntidadeReferenciada;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.MotoristaBO;
@@ -15,6 +18,7 @@ import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
+import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 
 public class AcoesDoSocket {
 
@@ -59,14 +63,16 @@ public class AcoesDoSocket {
 	}
 
 	public static void informarLocalizacao(Session session, String json)
-			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea, IOException {
+			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea, IOException, ExcecaoBancoConexao, ExcecaoBancoEntidadeReferenciada, ExcecaoBanco {
 		Gson gson = new Gson();
 		VerificaPosicaoParam param = gson.fromJson(json, VerificaPosicaoParam.class);
 		MotoristaPosicaoArea motoPosicao = MotoristaPosicaoAreaBO.getInstance().obterPosicaoMotoristaArea(param);
-		System.out.println("Posi��o motorista " + motoPosicao.getMotorista().getNome());
-		/*if (motoPosicao != null) {
-			session.getBasicRemote().sendText("LocalizacaoResp=>" + gson.toJson(motoPosicao));
-		}*/
+		RetornoVerificaPosicao retorno = new RetornoVerificaPosicao();
+		retorno.setAreaAtual(motoPosicao.getArea());
+		retorno.setPosicaoNaArea(motoPosicao.getPosicao());
+		if (motoPosicao != null) {
+			session.getBasicRemote().sendText("LocalizacaoResp=>" + gson.toJson(retorno));
+		}
 	}
 
 	public static void logOut(Session session, String json) throws ExcecaoNegocio, IOException {
