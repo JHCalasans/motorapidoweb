@@ -64,6 +64,19 @@
        
 	}
 
+    function atualizarPontos(obj) {
+    	PF('dlgMensagem').show();
+    	console.log("entrou blz");
+        /*   var  currentMarker = new google.maps.Marker({
+                position:obj
+            });
+
+            PF('maparea').addOverlay(currentMarker); */
+
+           
+        
+    }
+
     function handlePointClick(event) {
 
     	 currentMarker = new google.maps.Marker({
@@ -139,33 +152,47 @@
     var myAudio=document.getElementById('audio');
 
     function handleMessage(facesmessage) {
-    	/* var res = facesmessage.detail.split("-");
-        facesmessage.detail = res[0]; */
-		facesmessage.severity = 'info';
-    	//alert(facesmessage);		
-		myAudio.play();
-		
-		
-		
-		//document.getElementById("formMsg:lblMsg").value = "opa";
 
-		
+         if(facesmessage.summary.toString() == 'LocalMotorista'){
+			var resu = facesmessage.detail.toString().split(';');
+			 var  currentMarker = new google.maps.Marker({
+	                position:new google.maps.LatLng(resu[1], resu[2]),
+	                icon: '/motorapido/resources/helmet.png',
+	                title: resu[0]
+	            });
 
-		if(PF('dlgMensagem').isVisible()){
-			document.getElementById("lblOrigemMsg2").innerHTML = "Mensagem de " + facesmessage.detail;
-			PF('dlgMensagem2').show();
-		}else{
-			document.getElementById("lblOrigemMsg").innerHTML = "Mensagem de " + facesmessage.detail;
-    		PF('dlgMensagem').show();
-		}
-    	
-    	
-		if(window.location.href.includes("enviar")){
+	            PF('maparea').addOverlay(currentMarker); 
+         }else
+         {              
+        
+	    	/* var res = facesmessage.detail.split("-");
+	        facesmessage.detail = res[0]; */
+			facesmessage.severity = 'info';
+	    	//alert(facesmessage);		
+			myAudio.play();
 			
-			  var interval = setInterval('ajustaMsg()',
-		    			2000); 
-		}
-		return facesmessage.detail;
+			
+			
+			//document.getElementById("formMsg:lblMsg").value = "opa";
+	
+			
+	
+			if(PF('dlgMensagem').isVisible()){
+				document.getElementById("lblOrigemMsg2").innerHTML = "Mensagem de " + facesmessage.detail;
+				PF('dlgMensagem2').show();
+			}else{
+				document.getElementById("lblOrigemMsg").innerHTML = "Mensagem de " + facesmessage.detail;
+	    		PF('dlgMensagem').show();
+			}
+	    	
+	    	
+			if(window.location.href.includes("enviar")){
+				
+				  var interval = setInterval('ajustaMsg()',
+			    			2000); 
+			}
+			return facesmessage.detail;
+         }
 		
 	}
 
@@ -195,10 +222,16 @@
 	<p:socket channel="/notify" id="socketMsg" onMessage="handleMessage">
 
 	</p:socket>
-	<p:socket channel="/chamadas" id="socketMsgChamada"
+	<!-- 	<p:socket channel="/chamadas" id="socketMsgChamada"
 		onMessage="handleMessageChamada">
 
 	</p:socket>
+	
+	<p:socket channel="/atualizaPonto" id="socketMsgPosicao"
+		onMessage="atualizarPontos">
+
+	</p:socket> -->
+
 	<ui:debug hotkey="k" />
 	<p:ajaxStatus>
 		<f:facet name="start">

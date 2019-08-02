@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.primefaces.model.map.LatLng;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
 
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBanco;
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
@@ -22,6 +26,7 @@ import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.CoordenadaPontoUtil;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.FuncoesUtil;
+import br.com.motorapido.util.MotoristaPontoMapa;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
 
 public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
@@ -59,6 +64,9 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 				break;
 			}
 		}
+		EventBus eventBus = EventBusFactory.getDefault().eventBus();
+		eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("LocalMotorista"),
+				codMotorista.toString()+";"+latitude+";"+longitude));
 		if (areaOrigem == null) {
 			desativarMotoristaEmAreas(codMotorista, em);
 			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área!");
@@ -202,11 +210,15 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 							// motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(),
 							// em);
 							motoPos.setPosicao(count);
+							motoPos.setLatitude(param.getLatitude());
+							motoPos.setLongitude(param.getLongitude());
 							motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em);
 							encontrouMoto = true;
 						} else { // Se o motorista já estava ativo na área atual
 									// retorno o registro atual
-							motoristaPosicao = motoPos;
+							motoPos.setLatitude(param.getLatitude());
+							motoPos.setLongitude(param.getLongitude());
+							motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em);
 							encontrouMoto = true;
 						}
 
@@ -223,6 +235,8 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 					// Integer maiorPosicao =
 					// motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(),
 					// em);
+					motoristaPosicao.setLatitude(param.getLatitude());
+					motoristaPosicao.setLongitude(param.getLongitude());
 					motoristaPosicao.setPosicao(count);
 					motoristaPosicao = motoristaPosicaoAreaDAO.save(motoristaPosicao, em);
 				}
@@ -232,6 +246,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 			
 		} catch (ExcecaoMotoristaPosicaoArea e) {
+			
 			throw e;
 		} catch (ExcecaoNegocio e) {
 			throw e;

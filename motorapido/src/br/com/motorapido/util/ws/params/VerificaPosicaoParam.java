@@ -17,6 +17,8 @@ public class VerificaPosicaoParam implements Serializable{
 	
 	private Integer codUltimaArea;
 	
+	private Double direcao;
+	
 	
 	public VerificaPosicaoParam(){
 		
@@ -60,6 +62,16 @@ public class VerificaPosicaoParam implements Serializable{
 
 	public void setCodUltimaArea(Integer codUltimaArea) {
 		this.codUltimaArea = codUltimaArea;
+	}
+
+
+	public Double getDirecao() {
+		return direcao;
+	}
+
+
+	public void setDirecao(Double direcao) {
+		this.direcao = direcao;
 	}
 	
 

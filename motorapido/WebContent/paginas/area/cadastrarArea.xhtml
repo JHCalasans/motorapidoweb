@@ -16,13 +16,13 @@
 		<meta http-equiv="Expires" content="0" />
 
 	</f:facet>
-
+	<script type="text/javascript"
+		src="https://maps.google.com/maps/api/js?sensor=false"></script>
 
 
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
-
-
+	
 	<ui:param name="tituloPagina" value="#{bundle.area_cadastroTitulo}" />
 	<ui:param name="headerConteudo" value="#{bundle.area_cadastroTitulo}" />
 	<ui:param name="bean" value="#{areaBean}" />
@@ -102,7 +102,7 @@
 				<div class="clear"></div>
 
 				<p:gmap id="gmap" center="#{areaBean.coordenadas}" zoom="14"
-					type="terrain" model="#{areaBean.mapModel}" widgetVar="map"
+					type="terrain" model="#{areaBean.mapModel}" widgetVar="maparea"
 					style="width:100%;height:400px">
 
 					<p:ajax event="pointSelect" listener="#{areaBean.addMarker}"
@@ -162,8 +162,9 @@
 		</p:dialog>
 
 		<p:dialog widgetVar="dlgMotoArea" id="dlgMotoArea1" showEffect="fade"
-			resizable="false" styleClass="dialogBox" closable="true" height="600px" scrollable="true" scrollHeight="150"
-			width="400px" header="Motoristas na #{areaBean.nomeAreaMotoristas}">
+			resizable="false" styleClass="dialogBox" closable="true"
+			height="600px" scrollable="true" scrollHeight="150" width="400px"
+			header="Motoristas na #{areaBean.nomeAreaMotoristas}">
 			<h:form prependId="false">
 				<h:form>
 					<h:panelGroup styleClass="p_like">

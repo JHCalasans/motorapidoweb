@@ -68,6 +68,28 @@ public class MotoristaPosicaoArea extends Entidade{
 	@Column(name = "flg_ativo", nullable = false)
 	private String ativo;	
 	
+	@Column(name = "latitude", nullable = false)
+	private String latitude;
+	
+	@Column(name = "longitude", nullable = false)
+	private String longitude;
+	
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
 	@Override
 	public Serializable getIdentificador() {
 		return getCodigo();
