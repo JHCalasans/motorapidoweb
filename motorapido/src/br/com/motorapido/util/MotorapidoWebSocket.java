@@ -82,8 +82,8 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 			case "FehouApp":
 				AcoesDoSocket.fechouApp(session);
 				break;
-			case "AlterarDisponibilidade":
-				AcoesDoSocket.fechouApp(session);
+			case "ListarSessoes":
+				AcoesDoSocket.listarSessoes();
 				break;
 
 			}

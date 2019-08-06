@@ -74,6 +74,10 @@ public class AcoesDoSocket {
 			session.getBasicRemote().sendText("LocalizacaoResp=>" + gson.toJson(retorno));
 		}
 	}
+	
+	public static void listarSessoes() {
+		ControleSessaoWS.listar();
+	}
 
 	public static void logOut(Session session, String json) throws ExcecaoNegocio, IOException {
 		Gson gson = new Gson();

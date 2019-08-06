@@ -305,9 +305,14 @@ public class MotoristaBO extends MotoRapidoBO {
 					motorista.getVeiculos().add(retornoVeiculo);
 				}
 
+				//Inicia sempre como indisponível
+				motorista.setDisponivel("N");
+				motoristaDAO.save(motorista, em);
+				
 				emUtil.commitTransaction(transaction);
 			} else
 				throw new ExcecaoNegocio("Senha/Login incorreto(s)");
+			
 			motorista.setCodBinarioFoto(null);
 			motorista.setCodBinarioDocCriminal(null);
 			motorista.setCodBinarioCompResidencia(null);
