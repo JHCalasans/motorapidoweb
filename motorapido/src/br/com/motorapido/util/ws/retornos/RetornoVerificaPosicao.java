@@ -14,6 +14,7 @@ public class RetornoVerificaPosicao implements Serializable {
 	
 	private Area areaAtual;
 	private Integer posicaoNaArea;
+	private Integer codMotorista;
 	
 	
 	public RetornoVerificaPosicao(){
@@ -38,6 +39,16 @@ public class RetornoVerificaPosicao implements Serializable {
 
 	public void setPosicaoNaArea(Integer posicaoNaArea) {
 		this.posicaoNaArea = posicaoNaArea;
+	}
+
+
+	public Integer getCodMotorista() {
+		return codMotorista;
+	}
+
+
+	public void setCodMotorista(Integer codMotorista) {
+		this.codMotorista = codMotorista;
 	}
 	
 	

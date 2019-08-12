@@ -66,7 +66,7 @@ public class MotoristaWS {
 		try {
 
 			MotoristaBO.getInstance().logoff(motorista);
-			//ControleSessaoWS.remove(motorista.getCodigo());
+			// ControleSessaoWS.remove(motorista.getCodigo());
 			return Response.status(Status.OK).entity(motorista).build();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -79,7 +79,7 @@ public class MotoristaWS {
 
 	@GET
 	@Path("/alterarDisponivel/{codMotorista}/{situacao}")
-	public Response alterarDisponivel(@PathParam("codMotorista") Integer codMotorista, 
+	public Response alterarDisponivel(@PathParam("codMotorista") Integer codMotorista,
 			@PathParam("situacao") String situacao) {
 		try {
 			MotoristaBO.getInstance().alterarDisponivel(codMotorista, situacao);
@@ -110,7 +110,6 @@ public class MotoristaWS {
 				retorno.add(retornoVeiculo);
 			}
 
-			
 			GenericEntity<List<RetornoVeiculosMotorista>> entidade = new GenericEntity<List<RetornoVeiculosMotorista>>(
 					retorno) {
 			};
@@ -124,22 +123,22 @@ public class MotoristaWS {
 					.entity("Falha ao tentar obter informações dos veículos").build();
 		}
 	}
-	
-	@POST
+
+	@GET
 	@Path("/selecionarVeiculo/{codMotorista}/{codVeiculo}")
-	public Response selecionarVeiculo(@PathParam("codMotorista") Integer codMotorista, @PathParam("codVeiculo") Integer codVeiculo) {
-		
-		
+	public Response selecionarVeiculo(@PathParam("codMotorista") Integer codMotorista,
+			@PathParam("codVeiculo") Integer codVeiculo) {
+
 		try {
-			VeiculoBO.getInstance().selecionarVeiculo(codMotorista, codVeiculo);			
+			VeiculoBO.getInstance().selecionarVeiculo(codMotorista, codVeiculo);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
-			return Response.status(Status.INTERNAL_SERVER_ERROR)
-					.entity("Falha ao tentar obter selecionar veículo").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter selecionar veículo")
+					.build();
 		}
 	}
 
@@ -187,7 +186,7 @@ public class MotoristaWS {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar iniciar corrida").build();
 		}
 	}
-	
+
 	@POST
 	@Path("/cancelarChamada")
 	public Response cancelarChamada(CancelarChamadaParam param) {
@@ -202,19 +201,14 @@ public class MotoristaWS {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar corrida").build();
 		}
 	}
-	
+
 	@GET
 	@Path("/ping")
 	public Response ping() {
-		try {
-			System.out.println("PONG");
-			return Response.status(Status.OK).build();
-		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar corrida").build();
-		}
+		return Response.status(Status.OK).build();
+
 	}
-	
+
 	@POST
 	@Path("/finalizarCorrida")
 	public Response finalizarCorrida(CancelarChamadaParam param) {
@@ -342,7 +336,7 @@ public class MotoristaWS {
 		}
 
 	}
-	
+
 	@POST
 	@Path("/aceitarChamada")
 	public Response aceitarChamada(SelecaoChamadaParam param) {
@@ -359,7 +353,7 @@ public class MotoristaWS {
 		}
 
 	}
-	
+
 	@POST
 	@Path("/recusarChamada")
 	public Response recusarChamada(CancelarChamadaParam param) {
@@ -376,7 +370,7 @@ public class MotoristaWS {
 		}
 
 	}
-	
+
 	@GET
 	@Path("/buscarDetalhesChamada/{codChamadaVeiculo}")
 	public Response buscarDetalhesChamada(@PathParam("codChamadaVeiculo") Long codChamadaVeiculo) {
@@ -389,7 +383,8 @@ public class MotoristaWS {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter detalhes da chamada").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter detalhes da chamada")
+					.build();
 		}
 
 	}

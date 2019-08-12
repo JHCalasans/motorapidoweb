@@ -28,6 +28,7 @@ import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.MotoristaPontoMapa;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
+import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 
 public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
@@ -280,15 +281,20 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 		// lista de motoristas para enviar mensagem do socket de atualizar
 		// posição
-		List<Integer> listaCodMotorista = new ArrayList<Integer>();
+		List<RetornoVerificaPosicao> listaMotorista = new ArrayList<RetornoVerificaPosicao>();
+		RetornoVerificaPosicao retornoPos;
 		for (MotoristaPosicaoArea motPos : listOrdem) {
 			motPos.setPosicao(count);
 			motoristaPosicaoAreaDAO.save(motPos, em);
 			count++;
-			listaCodMotorista.add(motPos.getMotorista().getCodigo());
+			retornoPos = new RetornoVerificaPosicao();
+			retornoPos.setAreaAtual(motPos.getArea());
+			retornoPos.setPosicaoNaArea(motPos.getPosicao());
+			retornoPos.setCodMotorista(motPos.getMotorista().getCodigo());
+			listaMotorista.add(retornoPos);
 		}
 
-		ControleSessaoWS.enviarMensagemListaMotorista(listaCodMotorista);
+		ControleSessaoWS.enviarMensagemListaMotorista(listaMotorista);
 
 	}
 

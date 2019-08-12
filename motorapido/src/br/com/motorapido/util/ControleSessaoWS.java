@@ -7,6 +7,11 @@ import java.util.Map;
 
 import javax.websocket.Session;
 
+import com.google.gson.Gson;
+
+import br.com.motorapido.entity.MotoristaPosicaoArea;
+import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
+
 public class ControleSessaoWS {
 
 	private static ControleSessaoWS instance;
@@ -56,15 +61,19 @@ public class ControleSessaoWS {
 		System.out.println(sMap.keySet().toString());
 	}
 
-	public static void enviarMensagemListaMotorista(List<Integer> listaCodMotorista) {
-		/*
-		 * List<String> listaErro = new ArrayList<String>(); for (Integer
-		 * codMotorista : listaCodMotorista) { try {
-		 * sMap.get(codMotorista).getSessao().getBasicRemote().sendText("Teste")
-		 * ; } catch (IOException e) {
-		 * listaErro.add("Erro em enviar msg para motorista - " + codMotorista +
-		 * " => " + e.getMessage()); } }
-		 */
+	public static void enviarMensagemListaMotorista(List<RetornoVerificaPosicao> listaMotorista) {
+		
+		Gson gson = new Gson();
+		 for (RetornoVerificaPosicao motorista : listaMotorista) { 
+			 try {
+				  sMap.get(motorista.getCodMotorista()).getSessao().getBasicRemote().sendText("AtualizarPosicao=>"+ gson.toJson(motorista));	
+			 }catch (Exception e) {
+				 ExcecoesUtil.logarErroMotorista(e, motorista.getCodMotorista(), "AtualizarPosicao");
+			}
+		 }
+		
+		
+		 
 
 	}
 
