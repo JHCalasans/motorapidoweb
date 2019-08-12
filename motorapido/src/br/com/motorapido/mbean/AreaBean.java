@@ -52,6 +52,8 @@ public class AreaBean extends SimpleController {
 	private Area areaExcluir;
 
 	private String nomeAreaMotoristas;
+	
+	private String tipoMapa;
 
 	private Boolean mostrarMapa = false;
 
@@ -71,7 +73,7 @@ public class AreaBean extends SimpleController {
 			area.setCor("#0000F0");
 			// mapModel = new DefaultMapModel();
 			// coordenadas = new LatLng(-10.9536484, -37.0437752);
-
+			tipoMapa = "E";
 			montarAreas();
 			//montarPosicoesMotoristas();
 
@@ -80,6 +82,11 @@ public class AreaBean extends SimpleController {
 		}
 	}
 
+	
+	public void ajustarMapaTempoReal() {
+		mapModel.getMarkers().clear();
+	}
+	
 	public void montarPosicoesMotoristas() {
 
 		try {
@@ -365,6 +372,14 @@ public class AreaBean extends SimpleController {
 
 	public void setNomeAreaMotoristas(String nomeAreaMotoristas) {
 		this.nomeAreaMotoristas = nomeAreaMotoristas;
+	}
+
+	public String getTipoMapa() {
+		return tipoMapa;
+	}
+
+	public void setTipoMapa(String tipoMapa) {
+		this.tipoMapa = tipoMapa;
 	}
 
 }

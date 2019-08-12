@@ -65,35 +65,7 @@
 						</f:facet>
 						<p:lightBox
 							style="opacity: 0.5;background:#{area.area.cor};width:80%;height:10px;margin-left:10%"></p:lightBox>
-					</p:column>
-
-					<p:column style="width:20%;text-align:center;">
-						<f:facet name="header">
-							<h:outputText value="#{bundle.operacoes}"
-								styleClass="cabecalhoDataTable" />
-						</f:facet>
-						<h:commandLink title="Editar" immediate="true"
-							action="#{areaBean.abrirAlterar(area.area)}">
-							<h:graphicImage url="/resources/edit.png"
-								style="border-style: none" />
-						</h:commandLink>
-
-						<p:commandLink title="Motoristas na área" immediate="true"
-							update="dlgMotoArea1"
-							action="#{areaBean.mostrarMotoristasArea(area.area)}"
-							style="margin-left:10px;">
-							<h:graphicImage url="/resources/capacete.png"
-								style="border-style: none" />
-						</p:commandLink>
-
-						<h:commandLink title="Remover" immediate="true"
-							style="margin-left:10px;"
-							action="#{areaBean.abrirExcluir(area.area)}">
-							<h:graphicImage url="/resources/delete.png"
-								style="border-style: none" />
-						</h:commandLink>
-
-					</p:column>
+					</p:column>			
 
 
 				</p:dataTable>
@@ -102,17 +74,13 @@
 				<br />
 				<div class="clear"></div>
 
-				<p:gmap id="gmap" center="#{areaBean.coordenadas}" zoom="14"  type="terrain" model="#{areaBean.mapModel}" 
-					widgetVar="maparea" style="width:100%;height:400px" >
-
-					<p:ajax event="pointSelect" listener="#{areaBean.addMarker}" 
-						update="gmap"></p:ajax>
-					<p:ajax event="overlaySelect"  
-						listener="#{areaBean.marcadorSelecionado}" update="gmap" />
-
+				<p:gmap id="gmapMoto" center="#{areaBean.coordenadas}" zoom="14"  type="terrain" model="#{areaBean.mapModel}"
+					widgetVar="mapmoto" style="width:100%;height:400px">
+						<p:ajax event="pointSelect" listener="#{areaBean.addMarker}"  disabled="true"
+						update="gmapMoto"></p:ajax>
+					<p:ajax event="overlaySelect"  disabled="true"
+						listener="#{areaBean.marcadorSelecionado}" update="gmapMoto" />
 				</p:gmap>
-				
-			
 
 				<br />
 				<div class="clear"></div>

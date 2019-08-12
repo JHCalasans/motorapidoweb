@@ -19,6 +19,8 @@ public class VerificaPosicaoParam implements Serializable{
 	
 	private Double direcao;
 	
+	private String loginMotorista;
+	
 	
 	public VerificaPosicaoParam(){
 		
@@ -72,6 +74,16 @@ public class VerificaPosicaoParam implements Serializable{
 
 	public void setDirecao(Double direcao) {
 		this.direcao = direcao;
+	}
+
+
+	public String getLoginMotorista() {
+		return loginMotorista;
+	}
+
+
+	public void setLoginMotorista(String loginMotorista) {
+		this.loginMotorista = loginMotorista;
 	}
 	
 

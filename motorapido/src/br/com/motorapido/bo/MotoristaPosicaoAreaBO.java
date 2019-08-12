@@ -64,7 +64,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		}
 	}
 
-	private Area validarAreaDoMotorista(double latitude, double longitude, Integer codMotorista, EntityManager em)
+	private Area validarAreaDoMotorista(double latitude, double longitude, Integer codMotorista, String login, EntityManager em)
 			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea, ExcecaoBancoConexao, ExcecaoBanco {
 		Area areaOrigem = null;
 		List<CoordenadasAreaUtil> listaCoordAreas = AreaBO.getInstance().obterAreas(em);
@@ -86,7 +86,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		}
 		EventBus eventBus = EventBusFactory.getDefault().eventBus();
 		eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("LocalMotorista"),
-				codMotorista.toString()+";"+latitude+";"+longitude));
+				codMotorista.toString()+";"+login+";"+ latitude+";"+longitude));
 	
 		if (areaOrigem == null) {
 			desativarMotoristaEmAreas(codMotorista, em);
@@ -186,7 +186,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
 			Area area = validarAreaDoMotorista(Double.parseDouble(param.getLatitude()),
-					Double.parseDouble(param.getLongitude()), param.getCodMotorista(), em);
+					Double.parseDouble(param.getLongitude()), param.getCodMotorista(), param.getLoginMotorista(), em);
 			if (param.getCodUltimaArea() == null || (param.getCodUltimaArea() != null && param.getCodUltimaArea() != area.getCodigo())) {
 
 				Motorista motorista = new Motorista();

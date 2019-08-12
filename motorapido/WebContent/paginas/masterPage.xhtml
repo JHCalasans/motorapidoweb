@@ -161,27 +161,26 @@
         	var resu = facesmessage.detail.toString().split(';');
 			
         	var i = 0;
-        	var achou = false;
+        	console.log(window.posis.length);
       	 	 while (i <  window.posis.length ){
       	 		if( window.posis[i].id == resu[0]){
       	 		     window.posis[i].setMap(null);
+      	 		     window.posis.splice(i,1);
  					 break;
  				}
 				i++;
 	 		}	  
 			 var  currentMarker = new google.maps.Marker({
-	                position:new google.maps.LatLng(resu[1], resu[2]),
+	                position:new google.maps.LatLng(resu[2], resu[3]),
 	                icon: '/motorapido/resources/helmet.png',
-	                title: resu[0],
+	                title: resu[1],
 	                id: resu[0]
 	        
 	            });
 
-				currentMarker.setMap(PF('maparea').getMap());
-	           // PF('maparea').addOverlay(currentMarker);
-	            
-	            posis.push(currentMarker);
- 	 		
+				currentMarker.setMap(PF('mapmoto').getMap());
+	           // PF('maparea').addOverlay(currentMarker);	            
+	            posis.push(currentMarker); 	 		
 	            
          }else
          {              
@@ -191,13 +190,7 @@
 			facesmessage.severity = 'info';
 	    	//alert(facesmessage);		
 			myAudio.play();
-			
-			
-			
 			//document.getElementById("formMsg:lblMsg").value = "opa";
-	
-			
-	
 			if(PF('dlgMensagem').isVisible()){
 				document.getElementById("lblOrigemMsg2").innerHTML = "Mensagem de " + facesmessage.detail;
 				PF('dlgMensagem2').show();
