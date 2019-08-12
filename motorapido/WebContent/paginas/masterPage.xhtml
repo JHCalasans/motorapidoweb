@@ -42,6 +42,7 @@
 	</audio>
 
 	<script type="text/javascript">
+	//<![CDATA[
     var currentMarker = null;
     var primeiroMarcador = null;
     var ultimoMarcador = null;
@@ -65,16 +66,16 @@
 	}
 
     function atualizarPontos(obj) {
-    	PF('dlgMensagem').show();
-    	console.log("entrou blz");
-        /*   var  currentMarker = new google.maps.Marker({
+    	//PF('dlgMensagem').show();
+    	//console.log("entrou blz");
+         /*   var  currentMarker = new google.maps.Marker({
                 position:obj
             });
 
             PF('maparea').addOverlay(currentMarker); */
 
-           
-        
+            
+       
     }
 
     function handlePointClick(event) {
@@ -106,7 +107,7 @@
         }else if(contador > 2){
         	alert("Hello! I am an alert box!!");
         	var caminho = [];
-        	for(var i = 0; i &lt; list.length; i++){
+        	for(var i = 0; i < list.length; i++){
         		caminho.push(list[i].position)
             }
         	
@@ -151,17 +152,37 @@
 			1000); */
     var myAudio=document.getElementById('audio');
 
+	var posis = [];
+
     function handleMessage(facesmessage) {
 
          if(facesmessage.summary.toString() == 'LocalMotorista'){
-			var resu = facesmessage.detail.toString().split(';');
+             
+        	var resu = facesmessage.detail.toString().split(';');
+			
+        	var i = 0;
+        	var achou = false;
+      	 	 while (i <  window.posis.length ){
+      	 		if( window.posis[i].id == resu[0]){
+      	 		     window.posis[i].setMap(null);
+ 					 break;
+ 				}
+				i++;
+	 		}	  
 			 var  currentMarker = new google.maps.Marker({
 	                position:new google.maps.LatLng(resu[1], resu[2]),
 	                icon: '/motorapido/resources/helmet.png',
-	                title: resu[0]
+	                title: resu[0],
+	                id: resu[0]
+	        
 	            });
 
-	            PF('maparea').addOverlay(currentMarker); 
+				currentMarker.setMap(PF('maparea').getMap());
+	           // PF('maparea').addOverlay(currentMarker);
+	            
+	            posis.push(currentMarker);
+ 	 		
+	            
          }else
          {              
         
@@ -215,7 +236,7 @@
 	    			
 		}
 	 
-  
+	//]]>
 </script>
 </h:head>
 <h:body>

@@ -8,6 +8,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.hibernate.validator.internal.engine.messageinterpolation.el.MapBasedFunctionMapper;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.event.map.PointSelectEvent;
 import org.primefaces.model.map.DefaultMapModel;
@@ -45,19 +46,19 @@ public class AreaBean extends SimpleController {
 	private org.primefaces.model.map.LatLng primeiroMarcador;
 
 	private Area area;
-	
+
 	private Area areaAlterar;
-	
+
 	private Area areaExcluir;
-	
-	private String  nomeAreaMotoristas;
+
+	private String nomeAreaMotoristas;
 
 	private Boolean mostrarMapa = false;
 
 	private List<CoordenadasArea> areasCadastradas;
-	
+
 	private List<CoordenadasAreaUtil> listaArea;
-	
+
 	private List<MotoristaPosicaoArea> listaMotoristasArea;
 
 	@PostConstruct
@@ -70,56 +71,93 @@ public class AreaBean extends SimpleController {
 			area.setCor("#0000F0");
 			// mapModel = new DefaultMapModel();
 			// coordenadas = new LatLng(-10.9536484, -37.0437752);
-			
-			
+
 			montarAreas();
+			//montarPosicoesMotoristas();
 
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
 
+	public void montarPosicoesMotoristas() {
+
+		try {
+			for(MotoristaPosicaoArea moto : getListaPosicaoMotorista()) {
+				Marker marker = new Marker(new org.primefaces.model.map.LatLng(Double.parseDouble(moto.getLatitude()), Double.parseDouble(moto.getLongitude())),
+						"Marcador - " + marcadores.size());
+				coordenadas.lat = marker.getLatlng().getLat();
+				coordenadas.lng = marker.getLatlng().getLng();
+
+				if (marcadores.size() == 0)
+					primeiroMarcador = marker.getLatlng();
+
+				if (marcadores.size() > 0) {
+					Polyline linha = new Polyline();
+					linha.getPaths().add(marcadores.get(marcadores.size() - 1));
+					linha.getPaths().add(marker.getLatlng());
+					linha.setStrokeWeight(2);
+					linha.setStrokeColor("#000000");
+					linha.setStrokeOpacity(0.2);
+					mapModel.addOverlay(linha);
+
+				}
+
+				marcadores.add(marker.getLatlng());
+
+				mapModel.addOverlay(marker);
+				
+			}
+			
+		} catch (Exception e) {
+		}
+
+	}
+	
+	public void addPontoMoto(Marker mark) {
+		mapModel.addOverlay(mark);
+	}
+
 	public void mudarMapa() {
 		mostrarMapa = !mostrarMapa;
 	}
-	
-	public void abrirAlterar(Area param){
+
+	public void abrirAlterar(Area param) {
 		areaAlterar = param;
 		enviarJavascript("PF('dlgAlterarArea').show();");
 	}
-	
-	public void mostrarMotoristasArea(Area param){
+
+	public void mostrarMotoristasArea(Area param) {
 		try {
 			listaMotoristasArea = MotoristaPosicaoAreaBO.getInstance().obterMotoristasPorArea(param);
 			nomeAreaMotoristas = param.getDescricao();
 			enviarJavascript("PF('dlgMotoArea').show();");
-		} catch (ExcecaoNegocio | ExcecaoMotoristaPosicaoArea e) {			
+		} catch (ExcecaoNegocio | ExcecaoMotoristaPosicaoArea e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
-		
+
 	}
-	
-	public void abrirExcluir(Area param){
+
+	public void abrirExcluir(Area param) {
 		areaExcluir = param;
 		enviarJavascript("PF('dlConfirmDelete').show();");
 	}
-	
-	public void alterarArea(){
+
+	public void alterarArea() {
 		try {
 			areaAlterar.setCor("#" + areaAlterar.getCorPura());
-			AreaBO.getInstance().alterarArea(areaAlterar);			
+			AreaBO.getInstance().alterarArea(areaAlterar);
 			montarAreas();
 			addMsg(FacesMessage.SEVERITY_INFO, "Área alterada com sucesso.");
-			
+
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
 
-	
-	public void excluirArea(){
+	public void excluirArea() {
 		try {
-			AreaBO.getInstance().excluirArea(areaExcluir);			
+			AreaBO.getInstance().excluirArea(areaExcluir);
 			montarAreas();
 			addMsg(FacesMessage.SEVERITY_INFO, "Área excluída com sucesso.");
 			areaExcluir = null;
@@ -127,7 +165,7 @@ public class AreaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	private void montarAreas() {
 		try {
 			mapModel = new DefaultMapModel();
@@ -141,7 +179,7 @@ public class AreaBean extends SimpleController {
 				poligono.setFillColor(coordenada.getArea().getCor());
 				poligono.setStrokeOpacity(0.9);
 				poligono.setFillOpacity(0.2);
-				poligono.setPaths(coordenada.getCoordenadas());				
+				poligono.setPaths(coordenada.getCoordenadas());
 				mapModel.addOverlay(poligono);
 			}
 		} catch (ExcecaoNegocio e) {
@@ -182,7 +220,7 @@ public class AreaBean extends SimpleController {
 			area.setCor("#" + area.getCor());
 			AreaBO.getInstance().salvarArea(marcadores, area);
 			montarAreas();
-			
+
 			addMsg(FacesMessage.SEVERITY_INFO, "Área cadastrado com sucesso.");
 			area = new Area();
 		} catch (ExcecaoNegocio e) {
@@ -192,7 +230,6 @@ public class AreaBean extends SimpleController {
 
 	public void addMarker(PointSelectEvent event) {
 
-		
 		try {
 			Marker marker = new Marker(event.getLatLng(), "Marcador - " + marcadores.size());
 			coordenadas.lat = marker.getLatlng().getLat();
@@ -220,6 +257,14 @@ public class AreaBean extends SimpleController {
 
 	}
 
+	public Integer mapModelSize() {
+		return mapModel.getMarkers().size();
+	}
+	
+	public Boolean existePontoMotorista(String id) {
+		return mapModel.getMarkers().stream().anyMatch(mar -> mar.getId().equals(id));
+	}
+	
 	public MapModel getMapModel() {
 		return mapModel;
 	}
@@ -321,7 +366,5 @@ public class AreaBean extends SimpleController {
 	public void setNomeAreaMotoristas(String nomeAreaMotoristas) {
 		this.nomeAreaMotoristas = nomeAreaMotoristas;
 	}
-
-	
 
 }

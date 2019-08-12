@@ -29,7 +29,7 @@ import br.com.minhaLib.dao.Entidade;
 				+ " where mpa.area.codigo = :codArea and mpa.ativo = 'S' order by mpa.posicao asc"),
 		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristaAtivoCodigo", query = "select mpa from MotoristaPosicaoArea mpa "
 				+ " join fetch mpa.motorista moto join fetch mpa.area a "
-				+ " where moto.codigo = :codMotorista and mpa.ativo = 'S' "),
+				+ " where (:codMotorista = -1 or moto.codigo = :codMotorista ) and mpa.ativo = 'S' "),	
 		@NamedQuery(name = "MotoristaPosicaoArea.obterSituacaoMotoristaAnterior", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "
 				+ " where mpa.area.codigo = :codArea and mpa.posicao < :posicao "),
 		@NamedQuery(name = "MotoristaPosicaoArea.obterMotoristasChamadaPorArea", query = "select mpa from MotoristaPosicaoArea mpa join fetch mpa.motorista moto "

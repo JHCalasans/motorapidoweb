@@ -22,6 +22,8 @@ import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
+import br.com.motorapido.mbean.AreaBean;
+import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.CoordenadaPontoUtil;
 import br.com.motorapido.util.CoordenadasAreaUtil;
@@ -43,6 +45,23 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			instance = new MotoristaPosicaoAreaBO();
 
 		return instance;
+	}
+	
+	public List<MotoristaPosicaoArea> iniciarListaPosicoesMapa() throws ExcecaoNegocio{
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
+			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.obterMotoristaAtivoCodigo(-1, em);			
+			return listaMotoristas;
+
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter posições dos motoristas.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
 	}
 
 	private Area validarAreaDoMotorista(double latitude, double longitude, Integer codMotorista, EntityManager em)
@@ -68,6 +87,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		EventBus eventBus = EventBusFactory.getDefault().eventBus();
 		eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("LocalMotorista"),
 				codMotorista.toString()+";"+latitude+";"+longitude));
+	
 		if (areaOrigem == null) {
 			desativarMotoristaEmAreas(codMotorista, em);
 			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área!");

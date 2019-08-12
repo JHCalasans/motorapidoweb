@@ -34,14 +34,18 @@ import br.com.minhaLib.util.FacesUtil;
 import br.com.motorapido.bo.CaracteristicaBO;
 import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.LogradouroBO;
+import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
 import br.com.motorapido.dao.FabricaDAO;
+import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
+import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.enums.SituacaoChamadaEnum;
 import br.com.motorapido.util.ExcecoesUtil;
+import br.com.motorapido.util.MotoristaPontoMapa;
 import br.com.motorapido.util.Paginas;
 
 @SuppressWarnings("deprecation")
@@ -74,7 +78,7 @@ public abstract class SimpleController implements Serializable {
 	
 	private static List<Chamada> listaChamadasEmCorrida = new ArrayList<Chamada>();
 	
-	
+	private static List<MotoristaPosicaoArea> listaPosicaoMotorista = new ArrayList<MotoristaPosicaoArea>();
 
 	public SimpleController() {
 		super();
@@ -94,6 +98,17 @@ public abstract class SimpleController implements Serializable {
 			 * for (Logradouro logradouro : listaLogradouro) {
 			 * autoComplete.add(logradouro.getDescricao()); }
 			 */
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+
+	}
+	
+	public static void iniciarListaPosicaoRealTime() {
+		try {
+			
+			listaPosicaoMotorista = MotoristaPosicaoAreaBO.getInstance().iniciarListaPosicoesMapa();
+			
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -364,6 +379,14 @@ public abstract class SimpleController implements Serializable {
 
 	public static void setListaChamadasEmCorrida(List<Chamada> listaChamadasEmCorrida) {
 		SimpleController.listaChamadasEmCorrida = listaChamadasEmCorrida;
+	}
+
+	public static List<MotoristaPosicaoArea> getListaPosicaoMotorista() {
+		return listaPosicaoMotorista;
+	}
+
+	public static void setListaPosicaoMotorista(List<MotoristaPosicaoArea> listaPosicaoMotorista) {
+		SimpleController.listaPosicaoMotorista = listaPosicaoMotorista;
 	}
 
 	
