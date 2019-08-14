@@ -78,13 +78,7 @@
 								style="border-style: none" />
 						</h:commandLink>
 
-						<p:commandLink title="Motoristas na área" immediate="true"
-							update="dlgMotoArea1"
-							action="#{areaBean.mostrarMotoristasArea(area.area)}"
-							style="margin-left:10px;">
-							<h:graphicImage url="/resources/capacete.png"
-								style="border-style: none" />
-						</p:commandLink>
+					
 
 						<h:commandLink title="Remover" immediate="true"
 							style="margin-left:10px;"
@@ -163,47 +157,7 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog widgetVar="dlgMotoArea" id="dlgMotoArea1" showEffect="fade"
-			resizable="false" styleClass="dialogBox" closable="true"
-			height="600px" scrollable="true" scrollHeight="150" width="400px"
-			header="Motoristas na #{areaBean.nomeAreaMotoristas}">
-			<h:form prependId="false">
-				<h:form>
-					<h:panelGroup styleClass="p_like">
-						<p:dataTable value="#{areaBean.listaMotoristasArea}" var="moto"
-							emptyMessage="Nenhum motorista ativo nesta área">
-							<f:facet name="header">
-						            Motoristas
-						    </f:facet>
-							<p:column headerText="Posição" style="width:50px">
-								<p:outputLabel value="#{moto.posicao}"
-									styleClass="OutputLabelValue"></p:outputLabel>
-							</p:column>
-							<p:column headerText="Nome">
-								<p:outputLabel value="#{moto.motorista.nome}"
-									styleClass="OutputLabelValue"></p:outputLabel>
-							</p:column>
-
-						</p:dataTable>
-					</h:panelGroup>
-
-					<br></br>
-					<div class="clear"></div>
-
-				</h:form>
-				<f:facet name="footer">
-					<div align="center" style="margin-top: 5px;">
-						<p:commandButton value="Confirmar"
-							actionListener="#{areaBean.salvarArea}"
-							update="formCadastro, msgs, conteudo" />
-						<p:commandButton value="Cancelar" onclick="PF('dlgArea').hide();"
-							immediate="true" style="margin-left:10px;" />
-					</div>
-				</f:facet>
-
-			</h:form>
-		</p:dialog>
-
+		
 
 		<p:dialog widgetVar="dlgAlterarArea" showEffect="fade"
 			resizable="false" styleClass="dialogBox" closable="false"

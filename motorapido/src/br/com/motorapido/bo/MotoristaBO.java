@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IBinarioMotoristaDAO;
@@ -28,6 +33,7 @@ import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.enums.ParametroEnum;
+import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
 import br.com.motorapido.util.PushNotificationUtil;
@@ -144,10 +150,24 @@ public class MotoristaBO extends MotoRapidoBO {
 					motoristaPosicaoAreaDAO.save(motoPosicao, em);
 					MotoristaPosicaoAreaBO.getInstance().atualizarPosicoesArea(motoPosicao.getArea(), em);
 				}
+				
 			}
 
 			motorista.setDisponivel(situacao.equals("S") ? "N" : "S");
-			motoristaDAO.save(motorista, em);				
+			motoristaDAO.save(motorista, em);	
+			
+			
+			if(SimpleController.getListaPosicaoMotorista() != null) {
+				if(motorista.getDisponivel().equals("N")) {				
+					SimpleController.getListaPosicaoMotorista().remove(SimpleController.getListaPosicaoMotorista().stream().
+							filter(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo()).findFirst().get());	
+					EventBus eventBus = EventBusFactory.getDefault().eventBus();
+					eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+							codMotorista.toString()+";"+motorista.getDisponivel()));
+				}
+			}
+			
+		
 			
 			emUtil.commitTransaction(transaction);
 		} catch (Exception e) {

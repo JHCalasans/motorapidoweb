@@ -86,7 +86,7 @@ public class Config implements ServletContextListener {
 			//Aloca em memória as chamadas que estão pendentes geral
 			SimpleController.iniciarListaChamadas();
 			//Aloca lista de posições no mapa dos motoristas
-			SimpleController.iniciarListaPosicaoRealTime();
+			//SimpleController.iniciarListaPosicaoRealTime();
 			
 			
 			sched.scheduleJob(job, trigger);			

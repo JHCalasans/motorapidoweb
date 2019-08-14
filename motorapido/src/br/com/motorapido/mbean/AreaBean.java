@@ -7,8 +7,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.validator.internal.engine.messageinterpolation.el.MapBasedFunctionMapper;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.event.map.PointSelectEvent;
 import org.primefaces.model.map.DefaultMapModel;
@@ -24,7 +25,6 @@ import br.com.motorapido.bo.AreaBO;
 import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.CoordenadasArea;
-import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.util.CoordenadasAreaUtil;
@@ -52,7 +52,7 @@ public class AreaBean extends SimpleController {
 	private Area areaExcluir;
 
 	private String nomeAreaMotoristas;
-	
+
 	private String tipoMapa;
 
 	private Boolean mostrarMapa = false;
@@ -62,6 +62,8 @@ public class AreaBean extends SimpleController {
 	private List<CoordenadasAreaUtil> listaArea;
 
 	private List<MotoristaPosicaoArea> listaMotoristasArea;
+
+	private List<MotoristaPosicaoArea> listaTodosMotoristasArea;
 
 	@PostConstruct
 	public void carregar() {
@@ -75,52 +77,57 @@ public class AreaBean extends SimpleController {
 			// coordenadas = new LatLng(-10.9536484, -37.0437752);
 			tipoMapa = "E";
 			montarAreas();
-			//montarPosicoesMotoristas();
+			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+					.getRequest();
+			String url = request.getRequestURL().toString();
+			if (url.contains("tempoReal"))
+				montarPosicoesMotoristas();
 
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
 
-	
+	public void adicionarListaTotal() {
+
+	}
+
+	public void removerListaTotal() {
+
+	}
+
 	public void ajustarMapaTempoReal() {
 		mapModel.getMarkers().clear();
 	}
-	
+
+	public Marker[] getPontosMotoristas() {
+		if (listaTodosMotoristasArea != null)
+			return (Marker[]) listaTodosMotoristasArea.toArray();
+		else
+			return null;
+	}
+
 	public void montarPosicoesMotoristas() {
 
 		try {
-			for(MotoristaPosicaoArea moto : getListaPosicaoMotorista()) {
-				Marker marker = new Marker(new org.primefaces.model.map.LatLng(Double.parseDouble(moto.getLatitude()), Double.parseDouble(moto.getLongitude())),
-						"Marcador - " + marcadores.size());
-				coordenadas.lat = marker.getLatlng().getLat();
-				coordenadas.lng = marker.getLatlng().getLng();
-
-				if (marcadores.size() == 0)
-					primeiroMarcador = marker.getLatlng();
-
-				if (marcadores.size() > 0) {
-					Polyline linha = new Polyline();
-					linha.getPaths().add(marcadores.get(marcadores.size() - 1));
-					linha.getPaths().add(marker.getLatlng());
-					linha.setStrokeWeight(2);
-					linha.setStrokeColor("#000000");
-					linha.setStrokeOpacity(0.2);
-					mapModel.addOverlay(linha);
-
-				}
-
-				marcadores.add(marker.getLatlng());
-
+			listaTodosMotoristasArea = MotoristaPosicaoAreaBO.getInstance().iniciarListaPosicoesMapa();
+			setListaPosicaoMotorista(listaTodosMotoristasArea);
+			Marker marker;
+			for (MotoristaPosicaoArea moto : listaTodosMotoristasArea) {
+				org.primefaces.model.map.LatLng coord = new org.primefaces.model.map.LatLng(
+						Double.parseDouble(moto.getLatitude()), Double.parseDouble(moto.getLongitude()));
+				marker = new Marker(coord);
+				marker.setId(moto.getMotorista().getCodigo().toString());
+				marker.setIcon("/motorapido/resources/helmet.png");
+				marker.setTitle(moto.getMotorista().getLogin());
 				mapModel.addOverlay(marker);
-				
 			}
-			
+
 		} catch (Exception e) {
 		}
 
 	}
-	
+
 	public void addPontoMoto(Marker mark) {
 		mapModel.addOverlay(mark);
 	}
@@ -267,11 +274,11 @@ public class AreaBean extends SimpleController {
 	public Integer mapModelSize() {
 		return mapModel.getMarkers().size();
 	}
-	
+
 	public Boolean existePontoMotorista(String id) {
 		return mapModel.getMarkers().stream().anyMatch(mar -> mar.getId().equals(id));
 	}
-	
+
 	public MapModel getMapModel() {
 		return mapModel;
 	}
@@ -380,6 +387,14 @@ public class AreaBean extends SimpleController {
 
 	public void setTipoMapa(String tipoMapa) {
 		this.tipoMapa = tipoMapa;
+	}
+
+	public List<MotoristaPosicaoArea> getListaTodosMotoristasArea() {
+		return listaTodosMotoristasArea;
+	}
+
+	public void setListaTodosMotoristasArea(List<MotoristaPosicaoArea> listaTodosMotoristasArea) {
+		this.listaTodosMotoristasArea = listaTodosMotoristasArea;
 	}
 
 }

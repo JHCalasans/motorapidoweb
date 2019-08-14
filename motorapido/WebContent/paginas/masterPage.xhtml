@@ -65,19 +65,7 @@
        
 	}
 
-    function atualizarPontos(obj) {
-    	//PF('dlgMensagem').show();
-    	//console.log("entrou blz");
-         /*   var  currentMarker = new google.maps.Marker({
-                position:obj
-            });
-
-            PF('maparea').addOverlay(currentMarker); */
-
-            
-       
-    }
-
+   
     function handlePointClick(event) {
 
     	 currentMarker = new google.maps.Marker({
@@ -145,15 +133,11 @@
     	clearTimeout(myVar2);
     }
 
-	/* function checktimer() {
-		alert('opa');
-	}
-	var interval = setInterval('checktimer()',
-			1000); */
+
     var myAudio=document.getElementById('audio');
 
 	var posis = [];
-
+	
     function handleMessage(facesmessage) {
 
          if(facesmessage.summary.toString() == 'LocalMotorista'){
@@ -182,6 +166,9 @@
 	           // PF('maparea').addOverlay(currentMarker);	            
 	            posis.push(currentMarker); 	 		
 	            
+         }else if(facesmessage.summary.toString() == 'AlterarDisponivel'){
+             
+        	 document.getElementById("formCadastro:panelCadastro:tbMotoArea").update();        	 
          }else
          {              
         

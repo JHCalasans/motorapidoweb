@@ -104,7 +104,7 @@ public abstract class SimpleController implements Serializable {
 
 	}
 	
-	public static void iniciarListaPosicaoRealTime() {
+/*	public static void iniciarListaPosicaoRealTime() {
 		try {
 			
 			listaPosicaoMotorista = MotoristaPosicaoAreaBO.getInstance().iniciarListaPosicoesMapa();
@@ -113,7 +113,7 @@ public abstract class SimpleController implements Serializable {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 
-	}
+	}*/
 	
 	public static void iniciarListaChamadas() {
 		try {

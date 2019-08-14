@@ -10,6 +10,7 @@ import javax.persistence.EntityTransaction;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.primefaces.model.map.LatLng;
+import org.primefaces.model.map.Marker;
 import org.primefaces.push.EventBus;
 import org.primefaces.push.EventBusFactory;
 
@@ -22,13 +23,11 @@ import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
-import br.com.motorapido.mbean.AreaBean;
 import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.CoordenadaPontoUtil;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.FuncoesUtil;
-import br.com.motorapido.util.MotoristaPontoMapa;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
 import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 
@@ -46,15 +45,17 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 		return instance;
 	}
-	
-	public List<MotoristaPosicaoArea> iniciarListaPosicoesMapa() throws ExcecaoNegocio{
+
+	public List<MotoristaPosicaoArea> iniciarListaPosicoesMapa() throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
+		List<MotoristaPosicaoArea> retorno = null;
 		try {
 			transaction.begin();
 			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
-			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.obterMotoristaAtivoCodigo(-1, em);			
-			return listaMotoristas;
+			retorno = motoristaPosicaoAreaDAO.obterMotoristaAtivoCodigo(-1, em);
+
+			return retorno;
 
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
@@ -64,8 +65,8 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		}
 	}
 
-	private Area validarAreaDoMotorista(double latitude, double longitude, Integer codMotorista, String login, EntityManager em)
-			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea, ExcecaoBancoConexao, ExcecaoBanco {
+	private Area validarAreaDoMotorista(double latitude, double longitude, Integer codMotorista, String login,
+			EntityManager em) throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea, ExcecaoBancoConexao, ExcecaoBanco {
 		Area areaOrigem = null;
 		List<CoordenadasAreaUtil> listaCoordAreas = AreaBO.getInstance().obterAreas(em);
 		CoordenadaPontoUtil[] pontos;
@@ -86,8 +87,8 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		}
 		EventBus eventBus = EventBusFactory.getDefault().eventBus();
 		eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("LocalMotorista"),
-				codMotorista.toString()+";"+login+";"+ latitude+";"+longitude));
-	
+				codMotorista.toString() + ";" + login + ";" + latitude + ";" + longitude));
+
 		if (areaOrigem == null) {
 			desativarMotoristaEmAreas(codMotorista, em);
 			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área!");
@@ -117,8 +118,8 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 	}
 
-	public MotoristaPosicaoArea obterPosicaoMotoristaArea(VerificaPosicaoParam param)
-			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea, ExcecaoBancoConexao, ExcecaoBancoEntidadeReferenciada, ExcecaoBanco {
+	public MotoristaPosicaoArea obterPosicaoMotoristaArea(VerificaPosicaoParam param) throws ExcecaoNegocio,
+			ExcecaoMotoristaPosicaoArea, ExcecaoBancoConexao, ExcecaoBancoEntidadeReferenciada, ExcecaoBanco {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -128,39 +129,35 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			 * IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO =
 			 * fabricaDAO.getPostgresMotoristaPosicaoAreaDAO(); Area area =
 			 * validarAreaDoMotorista(Double.parseDouble(param.getLatitude()),
-			 * Double.parseDouble(param.getLongitude()), em); Motorista
-			 * motorista = new Motorista();
-			 * motorista.setCodigo(param.getCodMotorista());
-			 * MotoristaPosicaoArea motoristaPosicao = new
-			 * MotoristaPosicaoArea(); motoristaPosicao.setMotorista(motorista);
+			 * Double.parseDouble(param.getLongitude()), em); Motorista motorista = new
+			 * Motorista(); motorista.setCodigo(param.getCodMotorista());
+			 * MotoristaPosicaoArea motoristaPosicao = new MotoristaPosicaoArea();
+			 * motoristaPosicao.setMotorista(motorista);
 			 * 
-			 * // motoristaPosicao.setAtivo("S"); List<MotoristaPosicaoArea>
-			 * lista = motoristaPosicaoAreaDAO.findByExample(motoristaPosicao,
-			 * em); boolean encontrouMoto = false; if (lista != null &&
-			 * lista.size() > 0) { for (MotoristaPosicaoArea motoPos : lista) {
-			 * if (motoPos.getArea().getCodigo() != area.getCodigo()) { //
-			 * desativa o motorista na área antiga lista.get(0).setAtivo("N");
-			 * motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em); }
-			 * else if (motoPos.getAtivo().equals("N")) { //Verifico se o
-			 * motorista estava desativado na área atual e ativo ele
-			 * motoPos.setAtivo("S"); motoPos.setEntrada(new Date()); Integer
-			 * maiorPosicao =
-			 * motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(),
-			 * em); motoPos.setPosicao(maiorPosicao == null ? 1 : maiorPosicao +
-			 * 1); motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em);
-			 * encontrouMoto = true; }else{ //Se o motorista já estava ativo na
-			 * área atual retorno o registro atual motoristaPosicao = motoPos;
-			 * encontrouMoto = true; }
+			 * // motoristaPosicao.setAtivo("S"); List<MotoristaPosicaoArea> lista =
+			 * motoristaPosicaoAreaDAO.findByExample(motoristaPosicao, em); boolean
+			 * encontrouMoto = false; if (lista != null && lista.size() > 0) { for
+			 * (MotoristaPosicaoArea motoPos : lista) { if (motoPos.getArea().getCodigo() !=
+			 * area.getCodigo()) { // desativa o motorista na área antiga
+			 * lista.get(0).setAtivo("N"); motoristaPosicao =
+			 * motoristaPosicaoAreaDAO.save(motoPos, em); } else if
+			 * (motoPos.getAtivo().equals("N")) { //Verifico se o motorista estava
+			 * desativado na área atual e ativo ele motoPos.setAtivo("S");
+			 * motoPos.setEntrada(new Date()); Integer maiorPosicao =
+			 * motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(), em);
+			 * motoPos.setPosicao(maiorPosicao == null ? 1 : maiorPosicao + 1);
+			 * motoristaPosicao = motoristaPosicaoAreaDAO.save(motoPos, em); encontrouMoto =
+			 * true; }else{ //Se o motorista já estava ativo na área atual retorno o
+			 * registro atual motoristaPosicao = motoPos; encontrouMoto = true; }
 			 * 
-			 * } } if (!encontrouMoto){ //se o motorista ainda não estava
-			 * cadastrado na área atual cadastro ele motoristaPosicao = new
-			 * MotoristaPosicaoArea(); motoristaPosicao.setMotorista(motorista);
-			 * motoristaPosicao.setArea(area); motoristaPosicao.setAtivo("S");
-			 * motoristaPosicao.setEntrada(new Date()); Integer maiorPosicao =
-			 * motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(),
-			 * em); motoristaPosicao.setPosicao(maiorPosicao == null ? 1 :
-			 * maiorPosicao + 1); motoristaPosicao =
-			 * motoristaPosicaoAreaDAO.save(motoristaPosicao, em); }
+			 * } } if (!encontrouMoto){ //se o motorista ainda não estava cadastrado na área
+			 * atual cadastro ele motoristaPosicao = new MotoristaPosicaoArea();
+			 * motoristaPosicao.setMotorista(motorista); motoristaPosicao.setArea(area);
+			 * motoristaPosicao.setAtivo("S"); motoristaPosicao.setEntrada(new Date());
+			 * Integer maiorPosicao =
+			 * motoristaPosicaoAreaDAO.obterMaiorPosicaoArea(area.getCodigo(), em);
+			 * motoristaPosicao.setPosicao(maiorPosicao == null ? 1 : maiorPosicao + 1);
+			 * motoristaPosicao = motoristaPosicaoAreaDAO.save(motoristaPosicao, em); }
 			 */
 
 			emUtil.commitTransaction(transaction);
@@ -187,7 +184,8 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
 			Area area = validarAreaDoMotorista(Double.parseDouble(param.getLatitude()),
 					Double.parseDouble(param.getLongitude()), param.getCodMotorista(), param.getLoginMotorista(), em);
-			if (param.getCodUltimaArea() == null || (param.getCodUltimaArea() != null && param.getCodUltimaArea() != area.getCodigo())) {
+			if (param.getCodUltimaArea() == null
+					|| (param.getCodUltimaArea() != null && param.getCodUltimaArea() != area.getCodigo())) {
 
 				Motorista motorista = new Motorista();
 				motorista.setCodigo(param.getCodMotorista());
@@ -261,13 +259,23 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 					motoristaPosicao.setPosicao(count);
 					motoristaPosicao = motoristaPosicaoAreaDAO.save(motoristaPosicao, em);
 				}
+
+				if (SimpleController.getListaPosicaoMotorista() != null) {	
+					if(SimpleController.getListaPosicaoMotorista().stream().anyMatch(mt -> mt.getCodigo() == motoristaPosicao.getCodigo())){
+						
+					}
+					SimpleController.getListaPosicaoMotorista().add(motoristaPosicao);
+					EventBus eventBus = EventBusFactory.getDefault().eventBus();
+					eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+							motorista.getCodigo() + ";" + motorista.getDisponivel()));
+				}
+
 				return motoristaPosicao;
-			}else
+			} else
 				return null;
 
-			
 		} catch (ExcecaoMotoristaPosicaoArea e) {
-			
+
 			throw e;
 		} catch (ExcecaoNegocio e) {
 			throw e;
@@ -275,18 +283,19 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			throw new ExcecaoNegocio("Falha ao tentar obter posição na área do motorista.", e);
 		}
 	}
-	
-	private void desativarMotoristaEmAreas(Integer codMotorista, EntityManager em) throws ExcecaoBancoConexao, ExcecaoBanco {
+
+	private void desativarMotoristaEmAreas(Integer codMotorista, EntityManager em)
+			throws ExcecaoBancoConexao, ExcecaoBanco {
 		Motorista motorista = new Motorista();
 		motorista.setCodigo(codMotorista);
 		MotoristaPosicaoArea motoristaPosicao = new MotoristaPosicaoArea();
 		motoristaPosicao.setMotorista(motorista);
-		IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();		
+		IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
 		List<MotoristaPosicaoArea> lista = motoristaPosicaoAreaDAO.findByExample(motoristaPosicao, em);
-		
+
 		for (MotoristaPosicaoArea motPos : lista) {
 			motPos.setAtivo("N");
-			motoristaPosicaoAreaDAO.save(motPos, em);			
+			motoristaPosicaoAreaDAO.save(motPos, em);
 		}
 
 	}

@@ -16,15 +16,19 @@
 		<meta http-equiv="Expires" content="0" />
 
 	</f:facet>
+
+
 	<script type="text/javascript"
-		src="https://maps.google.com/maps/api/js?sensor=false"></script>
+		src="https://maps.google.com/maps/api/js?sensor=false">
+	</script>
+
 
 
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
 
-	<ui:param name="tituloPagina" value="#{bundle.area_cadastroTitulo}" />
-	<ui:param name="headerConteudo" value="#{bundle.area_cadastroTitulo}" />
+	<ui:param name="tituloPagina" value="Tempo Real" />
+	<ui:param name="headerConteudo" value="Tempo Real" />
 	<ui:param name="bean" value="#{areaBean}" />
 	<f:metadata>
 		<f:event type="preRenderView"
@@ -33,16 +37,15 @@
 
 	<ui:define name="conteudo">
 		<h:form prependId="false" id="formCadastro">
-
 			<p:panel id="panelCadastro">
 
 				<br />
 				<div class="clear"></div>
 
-				<p:dataTable tableStyle="table-layout:auto;width: 100%;" id="tbArea"
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;" id="tbMotoArea"
 					var="area" value="#{areaBean.listaArea}" rows="10"
 					style="text-align: center; max-width:100%" first="0"
-					paginatorAlwaysVisible="false" paginator="true"
+					paginatorAlwaysVisible="false" paginator="true" 
 					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
 					<f:facet name="header" styleClass="cabecalhoDataTable">
 			     		   Áreas
@@ -65,20 +68,48 @@
 						</f:facet>
 						<p:lightBox
 							style="opacity: 0.5;background:#{area.area.cor};width:80%;height:10px;margin-left:10%"></p:lightBox>
-					</p:column>			
+					</p:column>
+
+
+					<p:column style="width:20%;text-align:center;">
+						<f:facet name="header">
+							<h:outputText value="Motoristas" styleClass="cabecalhoDataTable" />
+						</f:facet>
+
+						<p:commandLink title="Motoristas na área" immediate="true"
+							update="dlgMotoArea1"
+							action="#{areaBean.mostrarMotoristasArea(area.area)}"
+							style="margin-left:10px;">
+							<h:graphicImage url="/resources/capacete.png"
+								style="border-style: none" />
+						</p:commandLink>
+
+					</p:column>
+
+					<f:facet name="footer" styleClass="cabecalhoDataTable">			     		   
+			   			 
+						<p:column colspan="2" style="text-align:right">
+							<h:outputText value="Total Ativos:" />
+						</p:column>
+						<p:column>
+							<h:outputText value="#{areaBean.listaTodosMotoristasArea.size()}">
+							</h:outputText>
+						</p:column>
+					</f:facet>
 
 
 				</p:dataTable>
-				
+
 
 				<br />
 				<div class="clear"></div>
 
-				<p:gmap id="gmapMoto" center="#{areaBean.coordenadas}" zoom="14"  type="terrain" model="#{areaBean.mapModel}"
-					widgetVar="mapmoto" style="width:100%;height:400px">
-						<p:ajax event="pointSelect" listener="#{areaBean.addMarker}"  disabled="true"
-						update="gmapMoto"></p:ajax>
-					<p:ajax event="overlaySelect"  disabled="true"
+				<p:gmap id="gmapMoto" center="#{areaBean.coordenadas}" zoom="14"
+					type="terrain" model="#{areaBean.mapModel}" widgetVar="mapmoto"
+					style="width:100%;height:400px">
+					<p:ajax event="pointSelect" listener="#{areaBean.addMarker}"
+						disabled="true" update="gmapMoto"></p:ajax>
+					<p:ajax event="overlaySelect" disabled="true"
 						listener="#{areaBean.marcadorSelecionado}" update="gmapMoto" />
 				</p:gmap>
 
@@ -88,69 +119,35 @@
 			</p:panel>
 		</h:form>
 
-		<p:dialog widgetVar="dlgArea" showEffect="fade" resizable="false"
-			styleClass="dialogBox" closable="false" header="Salvar área">
-			<h:form prependId="false">
-				<h:panelGrid columns="2">
-					<h:form>
-						<h:panelGroup styleClass="p_like">
-							<p:outputLabel value="Nome área :" for="inptNome"
-								style="width:125px;" />
-
-							<p:inputText value="#{areaBean.area.descricao}" required="true"
-								id="inptNome" size="20"
-								requiredMessage="Campo Obrigatório: Nome área!"
-								style="font-size:15px; color:gray;margin-right:20px" />
-
-						</h:panelGroup>
-						<br></br>
-						<div class="clear"></div>
-						<h:panelGroup styleClass="p_like">
-							<p:outputLabel value="Cor :" style="width:125px;" />
-
-							<p:colorPicker value="#{areaBean.area.cor}" />
-
-						</h:panelGroup>
-
-
-						<br></br>
-						<div class="clear"></div>
-
-					</h:form>
-					<f:facet name="footer">
-						<div align="center" style="margin-top: 5px;">
-							<p:commandButton value="Confirmar"
-								actionListener="#{areaBean.salvarArea}"
-								update="formCadastro, msgs, conteudo" />
-							<p:commandButton value="Cancelar" onclick="PF('dlgArea').hide();"
-								immediate="true" style="margin-left:10px;" />
-						</div>
-					</f:facet>
-
-				</h:panelGrid>
-			</h:form>
-		</p:dialog>
 
 		<p:dialog widgetVar="dlgMotoArea" id="dlgMotoArea1" showEffect="fade"
 			resizable="false" styleClass="dialogBox" closable="true"
-			height="600px" scrollable="true" scrollHeight="150" width="400px"
+			scrollable="true" scrollHeight="150" width="450px"
 			header="Motoristas na #{areaBean.nomeAreaMotoristas}">
 			<h:form prependId="false">
 				<h:form>
 					<h:panelGroup styleClass="p_like">
 						<p:dataTable value="#{areaBean.listaMotoristasArea}" var="moto"
-							emptyMessage="Nenhum motorista ativo nesta área">
+							rows="10" paginator="true"
+							emptyMessage="Nenhum motorista ativo nesta área"
+							paginatorAlwaysVisible="false">
 							<f:facet name="header">
 						            Motoristas
 						    </f:facet>
-							<p:column headerText="Posição" style="width:50px">
-								<p:outputLabel value="#{moto.posicao}"
+							<p:column headerText="Pos."
+								style="width:30px;text-align: center;">
+								<p:outputLabel value="#{moto.posicao}" style="float: none;"
 									styleClass="OutputLabelValue"></p:outputLabel>
 							</p:column>
 							<p:column headerText="Nome">
 								<p:outputLabel value="#{moto.motorista.nome}"
 									styleClass="OutputLabelValue"></p:outputLabel>
 							</p:column>
+							<p:column headerText="Login" style="width:20%;">
+								<p:outputLabel value="#{moto.motorista.login}"
+									styleClass="OutputLabelValue"></p:outputLabel>
+							</p:column>
+
 
 						</p:dataTable>
 					</h:panelGroup>
@@ -172,81 +169,6 @@
 			</h:form>
 		</p:dialog>
 
-
-		<p:dialog widgetVar="dlgAlterarArea" showEffect="fade"
-			resizable="false" styleClass="dialogBox" closable="false"
-			header="Alterar área">
-			<h:form prependId="false">
-				<h:panelGrid columns="2">
-					<h:form>
-						<h:panelGroup styleClass="p_like">
-							<p:outputLabel value="Nome área :" for="inptNome"
-								style="width:125px;" />
-
-							<p:inputText value="#{areaBean.areaAlterar.descricao}"
-								required="true" id="inptNome" size="20"
-								requiredMessage="Campo Obrigatório: Nome área!"
-								style="font-size:15px; color:gray;margin-right:20px" />
-
-						</h:panelGroup>
-						<br></br>
-						<div class="clear"></div>
-						<h:panelGroup styleClass="p_like">
-							<p:outputLabel value="Cor :" style="width:125px;" />
-
-							<p:colorPicker value="#{areaBean.areaAlterar.corPura}" />
-
-						</h:panelGroup>
-
-						<br></br>
-						<div class="clear"></div>
-
-					</h:form>
-					<f:facet name="footer">
-						<div align="center" style="margin-top: 5px;">
-							<p:commandButton value="Confirmar"
-								actionListener="#{areaBean.alterarArea}"
-								update="formCadastro, msgs, conteudo" />
-							<p:commandButton value="Cancelar"
-								onclick="PF('dlgAlterarArea').hide();" immediate="true"
-								style="margin-left:10px;" />
-						</div>
-					</f:facet>
-
-				</h:panelGrid>
-			</h:form>
-		</p:dialog>
-
-		<!-- CONFIRMACAO DELETE -->
-		<p:dialog header="Excluir Registro" widgetVar="dlConfirmDelete"
-			id="dlConfirmDelete" modal="true" dynamic="true" width="470">
-			<h:form id="formDelete" prependId="false">
-				<p:panel>
-					<h:panelGroup styleClass="p_like" layout="block"
-						style="text-align:center;">
-
-						<b><p:outputLabel value="Deseja realmente excluir o registro?" /></b>
-					</h:panelGroup>
-					<br></br>
-					<br></br>
-					<div class="clear"></div>
-					<h:panelGroup layout="block" style="text-align: center;">
-						<p:commandButton process="@this" id="btSim"
-							style="margin-left: 13px" value="#{bundle.sim}"
-							onclick="PF('dlConfirmDelete').hide()"
-							update="formCadastro, msgs, conteudo"
-							actionListener="#{areaBean.excluirArea}" />
-						<p:commandButton process="@this" id="btNao"
-							style="margin-left: 13px" value="#{bundle.nao}"
-							oncomplete="PF('dlConfirmDelete').hide()" />
-					</h:panelGroup>
-
-					<br></br>
-					<div class="clear"></div>
-				</p:panel>
-			</h:form>
-		</p:dialog>
-		<!-- CONFIRMACAO DELETE -->
 
 
 
