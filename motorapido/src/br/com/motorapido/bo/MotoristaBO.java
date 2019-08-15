@@ -158,9 +158,14 @@ public class MotoristaBO extends MotoRapidoBO {
 			
 			
 			if(SimpleController.getListaPosicaoMotorista() != null) {
-				if(motorista.getDisponivel().equals("N")) {				
-					SimpleController.getListaPosicaoMotorista().remove(SimpleController.getListaPosicaoMotorista().stream().
-							filter(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo()).findFirst().get());	
+				if(motorista.getDisponivel().equals("N")) {			
+					boolean existe = SimpleController.getListaPosicaoMotorista().stream().
+							anyMatch(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo());
+					if(existe) {
+						MotoristaPosicaoArea motoTemp = SimpleController.getListaPosicaoMotorista().stream().
+						filter(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo()).findFirst().get();
+						SimpleController.getListaPosicaoMotorista().remove(motoTemp);	
+					}
 					EventBus eventBus = EventBusFactory.getDefault().eventBus();
 					eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
 							codMotorista.toString()+";"+motorista.getDisponivel()));

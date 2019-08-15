@@ -140,7 +140,7 @@
 	
     function handleMessage(facesmessage) {
 
-         if(facesmessage.summary.toString() == 'LocalMotorista'){
+         if(facesmessage.summary.toString() == 'LocalMotorista' && window.location.href.indexOf('tempoReal') > -1){
              
         	var resu = facesmessage.detail.toString().split(';');
 			
@@ -166,10 +166,10 @@
 	           // PF('maparea').addOverlay(currentMarker);	            
 	            posis.push(currentMarker); 	 		
 	            
-         }else if(facesmessage.summary.toString() == 'AlterarDisponivel'){
-             
-        	 document.getElementById("formCadastro:panelCadastro:tbMotoArea").update();        	 
-         }else
+         }else if(facesmessage.summary.toString() == 'AlterarDisponivel'  && window.location.href.indexOf('tempoReal') > -1){             
+        	// document.getElementById("formCadastro:panelCadastro:tbMotoArea").update();    
+        	 updateTable();
+         }else if (facesmessage.summary.toString() == 'NovaMensagem')
          {              
         
 	    	/* var res = facesmessage.detail.split("-");

@@ -85,6 +85,9 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 			case "ListarSessoes":
 				AcoesDoSocket.listarSessoes();
 				break;
+			case "MensagemChat":
+				AcoesDoSocket.novaMensagemChat(session, msg[1]);
+				break;
 
 			}
 			/*

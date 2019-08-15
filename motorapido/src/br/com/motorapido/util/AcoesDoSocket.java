@@ -36,6 +36,10 @@ public class AcoesDoSocket {
 	}
 	
 	
+	public static void novaMensagemChat(Session session, String msg) {
+		
+	}
+	
 
 	private static void cancelarChamada(Session session,String json, String codInformacaoPendente) {
 		Gson gson = new Gson();

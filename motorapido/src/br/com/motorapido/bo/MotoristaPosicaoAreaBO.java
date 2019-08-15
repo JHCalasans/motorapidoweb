@@ -178,6 +178,10 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 	public MotoristaPosicaoArea obterPosicaoMotoristaArea(VerificaPosicaoParam param, EntityManager em)
 			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea {
+		Motorista motorista = new Motorista();
+		motorista.setCodigo(param.getCodMotorista());
+		MotoristaPosicaoArea motoristaPosicao = new MotoristaPosicaoArea();
+		motoristaPosicao.setMotorista(motorista);
 
 		try {
 
@@ -187,11 +191,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			if (param.getCodUltimaArea() == null
 					|| (param.getCodUltimaArea() != null && param.getCodUltimaArea() != area.getCodigo())) {
 
-				Motorista motorista = new Motorista();
-				motorista.setCodigo(param.getCodMotorista());
-				MotoristaPosicaoArea motoristaPosicao = new MotoristaPosicaoArea();
-				motoristaPosicao.setMotorista(motorista);
-
+			
 				List<MotoristaPosicaoArea> listOrdem = motoristaPosicaoAreaDAO.obterMotoristasPorArea(area, em);
 				// reordena a lista de posição na área
 				int count = 1;
@@ -258,20 +258,19 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 					motoristaPosicao.setLongitude(param.getLongitude());
 					motoristaPosicao.setPosicao(count);
 					motoristaPosicao = motoristaPosicaoAreaDAO.save(motoristaPosicao, em);
-					
-				}
-				if (SimpleController.getListaPosicaoMotorista() != null) 
-					adicionaMotoristaLista(motoristaPosicao, motorista);			
-				
-				
 
+				}
 				
+				if (SimpleController.getListaPosicaoMotorista() != null)
+					adicionaMotoristaLista(motoristaPosicao, motorista);
 				return motoristaPosicao;
 			} else
 				return null;
+		
 
 		} catch (ExcecaoMotoristaPosicaoArea e) {
-
+			if (SimpleController.getListaPosicaoMotorista() != null)
+				adicionaMotoristaLista(motoristaPosicao, motorista);
 			throw e;
 		} catch (ExcecaoNegocio e) {
 			throw e;
@@ -280,16 +279,28 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		}
 	}
 
-	
 	private void adicionaMotoristaLista(MotoristaPosicaoArea motoristaPos, Motorista moto) {
-		if(SimpleController.getListaPosicaoMotorista().stream().anyMatch(mt -> mt.getCodigo() == motoristaPos.getCodigo())){
+		boolean existe = SimpleController.getListaPosicaoMotorista().stream()
+				.anyMatch(mt -> mt.getMotorista().getCodigo() == motoristaPos.getMotorista().getCodigo());
+		if (existe) {
+			MotoristaPosicaoArea motoTemp = SimpleController.getListaPosicaoMotorista().stream()
+					.filter(mt -> mt.getMotorista().getCodigo() == motoristaPos.getMotorista().getCodigo()).findFirst().get();
+			if (motoTemp != null) {
+				SimpleController.getListaPosicaoMotorista().remove(motoTemp);
+				SimpleController.getListaPosicaoMotorista().add(motoristaPos);
+				EventBus eventBus = EventBusFactory.getDefault().eventBus();
+				eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+						moto.getCodigo() + ";" + moto.getDisponivel()));
+			}
+		}else {
 			SimpleController.getListaPosicaoMotorista().add(motoristaPos);
 			EventBus eventBus = EventBusFactory.getDefault().eventBus();
 			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
 					moto.getCodigo() + ";" + moto.getDisponivel()));
 		}
+		
 	}
-	
+
 	private void desativarMotoristaEmAreas(Integer codMotorista, EntityManager em)
 			throws ExcecaoBancoConexao, ExcecaoBanco {
 		Motorista motorista = new Motorista();
