@@ -36,6 +36,8 @@ public class LogErro extends Entidade {
 	@Column(name = "descricao", nullable = false)
 	private String erro;
 	
+	@Column(name = "pagina", nullable = true)
+	private String pagina;
 	
 
 
@@ -70,5 +72,13 @@ public class LogErro extends Entidade {
 
 	public void setErro(String erro) {
 		this.erro = erro;
+	}
+
+	public String getPagina() {
+		return pagina;
+	}
+
+	public void setPagina(String pagina) {
+		this.pagina = pagina;
 	}
 }

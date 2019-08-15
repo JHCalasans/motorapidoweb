@@ -29,12 +29,14 @@ import com.google.maps.model.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.ChamadaBO;
+import br.com.motorapido.bo.ChamadaVeiculoBO;
 import br.com.motorapido.bo.ClienteBO;
 import br.com.motorapido.bo.EnderecoClienteBO;
 import br.com.motorapido.bo.LocalBO;
 import br.com.motorapido.bo.ParametroBO;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Chamada;
+import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Local;
@@ -90,6 +92,8 @@ public class ChamadaBean extends SimpleController {
 	private Integer situacaoChamadaFiltro;
 
 	private List<Chamada> chamadas;
+	
+	private List<ChamadaVeiculo> detalheChamadas;
 
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
 
@@ -153,11 +157,7 @@ public class ChamadaBean extends SimpleController {
 				break;
 			}
 		}
-		/*
-		 * if(tipoMarcador.equals("O"))
-		 * 
-		 * mapModel.getMarkers().
-		 */
+	
 	}
 
 	
@@ -408,6 +408,15 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
+	
+	public void detalhesChamada(Chamada chamada) {
+		try {
+			detalheChamadas = ChamadaVeiculoBO.getInstance().obterChamadaVeiculoPorChamada(chamada.getCodigo());
+			enviarJavascript("PF('dlgMotoChamada').show();");
+		} catch (ExcecaoNegocio e) {			
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
 
 	public void pesquisarClientePorCelular() {
 		try {
@@ -422,12 +431,9 @@ public class ChamadaBean extends SimpleController {
 			} else
 				vincularCliente(cliente);
 
-		} catch (ExcecaoNegocio e) {
+		} catch (IOException | ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	public void removerChamada(Chamada chamadaRemover) {
@@ -901,6 +907,14 @@ public class ChamadaBean extends SimpleController {
 
 	public void setContadorLista(Integer contadorLista) {
 		this.contadorLista = contadorLista;
+	}
+
+	public List<ChamadaVeiculo> getDetalheChamadas() {
+		return detalheChamadas;
+	}
+
+	public void setDetalheChamadas(List<ChamadaVeiculo> detalheChamadas) {
+		this.detalheChamadas = detalheChamadas;
 	}
 
 }

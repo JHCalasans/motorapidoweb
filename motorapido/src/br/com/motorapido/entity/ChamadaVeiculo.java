@@ -32,7 +32,10 @@ import br.com.minhaLib.dao.Entidade;
 				+ " where ch.codigo = :codChamada and  cv.flgUltimoMovimento = 'S' "),
 		@NamedQuery(name = "ChamadaVeiculo.obterChamadaVeiculoPorCodigo", query = "select cv from ChamadaVeiculo cv join fetch cv.chamada ch join fetch ch.situacaoChamada sch "
 				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv "
-				+ " where cv.codigo = :codChamadaVeiculo ")
+				+ " where cv.codigo = :codChamadaVeiculo "),
+		@NamedQuery(name = "ChamadaVeiculo.obterChamadaVeiculoPorChamada", query = "select cv from ChamadaVeiculo cv join fetch cv.chamada ch join fetch ch.situacaoChamada sch "
+				+ " join fetch cv.veiculo vei join fetch vei.modelo mo join fetch mo.tipoVeiculo tpv join fetch vei.motorista mot "
+				+ " where ch.codigo = :codChamada ")
 		})
 @XmlRootElement
 public class ChamadaVeiculo extends Entidade{

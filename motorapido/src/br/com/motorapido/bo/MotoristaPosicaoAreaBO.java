@@ -258,18 +258,14 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 					motoristaPosicao.setLongitude(param.getLongitude());
 					motoristaPosicao.setPosicao(count);
 					motoristaPosicao = motoristaPosicaoAreaDAO.save(motoristaPosicao, em);
+					
 				}
+				if (SimpleController.getListaPosicaoMotorista() != null) 
+					adicionaMotoristaLista(motoristaPosicao, motorista);			
+				
+				
 
-				if (SimpleController.getListaPosicaoMotorista() != null) {	
-					if(SimpleController.getListaPosicaoMotorista().stream().anyMatch(mt -> mt.getCodigo() == motoristaPosicao.getCodigo())){
-						
-					}
-					SimpleController.getListaPosicaoMotorista().add(motoristaPosicao);
-					EventBus eventBus = EventBusFactory.getDefault().eventBus();
-					eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
-							motorista.getCodigo() + ";" + motorista.getDisponivel()));
-				}
-
+				
 				return motoristaPosicao;
 			} else
 				return null;
@@ -284,6 +280,16 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		}
 	}
 
+	
+	private void adicionaMotoristaLista(MotoristaPosicaoArea motoristaPos, Motorista moto) {
+		if(SimpleController.getListaPosicaoMotorista().stream().anyMatch(mt -> mt.getCodigo() == motoristaPos.getCodigo())){
+			SimpleController.getListaPosicaoMotorista().add(motoristaPos);
+			EventBus eventBus = EventBusFactory.getDefault().eventBus();
+			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+					moto.getCodigo() + ";" + moto.getDisponivel()));
+		}
+	}
+	
 	private void desativarMotoristaEmAreas(Integer codMotorista, EntityManager em)
 			throws ExcecaoBancoConexao, ExcecaoBanco {
 		Motorista motorista = new Motorista();
