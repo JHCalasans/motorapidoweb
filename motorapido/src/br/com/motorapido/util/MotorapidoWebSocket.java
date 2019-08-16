@@ -59,6 +59,7 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 	@OnClose
 	public void onClose(Session session) {
 		System.out.println("sessão encerrada - " + session.getId());
+
 		ControleSessaoWS.remove(session);
 	}
 
