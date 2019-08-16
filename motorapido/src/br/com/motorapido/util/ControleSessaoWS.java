@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
 import javax.websocket.Session;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
 
 import com.google.gson.Gson;
 
@@ -39,8 +44,8 @@ public class ControleSessaoWS {
 
 	public static void remove(Session session) {
 		//obterPorSessao(session.getId());
-		
-		sMap.remove(obterPorSessao(session.getId()).getCodMotorista());
+		SessaoWS sess = obterPorSessao(session.getId());		
+		sMap.remove(sess.getCodMotorista());
 	}
 
 	public static void initialize() {
