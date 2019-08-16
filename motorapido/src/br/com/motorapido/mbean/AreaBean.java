@@ -22,6 +22,7 @@ import com.google.maps.model.LatLng;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.AreaBO;
+import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
 import br.com.motorapido.entity.Area;
 import br.com.motorapido.entity.CoordenadasArea;
@@ -111,7 +112,7 @@ public class AreaBean extends SimpleController {
 
 		try {
 			listaTodosMotoristasArea = MotoristaPosicaoAreaBO.getInstance().iniciarListaPosicoesMapa();
-			setListaPosicaoMotorista(listaTodosMotoristasArea);
+			MotoristaBO.getInstance().obterPosicaoMotoristasForaDeAreas();
 			Marker marker;
 			for (MotoristaPosicaoArea moto : listaTodosMotoristasArea) {
 				org.primefaces.model.map.LatLng coord = new org.primefaces.model.map.LatLng(
@@ -126,6 +127,15 @@ public class AreaBean extends SimpleController {
 		} catch (Exception e) {
 		}
 
+	}
+	
+	public Integer getTotaisAtivos() {
+		try {
+			return MotoristaBO.getInstance().obterMotoristasDisponiveis().size();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return null;
+		}
 	}
 
 	public void addPontoMoto(Marker mark) {

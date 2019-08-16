@@ -40,6 +40,8 @@ public class AcoesDoSocket {
 		
 	}
 	
+	
+	
 
 	private static void cancelarChamada(Session session,String json, String codInformacaoPendente) {
 		Gson gson = new Gson();

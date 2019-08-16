@@ -33,7 +33,7 @@ import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.enums.ParametroEnum;
-import br.com.motorapido.mbean.SimpleController;
+import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
 import br.com.motorapido.util.PushNotificationUtil;
@@ -109,6 +109,25 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
+	
+	public List<Motorista> obterMotoristasDisponiveis() throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			Motorista motorista = new Motorista();
+			motorista.setDisponivel("S");
+			List<Motorista> lista = motoristaDAO.findByExample(motorista, em);
+			emUtil.commitTransaction(transaction);
+			return lista;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter motoristas ativos.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
 
 	public List<Motorista> obterMotoristasSemRestricoesCliente(Integer codCliente) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
@@ -138,42 +157,43 @@ public class MotoristaBO extends MotoRapidoBO {
 
 			// Busca se o motorista estava ativo em alguma área para também
 			// desativar
-			/*MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
-			motoristaPosicaoArea.setMotorista(motorista);
-			motoristaPosicaoArea.setAtivo("S");*/
+			/*
+			 * MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
+			 * motoristaPosicaoArea.setMotorista(motorista);
+			 * motoristaPosicaoArea.setAtivo("S");
+			 */
 			IMotoristaPosicaoAreaDAO motoristaPosicaoAreaDAO = fabricaDAO.getPostgresMotoristaPosicaoAreaDAO();
-			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.obterMotoristaAtivoCodigo(codMotorista, em);
-			
+			List<MotoristaPosicaoArea> listaMotoristas = motoristaPosicaoAreaDAO.obterMotoristaAtivoCodigo(codMotorista,
+					em);
+
 			for (MotoristaPosicaoArea motoPosicao : listaMotoristas) {
-				if(motoPosicao.getAtivo().equals("S")){
+				if (motoPosicao.getAtivo().equals("S")) {
 					motoPosicao.setAtivo("N");
 					motoristaPosicaoAreaDAO.save(motoPosicao, em);
 					MotoristaPosicaoAreaBO.getInstance().atualizarPosicoesArea(motoPosicao.getArea(), em);
 				}
-				
+
 			}
 
 			motorista.setDisponivel(situacao.equals("S") ? "N" : "S");
-			motoristaDAO.save(motorista, em);	
-			
-			
-			if(SimpleController.getListaPosicaoMotorista() != null) {
-				if(motorista.getDisponivel().equals("N")) {			
-					boolean existe = SimpleController.getListaPosicaoMotorista().stream().
-							anyMatch(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo());
-					if(existe) {
-						MotoristaPosicaoArea motoTemp = SimpleController.getListaPosicaoMotorista().stream().
-						filter(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo()).findFirst().get();
-						SimpleController.getListaPosicaoMotorista().remove(motoTemp);	
-					}
-					EventBus eventBus = EventBusFactory.getDefault().eventBus();
-					eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
-							codMotorista.toString()+";"+motorista.getDisponivel()));
-				}
-			}
-			
-		
-			
+			motoristaDAO.save(motorista, em);
+
+			// if(SimpleController.getListaPosicaoMotorista() != null) {
+			// if(motorista.getDisponivel().equals("N")) {
+			/*
+			 * boolean existe = SimpleController.getListaPosicaoMotorista().stream().
+			 * anyMatch(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo());
+			 * if(existe) { MotoristaPosicaoArea motoTemp =
+			 * SimpleController.getListaPosicaoMotorista().stream(). filter(mt ->
+			 * mt.getMotorista().getCodigo() == motorista.getCodigo()).findFirst().get();
+			 * SimpleController.getListaPosicaoMotorista().remove(motoTemp); }
+			 */
+			EventBus eventBus = EventBusFactory.getDefault().eventBus();
+			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+					codMotorista.toString() + ";" + motorista.getDisponivel()));
+			// }
+			// }
+
 			emUtil.commitTransaction(transaction);
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
@@ -182,9 +202,6 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
-	
-	
 
 	public List<Motorista> obterMotoristasExample(Motorista motorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
@@ -198,6 +215,24 @@ public class MotoristaBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar obter motoristas.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public List<Motorista> obterPosicaoMotoristasForaDeAreas() throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			List<Motorista> lista = motoristaDAO.obterMotoristasForaDeAreas(em);
+			emUtil.commitTransaction(transaction);
+			ControleSessaoWS.enviarSolicitacaoPosicao(lista);
+			return lista;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter motoristas fora de áreas.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}
@@ -330,14 +365,14 @@ public class MotoristaBO extends MotoRapidoBO {
 					motorista.getVeiculos().add(retornoVeiculo);
 				}
 
-				//Inicia sempre como indisponível
+				// Inicia sempre como indisponível
 				motorista.setDisponivel("N");
 				motoristaDAO.save(motorista, em);
-				
+
 				emUtil.commitTransaction(transaction);
 			} else
 				throw new ExcecaoNegocio("Senha/Login incorreto(s)");
-			
+
 			motorista.setCodBinarioFoto(null);
 			motorista.setCodBinarioDocCriminal(null);
 			motorista.setCodBinarioCompResidencia(null);

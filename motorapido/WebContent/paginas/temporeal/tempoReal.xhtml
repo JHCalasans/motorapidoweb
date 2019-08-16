@@ -37,7 +37,7 @@
 
 	<ui:define name="conteudo">
 		<h:form prependId="false" id="formCadastro">
-		<p:remoteCommand name="updateTable"  update="tbMotoArea" />
+		
 			<p:panel id="panelCadastro">
 
 				<br />
@@ -90,10 +90,10 @@
 					<f:facet name="footer" styleClass="cabecalhoDataTable">			     		   
 			   			 
 						<p:column colspan="2" style="text-align:right">
-							<h:outputText value="Total Ativos:" />
+							<h:outputText value="Total Disponíveis:" />
 						</p:column>
 						<p:column>
-							<h:outputText value="#{areaBean.listaTodosMotoristasArea.size()}">
+							<h:outputText value="#{areaBean.totaisAtivos}" id="lblTotal">
 							</h:outputText>
 						</p:column>
 					</f:facet>

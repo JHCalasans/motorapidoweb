@@ -145,7 +145,7 @@
         	var resu = facesmessage.detail.toString().split(';');
 			
         	var i = 0;
-        	console.log(window.posis.length);
+        //	console.log(window.posis.length);
       	 	 while (i <  window.posis.length ){
       	 		if( window.posis[i].id == resu[0]){
       	 		     window.posis[i].setMap(null);
@@ -166,9 +166,24 @@
 	           // PF('maparea').addOverlay(currentMarker);	            
 	            posis.push(currentMarker); 	 		
 	            
-         }else if(facesmessage.summary.toString() == 'AlterarDisponivel'  && window.location.href.indexOf('tempoReal') > -1){             
-        	// document.getElementById("formCadastro:panelCadastro:tbMotoArea").update();    
-        	 updateTable();
+         }else if(facesmessage.summary.toString() == 'AlterarDisponivel'  && window.location.href.indexOf('tempoReal') > -1){      
+        	 var resu = facesmessage.detail.toString().split(';');
+     		 var te =  document.getElementById("tbMotoArea:lblTotal");
+     		 if(resu[1] == 'S') 
+     		 	te.innerHTML = (parseInt(te.innerHTML)+1);
+     		 else{
+     			te.innerHTML = (parseInt(te.innerHTML)-1)
+     			var i = 0;
+     	      	 	 while (i <  window.posis.length ){
+     	      	 		if( window.posis[i].id == resu[0]){
+     	      	 		     window.posis[i].setMap(null);
+     	      	 		     window.posis.splice(i,1);
+     	 					 break;
+     	 				}
+     					i++;
+     		 		}	  
+     		 }
+        	// updateTable();
          }else if (facesmessage.summary.toString() == 'NovaMensagem')
          {              
         

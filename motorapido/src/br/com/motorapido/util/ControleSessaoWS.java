@@ -9,6 +9,7 @@ import javax.websocket.Session;
 
 import com.google.gson.Gson;
 
+import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 
@@ -70,12 +71,26 @@ public class ControleSessaoWS {
 			 }catch (Exception e) {
 				 ExcecoesUtil.logarErroMotorista(e, motorista.getCodMotorista(), "AtualizarPosicao");
 			}
-		 }
-		
-		
+		 }				
 		 
 
 	}
+	
+
+	public static void enviarSolicitacaoPosicao(List<Motorista> listaMotorista) {
+		
+		Gson gson = new Gson();
+		 for (Motorista motorista : listaMotorista) { 
+			 try {
+				  sMap.get(motorista.getCodigo()).getSessao().getBasicRemote().sendText("InformarCoordenada=>"+ gson.toJson(motorista));	
+			 }catch (Exception e) {
+				 ExcecoesUtil.logarErroMotorista(e, motorista.getCodigo(), "InformarCoordenada");
+			}
+		 }				
+		 
+
+	}
+
 
 	public static boolean enviarMensagemMotoristaChamada(Integer codMotorista, String msg) throws IOException {
 

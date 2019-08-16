@@ -27,7 +27,12 @@ import br.com.motorapido.util.ws.retornos.RetornoVeiculosMotorista;
 		@NamedQuery(name = "Motorista.obterTodos", query = "select m from Motorista m "),
 		@NamedQuery(name = "Motorista.obterPorCod", query = "select m from Motorista m where m.codigo = :codigo"),
 		@NamedQuery(name = "Motorista.obterSemRestricoesClientes", query = "select m from Motorista m where m.ativo like 'S' and m.codigo not in "
-				+ " (select rcm.motorista.codigo from RestricaoClienteMotorista rcm where rcm.cliente.codigo = :codCliente)")		
+				+ " (select rcm.motorista.codigo from RestricaoClienteMotorista rcm where rcm.cliente.codigo = :codCliente)"),
+		@NamedQuery(name = "Motorista.obterDisponiveisForaDeAreas", query = "select mot from Motorista mot " + 
+				  " where mot.codigo not in (select mota.motorista.codigo from MotoristaPosicaoArea mota where mota.ativo = 'S') " + 
+				  " and mot.disponivel = 'S' ")	
+		
+		
 		})
 @XmlRootElement
 public class Motorista  extends Entidade {

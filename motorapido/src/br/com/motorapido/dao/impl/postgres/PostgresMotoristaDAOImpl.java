@@ -54,4 +54,11 @@ public class PostgresMotoristaDAOImpl extends GenericDAOImpl<Motorista, Integer>
 		return lista;
 	}
 
+	@Override
+	public List<Motorista> obterMotoristasForaDeAreas(EntityManager em) throws ExcecaoBanco {
+		Map<String, Object> params = new HashMap<String, Object>();
+		List<Motorista> lista = findByNamedQueryAndNamedParams("Motorista.obterDisponiveisForaDeAreas", params, em);
+		return lista;
+	}
+
 }

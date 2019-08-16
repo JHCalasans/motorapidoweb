@@ -86,9 +86,16 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			}
 		}
 		EventBus eventBus = EventBusFactory.getDefault().eventBus();
-		eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("LocalMotorista"),
-				codMotorista.toString() + ";" + login + ";" + latitude + ";" + longitude));
+		try {
+			Thread.sleep(500);
+			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("LocalMotorista"),
+					codMotorista.toString() + ";" + login + ";" + latitude + ";" + longitude));
 
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
 		if (areaOrigem == null) {
 			desativarMotoristaEmAreas(codMotorista, em);
 			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área!");
@@ -261,16 +268,16 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 
 				}
 				
-				if (SimpleController.getListaPosicaoMotorista() != null)
-					adicionaMotoristaLista(motoristaPosicao, motorista);
+				/*if (SimpleController.getListaPosicaoMotorista() != null)
+					adicionaMotoristaLista(motoristaPosicao, motorista);*/
 				return motoristaPosicao;
 			} else
 				return null;
 		
 
 		} catch (ExcecaoMotoristaPosicaoArea e) {
-			if (SimpleController.getListaPosicaoMotorista() != null)
-				adicionaMotoristaLista(motoristaPosicao, motorista);
+			/*if (SimpleController.getListaPosicaoMotorista() != null)
+				adicionaMotoristaLista(motoristaPosicao, motorista);*/
 			throw e;
 		} catch (ExcecaoNegocio e) {
 			throw e;
@@ -280,7 +287,7 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 	}
 
 	private void adicionaMotoristaLista(MotoristaPosicaoArea motoristaPos, Motorista moto) {
-		boolean existe = SimpleController.getListaPosicaoMotorista().stream()
+		/*boolean existe = SimpleController.getListaPosicaoMotorista().stream()
 				.anyMatch(mt -> mt.getMotorista().getCodigo() == motoristaPos.getMotorista().getCodigo());
 		if (existe) {
 			MotoristaPosicaoArea motoTemp = SimpleController.getListaPosicaoMotorista().stream()
@@ -292,12 +299,12 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 				eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
 						moto.getCodigo() + ";" + moto.getDisponivel()));
 			}
-		}else {
-			SimpleController.getListaPosicaoMotorista().add(motoristaPos);
+		}else {*/
+			//SimpleController.getListaPosicaoMotorista().add(motoristaPos);
 			EventBus eventBus = EventBusFactory.getDefault().eventBus();
 			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
 					moto.getCodigo() + ";" + moto.getDisponivel()));
-		}
+		//}
 		
 	}
 
