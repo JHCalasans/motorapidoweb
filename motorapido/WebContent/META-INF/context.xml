@@ -12,26 +12,27 @@
 		removeAbandonedTimeout="60" 
 		type="javax.sql.DataSource"
 		
-		url="jdbc:postgresql://localhost:5432/diego" 
-		username="postgres"	
-		password="jota01"
-			
 		
+			
+		url="jdbc:postgresql://104.248.186.97:5432/diego" 
+		username="diego" 
+		password="d16082017" 
 			
 		/>
 			<!-- 
-		url="jdbc:postgresql://104.248.186.97:5432/diego" 
-		username="diego" 
-		password="d16082017"   -->
+		url="jdbc:postgresql://localhost:5432/diego" 
+		username="postgres"	
+		password="jota01"   -->
 	<ResourceLink global="jdbc/postgresapp" 
 		name="jdbc/postgresapp" 
 		factory="org.apache.naming.factory.DataSourceLinkFactory" 
 		type="javax.sql.DataSource"
-		username="postgres"	
-		password="jota01" 
+
+		username="diego" 
+		password="d16082017" 
 		 />
 		
 		<!-- 
-	username="diego" 
-		password="d16082017"   -->
+			username="postgres"	
+		password="jota01"   -->
 </Context>

@@ -24,10 +24,10 @@ public class GoogleWSUtil {
 	public static RetornoGoogleWSCoordenadas buscarCoordenadas(String coordenadas) throws ExcecaoNegocio {
 
 		
-		 HttpHost proxy = new HttpHost("172.17.0.19", 3128);
+		// HttpHost proxy = new HttpHost("172.17.0.19", 3128);
 		// HttpClient httpClient = HttpClients.custom().setProxy(proxy).build();
 		try {
-			HttpClient httpClient = HttpClients.custom().setProxy(proxy).build();
+			HttpClient httpClient = HttpClients.custom().build();
 
 			// Buscando coordenadas pelo cep passado
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
@@ -65,9 +65,9 @@ public class GoogleWSUtil {
 	
 	public static RetornoMatrixGoogleAPI buscarDistanciaAPercorrer(String origem, String destino, String chave) throws ExcecaoNegocio{
 
-		 HttpHost proxy = new HttpHost("172.17.0.19", 3128);
+		// HttpHost proxy = new HttpHost("172.17.0.19", 3128);
 		try {
-			HttpClient httpClient = HttpClients.custom().setProxy(proxy).build();
+			HttpClient httpClient = HttpClients.custom().build();
 
 			// Buscando distância e tempo entre a origem e destino passados
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
@@ -102,9 +102,9 @@ public class GoogleWSUtil {
 	}
 	
 	public static String buscarRota(Chamada chamada, EntityManager em) throws ExcecaoNegocio{
-		 HttpHost proxy = new HttpHost("172.17.0.19", 3128);
+		// HttpHost proxy = new HttpHost("172.17.0.19", 3128);
 		try {
-			HttpClient httpClient = HttpClients.custom().setProxy(proxy).build();
+			HttpClient httpClient = HttpClients.custom().build();
 
 			// Buscando distância e tempo entre a origem e destino passados
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
@@ -140,9 +140,9 @@ public class GoogleWSUtil {
 	}
 	
 	public static String buscarRota(String latOrigem, String longOrigem, String latDestino, String longDestino, EntityManager em) throws ExcecaoNegocio{
-		 HttpHost proxy = new HttpHost("172.17.0.19", 3128);
+		// HttpHost proxy = new HttpHost("172.17.0.19", 3128);
 		try {
-			HttpClient httpClient = HttpClients.custom().setProxy(proxy).build();
+			HttpClient httpClient = HttpClients.custom().build();
 
 			// Buscando distância e tempo entre a origem e destino passados
 			HttpUriRequest requestCoordenadas = RequestBuilder.get()
