@@ -72,6 +72,23 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
+	
+	public boolean estaDisponivel(Integer codMotorista) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			Motorista motorista = motoristaDAO.findById(codMotorista, em);
+			emUtil.commitTransaction(transaction);
+			return motorista.getDisponivel().equals("S");
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar checar disponibilidade", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
 
 	public List<Motorista> obterMotoristas(String nome, String cpf, String cnh, String email, String identidade)
 			throws ExcecaoNegocio {
@@ -251,6 +268,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
 			motoristaAparelho = lista.get(0);
 			motoristaAparelho.setAtivo("N");
+			motoristaAparelho.setDesativacao(new Date());
 			motoristaAparelhoDAO.save(motoristaAparelho, em);
 
 			motorista = motoristaDAO.findById(motorista.getCodigo(), em);
@@ -268,6 +286,46 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 
+	
+	
+	
+	public void ficarIndisponivel(Integer codMotorista) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
+			MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
+			motoristaAparelho.setCodMotorista(codMotorista);
+			List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
+			for(MotoristaAparelho moto : lista) {
+				moto.setAtivo("N");
+				moto.setDesativacao(new Date());
+				motoristaAparelhoDAO.save(moto, em);
+			}
+
+			Motorista motorista = motoristaDAO.findById(codMotorista, em);
+
+			motorista.setDisponivel("N");
+
+			motoristaDAO.save(motorista, em);
+
+
+		
+			EventBus eventBus = EventBusFactory.getDefault().eventBus();
+			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+					codMotorista.toString() + ";" + motorista.getDisponivel()));
+			
+			emUtil.commitTransaction(transaction);
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar ficar indisponível.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
 	public Motorista login(Motorista motorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();

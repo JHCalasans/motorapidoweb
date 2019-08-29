@@ -1,5 +1,6 @@
 package br.com.motorapido.util;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +31,14 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 	private SessaoWS sessao;
 
 	@OnOpen
-	public void onOpen(Session session, EndpointConfig config)  {
+	public void onOpen(Session session, EndpointConfig config) {
 
-		
-		//Map<String, List<String>> params = session.getRequestParameterMap();
+		// Map<String, List<String>> params = session.getRequestParameterMap();
 
 		Integer codMotorista = (Integer) config.getUserProperties().get("codMotorista");
 
 		config.getUserProperties().remove("codMotorista");
-		
+
 		try {
 			ControleSessaoWS.initialize();
 			ControleSessaoWS.remove(codMotorista);
@@ -52,20 +52,17 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
 	}
 
 	@OnClose
 	public void onClose(Session session) {
-		System.out.println("sessão encerrada - " + session.getId());
-
+		System.out.println("sessão encerrada onclose- " + session.getId());
 		ControleSessaoWS.remove(session);
 	}
 
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		
 
 		try {
 
@@ -92,8 +89,8 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 
 			}
 			/*
-			 * session.getBasicRemote().sendText("Hello Client " +
-			 * session.getId() + "!"); ControleSessaoWS.listar();
+			 * session.getBasicRemote().sendText("Hello Client " + session.getId() + "!");
+			 * ControleSessaoWS.listar();
 			 */
 
 		} catch (ExcecaoMotoristaPosicaoArea e) {
@@ -106,7 +103,6 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 		}
 	}
 
-	
 	public void enviarResposta(Session session, String resp) {
 		try {
 			session.getBasicRemote().sendText(resp);
@@ -114,8 +110,6 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 			ExcecoesUtil.logarErro(e);
 		}
 	}
-
-	
 
 	@Override
 	public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response) {
@@ -155,12 +149,19 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 		// System.out.println("modifyHandshake " + httpSession.getId());
 
 	}
-			
-		
 
 	@OnError
-	public void onError(Throwable t) {
-		 System.out.println("onError::" + t.getMessage());
+	public void onError(Session session, Throwable t) {
+
+		if (t instanceof EOFException) {
+			try {
+				AcoesDoSocket.ficarIndisponivel(session);
+			} catch (ExcecaoNegocio | IOException e) {
+				ExcecoesUtil.logarErro(e);
+			}
+		}
+		System.out.println("onError::" + t.getMessage());
+
 	}
 
 	@Override

@@ -205,7 +205,7 @@ public class MotoristaWS {
 	@GET
 	@Path("/ping")
 	public Response ping() {
-		return Response.status(Status.OK).build();
+		return Response.status(Status.OK).entity("UIUI").build();
 
 	}
 

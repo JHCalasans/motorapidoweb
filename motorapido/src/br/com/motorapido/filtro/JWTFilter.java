@@ -45,11 +45,10 @@ public class JWTFilter implements Filter {
 					return;
 				}
 			}
-			/*if (req.getRequestURI().endsWith("/login") || req.getRequestURI().endsWith("/enviarMensagem") 
-					|| req.getRequestURI().endsWith("/cadastrar")) {
+			if (req.getRequestURI().endsWith("/ping")) {
 				filterChain.doFilter(servletRequest, servletResponse);
 				return;
-			}*/
+			}
 		} catch (ExcecaoNegocio e) {			
 			res.setContentType("aplication/json");
 			res.setStatus(500);

@@ -39,7 +39,7 @@ public class ControleSessaoWS {
 			return;
 		
 		sMap.remove(codMotorista);
-		System.out.println("sessão encerrada - " + sessao.getSessao().getId());
+		//System.out.println("sessão encerrada - " + sessao.getSessao().getId());
 	}
 
 	public static void remove(Session session) {
