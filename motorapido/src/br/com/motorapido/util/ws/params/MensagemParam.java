@@ -15,7 +15,7 @@ public class MensagemParam implements Serializable{
 	private Integer codMotorista;
 	
 	
-	MensagemParam(){
+	public MensagemParam(){
 		
 	}
 

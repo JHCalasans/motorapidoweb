@@ -268,7 +268,6 @@ public class MotoristaWS {
 	@Path("/enviarMensagem")
 	public Response enviarMensagem(MensagemParam param) {
 		try {
-
 			MensagemMotoristaFuncionarioBO.getInstance().enviarMensagemDoMotorista(param);
 			return Response.status(Status.OK).build();
 		} catch (Exception e) {

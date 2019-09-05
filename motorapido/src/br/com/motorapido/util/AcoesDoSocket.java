@@ -11,12 +11,14 @@ import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
 import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoEntidadeReferenciada;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.ChamadaBO;
+import br.com.motorapido.bo.MensagemMotoristaFuncionarioBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
+import br.com.motorapido.util.ws.params.MensagemParam;
 import br.com.motorapido.util.ws.params.VerificaPosicaoParam;
 import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 
@@ -37,7 +39,15 @@ public class AcoesDoSocket {
 	}
 
 	public static void novaMensagemChat(Session session, String msg) {
-
+		SessaoWS ses = ControleSessaoWS.obterPorSessao(session.getId());
+		MensagemParam param = new MensagemParam();
+		param.setMensagem(msg);
+		param.setCodMotorista(ses.getCodMotorista());
+		try {
+			MensagemMotoristaFuncionarioBO.getInstance().enviarMensagemDoMotorista(param);
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.logarErro(e);
+		}
 	}
 
 	private static void cancelarChamada(Session session, String json, String codInformacaoPendente) {
@@ -82,7 +92,7 @@ public class AcoesDoSocket {
 			if (motoPosicao != null) {
 				session.getBasicRemote().sendText("LocalizacaoResp=>" + gson.toJson(retorno));
 			}
-		} else {
+		} else { 
 			session.getBasicRemote().sendText("IndisponivelResp=>");
 		}
 	}
