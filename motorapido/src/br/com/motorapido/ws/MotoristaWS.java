@@ -93,6 +93,22 @@ public class MotoristaWS {
 					.build();
 		}
 	}
+	
+/*	@POST
+	@Path("/enviarID")
+	public Response enviarID(Motorista motorista) {
+		try {
+			
+			return Response.status(Status.OK).build();
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Falha ao tentar obter informações dos veículos").build();
+		}
+	}*/
 
 	@POST
 	@Path("/atualizarVeiculos")

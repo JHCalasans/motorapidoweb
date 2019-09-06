@@ -40,11 +40,14 @@ public class MotoristaAparelho extends Entidade{
 	@Column(name = "id_push_aparelho", nullable = true, length = 50)
 	private String idPush;
 	
-	@Column(name = "cod_motorista", nullable = false)
+	@Column(name = "cod_motorista", nullable = true)
 	private Integer codMotorista;
 	
 	@Column(name = "flg_ativo", nullable = false)
 	private String ativo;	
+	
+	@Column(name = "id_aparelho", nullable = false)
+	private String idAparelho;	
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_entrada", nullable = false)
@@ -123,6 +126,16 @@ public class MotoristaAparelho extends Entidade{
 
 	public void setDesativacao(Date desativacao) {
 		this.desativacao = desativacao;
+	}
+
+
+	public String getIdAparelho() {
+		return idAparelho;
+	}
+
+
+	public void setIdAparelho(String idAparelho) {
+		this.idAparelho = idAparelho;
 	}
 
 

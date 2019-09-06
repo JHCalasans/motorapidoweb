@@ -147,6 +147,9 @@ public class Motorista  extends Entidade {
 	private String chaveGoogle;
 	
 	@Transient
+	private String idAparelho;
+	
+	@Transient
 	private List<RetornoVeiculosMotorista> veiculos;
 
 	@Override
@@ -485,6 +488,16 @@ public class Motorista  extends Entidade {
 
 	public void setVeiculos(List<RetornoVeiculosMotorista> veiculos) {
 		this.veiculos = veiculos;
+	}
+
+
+	public String getIdAparelho() {
+		return idAparelho;
+	}
+
+
+	public void setIdAparelho(String idAparelho) {
+		this.idAparelho = idAparelho;
 	}
 
 
