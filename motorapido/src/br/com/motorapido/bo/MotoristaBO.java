@@ -220,6 +220,23 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 
+	public List<Motorista> obterMotoristasPorNome(String nome) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
+			List<Motorista> lista = motoristaDAO.obterMotoristasPorNome(nome, em);
+			emUtil.commitTransaction(transaction);
+			return lista;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter motoristas.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
 	public List<Motorista> obterMotoristasExample(Motorista motorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -263,7 +280,9 @@ public class MotoristaBO extends MotoRapidoBO {
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
 			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
 			MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
-			motoristaAparelho.setCodMotorista(motorista.getCodigo());
+			//motoristaAparelho.setCodMotorista(motorista.getCodigo());
+			Motorista motoTemp = new Motorista(motorista.getCodigo());
+			motoristaAparelho.setMotorista(motoTemp);
 			motoristaAparelho.setIdPush(motorista.getIdPush());
 			List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
 			motoristaAparelho = lista.get(0);
@@ -297,7 +316,8 @@ public class MotoristaBO extends MotoRapidoBO {
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
 			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
 			MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
-			motoristaAparelho.setCodMotorista(codMotorista);
+			Motorista motoTemp = new Motorista(codMotorista);
+			motoristaAparelho.setMotorista(motoTemp);
 			List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
 			for(MotoristaAparelho moto : lista) {
 				moto.setAtivo("N");
@@ -348,13 +368,13 @@ public class MotoristaBO extends MotoRapidoBO {
 
 				// Busca se aparelho já está cadastrado para alguém
 				motoristaAparelho.setIdPush(idPush);
-				List<MotoristaAparelho> listaAparelho = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
+				List<MotoristaAparelho> listaAparelho = motoristaAparelhoDAO.obterAparelhoPorIdPush(idPush, em);
 				boolean achou = false;
 				if (listaAparelho != null && listaAparelho.size() > 0) {
 					for (MotoristaAparelho motoAp : listaAparelho) {
 						// Se estivesse cadastrado para este motorista seto para
 						// ativo
-						if (motoAp.getCodMotorista() == motorista.getCodigo()) {
+						if (motoAp.getMotorista().getCodigo() == motorista.getCodigo()) {
 							motoAp.setAtivo("S");
 							motoAp.setEntrada(new Date());
 							motoristaAparelhoDAO.save(motoAp, em);
@@ -370,7 +390,8 @@ public class MotoristaBO extends MotoRapidoBO {
 					// Se o motorista que logou ainda não estava cadastrado
 					// nesse aparelho faço o cadastro
 					if (!achou) {
-						motoristaAparelho.setCodMotorista(motorista.getCodigo());
+						Motorista motoTemp = new Motorista(motorista.getCodigo());
+						motoristaAparelho.setMotorista(motoTemp);
 						motoristaAparelho.setAtivo("S");
 						motoristaAparelho.setEntrada(new Date());
 						motoristaAparelhoDAO.save(motoristaAparelho, em);
@@ -378,7 +399,8 @@ public class MotoristaBO extends MotoRapidoBO {
 				} // Se o aparelho ainda não estiver cadastrado faço o primeiro
 					// cadastro para este aparelho com este motorista
 				else {
-					motoristaAparelho.setCodMotorista(motorista.getCodigo());
+					Motorista motoTemp = new Motorista(motorista.getCodigo());
+					motoristaAparelho.setMotorista(motoTemp);
 					motoristaAparelho.setAtivo("S");
 					motoristaAparelho.setEntrada(new Date());
 					motoristaAparelhoDAO.save(motoristaAparelho, em);

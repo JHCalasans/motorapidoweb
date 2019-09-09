@@ -30,7 +30,9 @@ import br.com.motorapido.util.ws.retornos.RetornoVeiculosMotorista;
 				+ " (select rcm.motorista.codigo from RestricaoClienteMotorista rcm where rcm.cliente.codigo = :codCliente)"),
 		@NamedQuery(name = "Motorista.obterDisponiveisForaDeAreas", query = "select mot from Motorista mot " + 
 				  " where mot.codigo not in (select mota.motorista.codigo from MotoristaPosicaoArea mota where mota.ativo = 'S') " + 
-				  " and mot.disponivel = 'S' ")	
+				  " and mot.disponivel = 'S' "),
+		@NamedQuery(name = "Motorista.obterPorNome", query = "select mot from Motorista mot " + 
+				  " where mot.nome like '%' || :nome || '%' ")	
 		
 		
 		})

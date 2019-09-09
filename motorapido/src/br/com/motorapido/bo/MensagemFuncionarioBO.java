@@ -55,7 +55,8 @@ public class MensagemFuncionarioBO extends MotoRapidoBO {
 				mensagemFuncionarioMotorista.setVisualizada("N");
 				mensagemFuncionarioMotoristaDAO.save(mensagemFuncionarioMotorista, em);
 				motoristaAparelho.setAtivo("S");
-				motoristaAparelho.setCodMotorista(motorista.getCodigo());
+				//motoristaAparelho.setCodMotorista(motorista.getCodigo());
+				motoristaAparelho.setMotorista(motorista);
 				List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
 				if(lista != null && lista.size() > 0)
 					listaParaNotificacao.add(lista.get(0).getIdPush());

@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.bo.ChamadaBO;
 import br.com.motorapido.bo.MensagemMotoristaFuncionarioBO;
+import br.com.motorapido.bo.MotoristaAparelhoBO;
 import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.MotoristaPosicaoAreaBO;
 import br.com.motorapido.bo.VeiculoBO;
@@ -94,11 +95,11 @@ public class MotoristaWS {
 		}
 	}
 	
-/*	@POST
+	@POST
 	@Path("/enviarID")
 	public Response enviarID(Motorista motorista) {
 		try {
-			
+			MotoristaAparelhoBO.getInstance().enviarID(motorista);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -106,9 +107,9 @@ public class MotoristaWS {
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
-					.entity("Falha ao tentar obter informações dos veículos").build();
+					.entity("Falha ao tentar enviar ID de Aparelho").build();
 		}
-	}*/
+	}
 
 	@POST
 	@Path("/atualizarVeiculos")

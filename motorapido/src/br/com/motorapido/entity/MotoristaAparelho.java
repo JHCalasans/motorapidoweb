@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
@@ -20,8 +23,16 @@ import br.com.minhaLib.dao.Entidade;
 @Entity
 @Table(name = MotoristaAparelho.nomeTabela, schema = MotoristaAparelho.esquema, catalog = "diego")
 @NamedQueries(value = { 
-		@NamedQuery(name = "MotoristaAparelho.obterOutrosAparelhosMotorista", query = "select ma from MotoristaAparelho ma where ma.codMotorista = :codMotorista "
-						+ " and ma.idPush != :idPush ")
+		@NamedQuery(name = "MotoristaAparelho.obterOutrosAparelhosMotorista", query = "select ma from MotoristaAparelho ma where ma.motorista.codigo = :codMotorista "
+						+ " and ma.idPush != :idPush "),
+		@NamedQuery(name = "MotoristaAparelho.obterAparelhosMotorista", query = "select ma from MotoristaAparelho ma left join fetch ma.motorista moto"
+				+ " where (:situacao = 'T' or ma.ativo = :situacao)"),
+	    @NamedQuery(name = "MotoristaAparelho.obterAparelhosPorIdPush", query = "select ma from MotoristaAparelho ma left join fetch ma.motorista moto"
+						+ " where ma.idPush = :idPush "),
+	    @NamedQuery(name = "MotoristaAparelho.obterAparelhosPorIdAparelho", query = "select ma from MotoristaAparelho ma left join fetch ma.motorista moto"
+				+ " where ma.idAparelho = :idAparelho "),
+	    @NamedQuery(name = "MotoristaAparelho.obterAparelhosPorMotorista", query = "select ma from MotoristaAparelho ma join fetch ma.motorista moto"
+				+ " where moto.codigo = :codMotorista and ma.ativo = 'S' " )
 		})
 public class MotoristaAparelho extends Entidade{
 
@@ -40,8 +51,9 @@ public class MotoristaAparelho extends Entidade{
 	@Column(name = "id_push_aparelho", nullable = true, length = 50)
 	private String idPush;
 	
-	@Column(name = "cod_motorista", nullable = true)
-	private Integer codMotorista;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cod_motorista", nullable = false, referencedColumnName = "cod_motorista")	
+	private Motorista motorista;
 	
 	@Column(name = "flg_ativo", nullable = false)
 	private String ativo;	
@@ -54,8 +66,12 @@ public class MotoristaAparelho extends Entidade{
 	private Date entrada;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "dt_desativacao", nullable = false)
+	@Column(name = "dt_desativacao", nullable = true)
 	private Date desativacao;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "dt_ativacao", nullable = true)
+	private Date ativacao;
 
 	@Override
 	public Serializable getIdentificador() {
@@ -99,16 +115,6 @@ public class MotoristaAparelho extends Entidade{
 	}
 
 
-	public Integer getCodMotorista() {
-		return codMotorista;
-	}
-
-
-	public void setCodMotorista(Integer codMotorista) {
-		this.codMotorista = codMotorista;
-	}
-
-
 	public Date getEntrada() {
 		return entrada;
 	}
@@ -136,6 +142,26 @@ public class MotoristaAparelho extends Entidade{
 
 	public void setIdAparelho(String idAparelho) {
 		this.idAparelho = idAparelho;
+	}
+
+
+	public Date getAtivacao() {
+		return ativacao;
+	}
+
+
+	public void setAtivacao(Date ativacao) {
+		this.ativacao = ativacao;
+	}
+
+
+	public Motorista getMotorista() {
+		return motorista;
+	}
+
+
+	public void setMotorista(Motorista motorista) {
+		this.motorista = motorista;
 	}
 
 

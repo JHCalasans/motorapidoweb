@@ -29,6 +29,7 @@ import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Funcionario;
+import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.SituacaoChamada;
@@ -413,21 +414,21 @@ public class ChamadaBO extends MotoRapidoBO {
 				IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
 				MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
 				motoristaAparelho.setAtivo("S");
-				motoristaAparelho.setCodMotorista(listaMotoristas.get(0).getMotorista().getCodigo());
-				List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
+				motoristaAparelho.setMotorista(listaMotoristas.get(0).getMotorista());
+				List<MotoristaAparelho> lista = motoristaAparelhoDAO.obterAparelhoPorMotorista(listaMotoristas.get(0).getMotorista().getCodigo(), em);
 				if (lista != null && lista.size() > 0) {
 
 					listaParaNotificacao.add(lista.get(0).getIdPush());
 
 					IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
-					Veiculo veiculo = veiculoDAO.obterVeiculosEmUsoPorMotorista(lista.get(0).getCodMotorista(), em);
+					Veiculo veiculo = veiculoDAO.obterVeiculosEmUsoPorMotorista(lista.get(0).getMotorista().getCodigo(), em);
 					chamadaVeiculo.setChamada(chamada);
 					chamadaVeiculo.setFlgAceita("A");
 					chamadaVeiculo.setFlgUltimoMovimento("S");
 					chamadaVeiculo.setDataCriacao(new Date());
 					if (veiculo == null)
 						throw new ExcecaoNegocio(
-								"Não existe veículo em uso para o motorista " + lista.get(0).getCodMotorista());
+								"Não existe veículo em uso para o motorista " + lista.get(0).getMotorista().getCodigo());
 					chamadaVeiculo.setVeiculo(veiculo);
 
 					chamadaVeiculo = chamadaVeiculoDAO.save(chamadaVeiculo, em);
@@ -436,7 +437,7 @@ public class ChamadaBO extends MotoRapidoBO {
 					chamada.setCodChamadaVeiculo(chamadaVeiculo.getCodigo());
 					Gson gson = new Gson();
 					
-					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(lista.get(0).getCodMotorista(),
+					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(lista.get(0).getMotorista().getCodigo(),
 							gson.toJson(chamada) + "=>"
 									+ FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo()));
 

@@ -1,2 +1,4 @@
-/br/
 /META-INF/
+/br/
+/log4j.properties
+/quartz.properties
