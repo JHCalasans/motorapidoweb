@@ -144,107 +144,121 @@
 
 		<p:dialog widgetVar="dlgVincularMotorista" showEffect="fade"
 			resizable="false" styleClass="dialogBox" closable="true"
-			header="VincularMotorista">
+			header="VincularMotorista" width="600px">
 			<h:form prependId="false" id="formMoto">
 
 				<p:messages id="msgsMoto" closable="true"></p:messages>
-				<h:panelGrid columns="2">
-					<h:form id="formMoto2">
-						<p:panel id="panelCadastro">
-							<h:panelGroup styleClass="p_like">
-								<p:outputLabel value="Nome:" for="inptNome" style="width:125px;" />
-
-								<p:inputText value="#{idAparelhoBean.nomeMotoPesquisa}"
-									id="inptNome" widgetVar="nmMoto" size="20"
-									style="font-size:15px; color:gray;margin-right:20px" />
-
-							</h:panelGroup>
-							<br></br>
-							<div class="clear"></div>
-							<h:panelGroup styleClass="p_like buttonPosition">
-								<p:commandButton value="Pesquisar"
-									actionListener="#{idAparelhoBean.pesquisarMotorista()}"
-									update="formMoto2, msgsMoto" />
-							</h:panelGroup>
-
-							<br></br>
-							<div class="clear"></div>
-						</p:panel>
-
-						<br />
-						<div class="clear"></div>
-						<h:panelGroup>
-							<p:dataTable tableStyle="table-layout:auto;width: 100%;"
-								id="tbMotoristas" var="motorista"
-								value="#{idAparelhoBean.motoristas}" rows="10"
-								style="text-align: center; max-width:100%" first="0"
-								paginatorAlwaysVisible="false" paginator="true"
-								emptyMessage="#{bundle.nenhumRegistroEncontrado}">
-								<f:facet name="header" styleClass="cabecalhoDataTable">
-			     		   Motoristas
-			   			 </f:facet>
-								<p:column style="width:130px">
-									<f:facet name="header">
-										<h:outputText value="Motorista"
-											styleClass="cabecalhoDataTable" />
-									</f:facet>
-									<h:outputText id="tbMotorista" value="#{motorista.nome}">
-
-									</h:outputText>
-								</p:column>
-
-								<p:column style="width:130px">
-									<f:facet name="header">
-										<h:outputText value="#{bundle.perfil_situacao}"
-											styleClass="cabecalhoDataTable" />
-									</f:facet>
-									<h:outputText id="tbSituacao"
-										value="#{motorista.ativo == 'S' ? 'Ativo' : 'Inativo'}">
-
-									</h:outputText>
-								</p:column>
 
 
-								<p:column style="width:80px">
-									<f:facet name="header">
-										<h:outputText value="#{bundle.operacoes}"
-											styleClass="cabecalhoDataTable" />
-									</f:facet>
-									<h:commandLink title="Vincular Motorista" immediate="true"
-										action="#{idAparelhoBean.vincularMoto(motorista.codigo)}" update="formCadastro, msgs">
-										<h:graphicImage url="/resources/capacete.png"
-											style="border-style: none" />
-										<p:confirm header="Confirmação"
-											message="Ao vincular esse motoristas, outro(s) aparelho(s) vinculado(s) a ele serão desvicunlado(s)!"
-											icon="pi pi-exclamation-triangle" />
-									</h:commandLink>
-									<p:confirmDialog global="true" showEffect="fade"
-										hideEffect="fade">
-										<p:commandButton value="Sim" type="button"
-											styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-										<p:commandButton value="Não" type="button"
-											styleClass="ui-confirmdialog-no" icon="pi pi-times" />
-									</p:confirmDialog>
+				<p:panel id="panelVinculo">
+					<h:panelGroup styleClass="p_like">
+						<p:outputLabel value="Nome:" for="inptNome" style="width:65px;"
+							styleClass="OutputLabelCampo" />
+
+						<p:inputText value="#{idAparelhoBean.nomeMotoPesquisa}"
+							id="inptNome" widgetVar="nmMoto" size="50"
+							style="font-size:15px; color:gray;margin-right:20px" />
+
+					</h:panelGroup>
+					<br></br>
+					<div class="clear"></div>
+					<h:panelGroup styleClass="p_like buttonPosition">
+						<p:commandButton value="Pesquisar"
+							actionListener="#{idAparelhoBean.pesquisarMotorista}"
+							update="tbMotoristas, msgsMoto" />
+					</h:panelGroup>
+
+					<br></br>
+					<div class="clear"></div>
+				</p:panel>
+
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup>
+					<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+						id="tbMotoristas" var="motorista"
+						value="#{idAparelhoBean.motoristas}" rows="5"
+						style="text-align: center; max-width:100%" first="0"
+						paginatorAlwaysVisible="false" paginator="true"
+						emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+						<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		  	 		Motoristas
+			   			 		</f:facet>
+						<p:column style="width:130px">
+							<f:facet name="header">
+								<h:outputText value="Motorista" styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText id="tbMotorista" value="#{motorista.nome}">
+
+							</h:outputText>
+						</p:column>
+
+						<p:column style="width:130px">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.perfil_situacao}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<h:outputText id="tbSituacao"
+								value="#{motorista.ativo == 'S' ? 'Ativo' : 'Inativo'}">
+
+							</h:outputText>
+						</p:column>
 
 
-								</p:column>
-							</p:dataTable>
-						</h:panelGroup>
-					</h:form>
-					<f:facet name="footer">
-						<div align="center" style="margin-top: 5px;">
-							
-							<p:commandButton value="Cancelar"
-								onclick="PF('dlgVincularMotorista').hide();" immediate="true"
-								style="margin-left:10px;" />
+						<p:column style="width:80px">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.operacoes}"
+									styleClass="cabecalhoDataTable" />
+							</f:facet>
+							<p:commandLink title="Vincular Motorista" immediate="true"
+								action="#{idAparelhoBean.vincularMoto(motorista.codigo)}">
+								<h:graphicImage url="/resources/vincular.png"
+									style="border-style: none" />
+
+							</p:commandLink>
+
+							<p:dialog widgetVar="dlgConfirmaVinculacao" showEffect="fade"
+								id="dlConfirmaVinculacao" resizable="false"
+								styleClass="dialogBox" closable="true" header="Confirmação"
+								width="600px">
+									<h:graphicImage url="/resources/alerta.png"
+										style="border-style: none; width: 20px;vertical-align: middle;margin-right: 10px;" />
+									<p:outputLabel
+										value="Ao vincular aparelho a esse motorista se houver outro motorista vinculado será desvinculado."></p:outputLabel>
+									<br />
+									<p:spacer height="20"></p:spacer>
+									<p:outputLabel value="Continuar?" style="font-weight: bold;"></p:outputLabel>
+									<br />
+									<p:spacer height="20"></p:spacer>
+									<h:panelGroup styleClass="p_like buttonPosition">
+										<p:commandButton value="Confirmar" id="btnCOnfirmar"
+											actionListener="#{idAparelhoBean.confirmarVincularMoto}"
+											style="margin-right: 10px;"
+											update="formCadastro, msgs, conteudo">
+										</p:commandButton>
+										<p:commandButton value="Cancelar"
+											onclick="PF('dlgConfirmaVinculacao').hide();"
+											immediate="true" style="margin-left:10px;" />
 
 
-						</div>
-					</f:facet>
+									</h:panelGroup>
 
-				</h:panelGrid>
+							</p:dialog>
+
+						</p:column>
+
+
+					</p:dataTable>
+
+
+
+				</h:panelGroup>
+
+
+
 			</h:form>
 		</p:dialog>
+
 
 	</ui:define>
 </ui:composition>

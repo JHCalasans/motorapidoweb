@@ -424,16 +424,16 @@ ul.ui-menu-child {
 
 .cabecalhoMenu .ui-menuitem-text {
 	text-align: left !important;
-	font-family: "Lobster-Regular" !important;
+	font-family: sans-serif !important;
 	width: 100%;
 	font-size: 15px !important;
 	color: white !important;
-	font-style: oblique;
+	font-style: normal;
 }
 
 .cabecalhoMenuBotao {
 	text-align: left !important;
-	font-family: "Lobster-Regular" !important;
+	font-family: sans-serif !important;
 	width: 100%;
 	font-size: 15px !important;
 	color: white !important;
@@ -547,6 +547,7 @@ a { /* ConfiguraÃƒÂ§ÃƒÂµes dos textos dos itens */
 	color: #c0c8ca;
 	/* Exibir os links do menu sem underline */
 	text-decoration: none;
+	margin-right: 15px;
 }
 
 a:active { /* ConfiguraÃƒÂ§ÃƒÂµes dos textos do item clicado (ativo) */

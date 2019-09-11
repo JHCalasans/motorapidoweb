@@ -27,6 +27,8 @@ public class IdAparelhoBean extends SimpleController {
 	private List<MotoristaAparelho> aparelhos;
 	private List<Motorista> motoristas;
 	private String idAparelho;
+	private Integer codMotoristaVincular;
+	
 	
 	@PostConstruct
 	public void carregar() {
@@ -64,9 +66,19 @@ public class IdAparelhoBean extends SimpleController {
 	
 	
 	public void vincularMoto(Integer codMotorista) {
+		codMotoristaVincular = codMotorista;
+		enviarJavascript("PF('dlgConfirmaVinculacao').show();");
+	
+	
+	}
+	
+	
+	public void confirmarVincularMoto() {
+	
 		try {
-			MotoristaAparelhoBO.getInstance().vincularMotorista(codMotorista, getIdAparelho());
+			MotoristaAparelhoBO.getInstance().vincularMotorista(codMotoristaVincular, getIdAparelho());
 			addMsg(FacesMessage.SEVERITY_INFO, "Aparelho vinculado com sucesso.");
+			pesquisarAparelhos();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -120,6 +132,14 @@ public class IdAparelhoBean extends SimpleController {
 
 	public void setIdAparelho(String idAparelho) {
 		this.idAparelho = idAparelho;
+	}
+
+	public Integer getCodMotoristaVincular() {
+		return codMotoristaVincular;
+	}
+
+	public void setCodMotoristaVincular(Integer codMotoristaVincular) {
+		this.codMotoristaVincular = codMotoristaVincular;
 	}
 
 }

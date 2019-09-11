@@ -72,7 +72,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public boolean estaDisponivel(Integer codMotorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -126,7 +126,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public List<Motorista> obterMotoristasDisponiveis() throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -236,7 +236,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public List<Motorista> obterMotoristasExample(Motorista motorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -253,7 +253,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public List<Motorista> obterPosicaoMotoristasForaDeAreas() throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -280,7 +280,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
 			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
 			MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
-			//motoristaAparelho.setCodMotorista(motorista.getCodigo());
+			// motoristaAparelho.setCodMotorista(motorista.getCodigo());
 			Motorista motoTemp = new Motorista(motorista.getCodigo());
 			motoristaAparelho.setMotorista(motoTemp);
 			motoristaAparelho.setIdPush(motorista.getIdPush());
@@ -305,9 +305,6 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 
-	
-	
-	
 	public void ficarIndisponivel(Integer codMotorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -319,7 +316,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			Motorista motoTemp = new Motorista(codMotorista);
 			motoristaAparelho.setMotorista(motoTemp);
 			List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
-			for(MotoristaAparelho moto : lista) {
+			for (MotoristaAparelho moto : lista) {
 				moto.setAtivo("N");
 				moto.setDesativacao(new Date());
 				motoristaAparelhoDAO.save(moto, em);
@@ -331,12 +328,10 @@ public class MotoristaBO extends MotoRapidoBO {
 
 			motoristaDAO.save(motorista, em);
 
-
-		
 			EventBus eventBus = EventBusFactory.getDefault().eventBus();
 			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
 					codMotorista.toString() + ";" + motorista.getDisponivel()));
-			
+
 			emUtil.commitTransaction(transaction);
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
@@ -345,16 +340,18 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public Motorista login(Motorista motorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 
 		try {
 			String idPush = motorista.getIdPush();
+			String idAparelho = motorista.getIdAparelho();
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
 			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
+
 			motorista.setCodigo(null);
 			motorista.setDataCriacao(null);
 			motorista.setDataDesativacao(null);
@@ -367,62 +364,70 @@ public class MotoristaBO extends MotoRapidoBO {
 				motorista = lista.get(0);
 
 				// Busca se aparelho já está cadastrado para alguém
-				motoristaAparelho.setIdPush(idPush);
-				List<MotoristaAparelho> listaAparelho = motoristaAparelhoDAO.obterAparelhoPorIdPush(idPush, em);
+				List<MotoristaAparelho> listaAparelho = motoristaAparelhoDAO
+						.obterAparelhoPorIdAparelho(idAparelho, em);
 				boolean achou = false;
 				if (listaAparelho != null && listaAparelho.size() > 0) {
 					for (MotoristaAparelho motoAp : listaAparelho) {
 						// Se estivesse cadastrado para este motorista seto para
 						// ativo
-						if (motoAp.getMotorista().getCodigo() == motorista.getCodigo()) {
-							motoAp.setAtivo("S");
-							motoAp.setEntrada(new Date());
-							motoristaAparelhoDAO.save(motoAp, em);
-							achou = true;
-							break;
-						} // verifico se outros motoristas neste aparelho estão
-							// ativo e desativo eles nesse aparelho
-						else if (motoAp.getAtivo().equals("S")) {
-							motoAp.setAtivo("N");
-							motoristaAparelhoDAO.save(motoAp, em);
+						if (motoAp.getMotorista() != null) {
+							if (motoAp.getMotorista().getCodigo() == motorista.getCodigo()) {
+								if (motoAp.getAtivo().equals("S")) {
+									achou = true;
+									break;
+								}else {
+									throw new ExcecaoNegocio(
+											"Aparelho não vinculado ao motorista.");
+								}
+							}
 						}
+						// verifico se outros motoristas neste aparelho estão
+						// ativo e desativo eles nesse aparelho
+						/*
+						 * else if (motoAp.getAtivo().equals("S")) { motoAp.setAtivo("N");
+						 * motoristaAparelhoDAO.save(motoAp, em); }
+						 */
 					}
 					// Se o motorista que logou ainda não estava cadastrado
 					// nesse aparelho faço o cadastro
 					if (!achou) {
-						Motorista motoTemp = new Motorista(motorista.getCodigo());
-						motoristaAparelho.setMotorista(motoTemp);
-						motoristaAparelho.setAtivo("S");
-						motoristaAparelho.setEntrada(new Date());
-						motoristaAparelhoDAO.save(motoristaAparelho, em);
+						throw new ExcecaoNegocio(
+								"Aparelho ainda não vinculado ao motorista. Favor comunicar a central.");
+						/*
+						 * Motorista motoTemp = new Motorista(motorista.getCodigo());
+						 * motoristaAparelho.setMotorista(motoTemp); motoristaAparelho.setAtivo("S");
+						 * motoristaAparelho.setEntrada(new Date());
+						 * motoristaAparelhoDAO.save(motoristaAparelho, em);
+						 */
 					}
 				} // Se o aparelho ainda não estiver cadastrado faço o primeiro
 					// cadastro para este aparelho com este motorista
-				else {
-					Motorista motoTemp = new Motorista(motorista.getCodigo());
-					motoristaAparelho.setMotorista(motoTemp);
-					motoristaAparelho.setAtivo("S");
-					motoristaAparelho.setEntrada(new Date());
-					motoristaAparelhoDAO.save(motoristaAparelho, em);
-				}
+				/*
+				 * else { Motorista motoTemp = new Motorista(motorista.getCodigo());
+				 * motoristaAparelho.setMotorista(motoTemp); motoristaAparelho.setAtivo("S");
+				 * motoristaAparelho.setEntrada(new Date());
+				 * motoristaAparelhoDAO.save(motoristaAparelho, em); }
+				 */
 				// Desativo qualquer outro registro deste motorista
-				listaAparelho = motoristaAparelhoDAO.obterOutrosAparelhosMotorista(motorista.getCodigo(), idPush, em);
-				List<String> listaParaNotificacao = new ArrayList<String>();
-				for (MotoristaAparelho motoAp : listaAparelho) {
-					// envio push para desativar a sessão no aparelho registrado
-					// anteriormente para este motorista
-					if (motoAp.getAtivo().equals("S")) {
-						motoAp.setDesativacao(new Date());
-						listaParaNotificacao.add(motoAp.getIdPush());
-					}
-					motoAp.setAtivo("N");
-					motoristaAparelhoDAO.save(motoAp, em);
-				}
-				if (listaParaNotificacao.size() > 0)
-					PushNotificationUtil.enviarNotificacaoPlayerId(
-							FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
-							FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
-							listaParaNotificacao, "Login realizado em outro aparelho!", "logout", "logout");
+				/*
+				 * listaAparelho =
+				 * motoristaAparelhoDAO.obterOutrosAparelhosMotorista(motorista.getCodigo(),
+				 * idPush, em); List<String> listaParaNotificacao = new ArrayList<String>(); for
+				 * (MotoristaAparelho motoAp : listaAparelho) { // envio push para desativar a
+				 * sessão no aparelho registrado // anteriormente para este motorista if
+				 * (motoAp.getAtivo().equals("S")) { motoAp.setDesativacao(new Date());
+				 * listaParaNotificacao.add(motoAp.getIdPush()); } motoAp.setAtivo("N");
+				 * motoristaAparelhoDAO.save(motoAp, em); }
+				 */
+				/*
+				 * if (listaParaNotificacao.size() > 0)
+				 * PushNotificationUtil.enviarNotificacaoPlayerId(
+				 * FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
+				 * FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
+				 * listaParaNotificacao, "Login realizado em outro aparelho!", "logout",
+				 * "logout");
+				 */
 
 				// Chave de segurança para uso dos ws
 				String chave = FuncoesUtil.getParam(ParametroEnum.CHAVE_SEGURANCA.getCodigo(), em);
