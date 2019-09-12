@@ -1,5 +1,6 @@
 package br.com.motorapido.mbean;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.atmosphere.util.analytics.GoogleAnalytics_v1_URLBuildingStrategy;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.event.map.PointSelectEvent;
 import org.primefaces.model.map.DefaultMapModel;
@@ -205,6 +207,8 @@ public class AreaBean extends SimpleController {
 				poligono.setFillOpacity(0.2);
 				poligono.setPaths(coordenada.getCoordenadas());
 				mapModel.addOverlay(poligono);
+							
+				
 			}
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);

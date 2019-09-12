@@ -298,11 +298,13 @@
 			<f:facet name="options">
 				<p:outputLabel
 					value="Olá, #{bean.funcionarioLogado.nome.split(' ')[0]}"
-					style="padding-top: 5px; margin-left: -75px;font-size:15px;position: absolute; right: 10%;"></p:outputLabel>
+					style="padding-top: 5px; margin-left: -75px;font-size:15px;position: absolute; right: 5%;"></p:outputLabel>
 
-				<p:commandButton value="#{erroSessao ne 'S'? 'Logout' : 'Login'}"
-					icon="ui-icon-extlink" action="#{bean.logout}"
-					styleClass="cabecalhoMenuBotao" />
+				<p:commandLink title="Logout"
+					action="#{bean.logout}" >
+					<h:graphicImage url="/resources/logout.png"
+								style="border-style: none;width: 20px; margin-top: 5px;" />
+					</p:commandLink>
 			</f:facet>
 
 		</p:menubar>

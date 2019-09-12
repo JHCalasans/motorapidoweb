@@ -94,8 +94,8 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		
+		}
+
 		if (areaOrigem == null) {
 			desativarMotoristaEmAreas(codMotorista, em);
 			throw new ExcecaoMotoristaPosicaoArea("Motorista não está em nenhuma área!");
@@ -104,6 +104,8 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 		return areaOrigem;
 
 	}
+	
+	
 
 	public List<MotoristaPosicaoArea> obterMotoristasPorArea(Area area)
 			throws ExcecaoNegocio, ExcecaoMotoristaPosicaoArea {
@@ -198,7 +200,6 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			if (param.getCodUltimaArea() == null
 					|| (param.getCodUltimaArea() != null && param.getCodUltimaArea() != area.getCodigo())) {
 
-			
 				List<MotoristaPosicaoArea> listOrdem = motoristaPosicaoAreaDAO.obterMotoristasPorArea(area, em);
 				// reordena a lista de posição na área
 				int count = 1;
@@ -267,17 +268,20 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 					motoristaPosicao = motoristaPosicaoAreaDAO.save(motoristaPosicao, em);
 
 				}
-				
-				/*if (SimpleController.getListaPosicaoMotorista() != null)
-					adicionaMotoristaLista(motoristaPosicao, motorista);*/
+
+				/*
+				 * if (SimpleController.getListaPosicaoMotorista() != null)
+				 * adicionaMotoristaLista(motoristaPosicao, motorista);
+				 */
 				return motoristaPosicao;
 			} else
 				return null;
-		
 
 		} catch (ExcecaoMotoristaPosicaoArea e) {
-			/*if (SimpleController.getListaPosicaoMotorista() != null)
-				adicionaMotoristaLista(motoristaPosicao, motorista);*/
+			/*
+			 * if (SimpleController.getListaPosicaoMotorista() != null)
+			 * adicionaMotoristaLista(motoristaPosicao, motorista);
+			 */
 			throw e;
 		} catch (ExcecaoNegocio e) {
 			throw e;
@@ -287,25 +291,26 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 	}
 
 	private void adicionaMotoristaLista(MotoristaPosicaoArea motoristaPos, Motorista moto) {
-		/*boolean existe = SimpleController.getListaPosicaoMotorista().stream()
-				.anyMatch(mt -> mt.getMotorista().getCodigo() == motoristaPos.getMotorista().getCodigo());
-		if (existe) {
-			MotoristaPosicaoArea motoTemp = SimpleController.getListaPosicaoMotorista().stream()
-					.filter(mt -> mt.getMotorista().getCodigo() == motoristaPos.getMotorista().getCodigo()).findFirst().get();
-			if (motoTemp != null) {
-				SimpleController.getListaPosicaoMotorista().remove(motoTemp);
-				SimpleController.getListaPosicaoMotorista().add(motoristaPos);
-				EventBus eventBus = EventBusFactory.getDefault().eventBus();
-				eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
-						moto.getCodigo() + ";" + moto.getDisponivel()));
-			}
-		}else {*/
-			//SimpleController.getListaPosicaoMotorista().add(motoristaPos);
-			EventBus eventBus = EventBusFactory.getDefault().eventBus();
-			eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
-					moto.getCodigo() + ";" + moto.getDisponivel()));
-		//}
-		
+		/*
+		 * boolean existe = SimpleController.getListaPosicaoMotorista().stream()
+		 * .anyMatch(mt -> mt.getMotorista().getCodigo() ==
+		 * motoristaPos.getMotorista().getCodigo()); if (existe) { MotoristaPosicaoArea
+		 * motoTemp = SimpleController.getListaPosicaoMotorista().stream() .filter(mt ->
+		 * mt.getMotorista().getCodigo() ==
+		 * motoristaPos.getMotorista().getCodigo()).findFirst().get(); if (motoTemp !=
+		 * null) { SimpleController.getListaPosicaoMotorista().remove(motoTemp);
+		 * SimpleController.getListaPosicaoMotorista().add(motoristaPos); EventBus
+		 * eventBus = EventBusFactory.getDefault().eventBus();
+		 * eventBus.publish("/notify", new
+		 * FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+		 * moto.getCodigo() + ";" + moto.getDisponivel())); } }else {
+		 */
+		// SimpleController.getListaPosicaoMotorista().add(motoristaPos);
+		EventBus eventBus = EventBusFactory.getDefault().eventBus();
+		eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("AlterarDisponivel"),
+				moto.getCodigo() + ";" + moto.getDisponivel()));
+		// }
+
 	}
 
 	private void desativarMotoristaEmAreas(Integer codMotorista, EntityManager em)
