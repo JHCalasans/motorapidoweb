@@ -33,7 +33,8 @@
 
 	<ui:define name="conteudo">
 		<h:form prependId="false" id="formCadastro">
-
+			<p:remoteCommand name="fecharArea" actionListener="#{areaBean.fecharArea}" ></p:remoteCommand>
+			
 			<p:panel id="panelCadastro">
 
 				<br />
@@ -97,16 +98,13 @@
 				<div class="clear"></div>
 
 				<p:gmap id="gmap" center="#{areaBean.coordenadas}" zoom="14"  type="terrain" model="#{areaBean.mapModel}" 
-					widgetVar="maparea" style="width:100%;height:400px" >
+					widgetVar="maparea" style="width:100%;height:400px" onPointClick="handlePointClick(event)">
 
-					<p:ajax event="pointSelect" listener="#{areaBean.addMarker}" 
-						update="gmap"></p:ajax>
+					
 					<p:ajax event="overlaySelect"  
 						listener="#{areaBean.marcadorSelecionado}" update="gmap" />
 
-				</p:gmap>
-				
-			
+				</p:gmap>		
 
 				<br />
 				<div class="clear"></div>

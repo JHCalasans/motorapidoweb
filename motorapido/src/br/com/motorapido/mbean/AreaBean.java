@@ -2,6 +2,7 @@ package br.com.motorapido.mbean;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -216,6 +217,22 @@ public class AreaBean extends SimpleController {
 
 	}
 
+	
+	public void fecharArea() {
+		String markers = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("marcadores");
+		marcadores.clear();
+		List<String> lista = Arrays.asList(markers.split("&"));
+		
+		for(String coords : lista) {
+			String[] coord = coords.split(";");
+			org.primefaces.model.map.LatLng coordenada = new org.primefaces.model.map.LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1])); 
+			marcadores.add(coordenada);
+		}			
+		
+		enviarJavascript("PF('dlgArea').show();");
+		
+	}
+	
 	public void marcadorSelecionado(OverlaySelectEvent event) {
 
 		try {
@@ -249,7 +266,8 @@ public class AreaBean extends SimpleController {
 			AreaBO.getInstance().salvarArea(marcadores, area);
 			montarAreas();
 
-			addMsg(FacesMessage.SEVERITY_INFO, "Área cadastrado com sucesso.");
+			addMsg(FacesMessage.SEVERITY_INFO, "Área cadastrada com sucesso.");
+			marcadores.clear();
 			area = new Area();
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -274,7 +292,7 @@ public class AreaBean extends SimpleController {
 				linha.setStrokeColor("#000000");
 				linha.setStrokeOpacity(0.2);
 				mapModel.addOverlay(linha);
-
+				
 			}
 
 			marcadores.add(marker.getLatlng());

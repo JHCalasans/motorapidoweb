@@ -47,7 +47,9 @@
     var primeiroMarcador = null;
     var ultimoMarcador = null;
     var contador = 0;
+    var contadorID = 0;
     var list = [];
+    var listaMarkers = [];
     function verificarurl(texto)
     {
          document.getElementById("msgLoad").innerHTML = texto;
@@ -57,7 +59,8 @@
     function handlePointClickChamada(event) {
     	
         currentMarker = new google.maps.Marker({
-            position:new google.maps.LatLng(event.latLng.lat(), event.latLng.lng())
+            position:new google.maps.LatLng(event.latLng.lat(), event.latLng.lng()),
+        	
         });
        
         PF('map').addOverlay(currentMarker);
@@ -65,21 +68,61 @@
        
 	}
 
-   
+
+    
     function handlePointClick(event) {
 
-    	 currentMarker = new google.maps.Marker({
-             position:new google.maps.LatLng(event.latLng.lat(), event.latLng.lng())
-         });
+        currentMarker = new google.maps.Marker({
+            position:new google.maps.LatLng(event.latLng.lat(), event.latLng.lng()),
+       		id:contadorID 
+        });
+        
+        contadorID++;
+         currentMarker.addListener('click', function(){
+				if(this.id == 0){
+					 var caminho = [ultimoMarcador.position, this.position];
+		        	 var linha = new google.maps.Polyline({
+		        		 path:caminho,
+		        		 geodesic: true,
+		                 strokeColor: '#000000',
+		                 strokeOpacity: 1.0,
+		                 strokeWeight: 2});
+		        	 PF('maparea').addOverlay(linha);
+		        	 var param = list.join("&");
+		        	 fecharArea([{name: "marcadores", value:param}]);
+		        	 contadorID = 0;
+		        	 list = [];
+		        	 listaMarkers = [];
+		        	 currentMarker = null;
+		        	 primeiroMarcador = null;
+		        	 ultimoMarcador = null;
+				}
+				else{
+					list.splice(this.id,list.length - this.id);
+					var cont = listaMarkers.length - 1; 
+					var val = this.id;
+					while(true){
+						listaMarkers[cont].setMap(null);
+						listaMarkers.pop();
+						cont--;
+						if(cont < val)
+							break;
+					}
+				}
+				
+             });
          
+      
         if(primeiroMarcador === null) {      
          	primeiroMarcador = currentMarker;
          	ultimoMarcador = currentMarker;
-            PF('map').addOverlay(currentMarker);
+            PF('maparea').addOverlay(currentMarker);
             contador++;
- 			list.push(currentMarker);
+            var coord = event.latLng.lat() + ";" + event.latLng.lng();
+ 			list.push(coord);
+ 			listaMarkers.push(currentMarker);
         }else if (primeiroMarcador != currentMarker){           
-        	 PF('map').addOverlay(currentMarker);
+        	 PF('maparea').addOverlay(currentMarker);
         	 contador++;
         	 var caminho = [ultimoMarcador.position, currentMarker.position];
         	 var linha = new google.maps.Polyline({
@@ -89,25 +132,16 @@
                  strokeOpacity: 1.0,
                  strokeWeight: 2});
 
-        	 PF('map').addOverlay(linha);
-        	 list.push(currentMarker);
+        	 PF('maparea').addOverlay(linha);
+        	 var coord = event.latLng.lat() + ";" + event.latLng.lng();
+  			 list.push(coord);
+  			 listaMarkers.push(currentMarker);
     		 ultimoMarcador = currentMarker;
-        }else if(contador > 2){
-        	alert("Hello! I am an alert box!!");
-        	var caminho = [];
-        	for(var i = 0; i < list.length; i++){
-        		caminho.push(list[i].position)
-            }
-        	
-        	var area = new google.maps.Polygon({
-       		 path:caminho,
-       		 geodesic: true,
-                strokeColor: '#000000',
-                strokeOpacity: 1.0,
-                strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35});
+        }else if(primeiroMarcador == currentMarker){
+        	document.getElementById("lblOrigemMsg").innerHTML = "Mensagem ";
+    		PF('dlgMensagem').show();
         }
+        
         
     }
 
@@ -300,11 +334,10 @@
 					value="Olá, #{bean.funcionarioLogado.nome.split(' ')[0]}"
 					style="padding-top: 5px; margin-left: -75px;font-size:15px;position: absolute; right: 5%;"></p:outputLabel>
 
-				<p:commandLink title="Logout"
-					action="#{bean.logout}" >
+				<p:commandLink title="Logout" action="#{bean.logout}">
 					<h:graphicImage url="/resources/logout.png"
-								style="border-style: none;width: 20px; margin-top: 5px;" />
-					</p:commandLink>
+						style="border-style: none;width: 20px; margin-top: 5px;" />
+				</p:commandLink>
 			</f:facet>
 
 		</p:menubar>

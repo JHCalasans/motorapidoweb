@@ -37,6 +37,9 @@ public class AreaBO extends MotoRapidoBO {
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
+			if(ArePolygonsOverlapped(coordenadas,em)) 
+				throw new ExcecaoNegocio("Área sobrepõe outra, favor ajustar.");
+			
 			IAreaDAO areaDAO = fabricaDAO.getPostgresAreaDAO();
 			area = areaDAO.save(area, em);
 
@@ -51,7 +54,10 @@ public class AreaBO extends MotoRapidoBO {
 			}
 			emUtil.commitTransaction(transaction);
 			return area;
-		} catch (Exception e) {
+		} catch (ExcecaoNegocio e) {
+			emUtil.rollbackTransaction(transaction);
+			throw  e;
+		}catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar gravar área.", e);
 		} finally {
