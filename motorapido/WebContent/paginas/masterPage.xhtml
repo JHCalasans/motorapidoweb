@@ -48,8 +48,10 @@
     var ultimoMarcador = null;
     var contador = 0;
     var contadorID = 0;
+    var contadorIDLinha = 0;
     var list = [];
     var listaMarkers = [];
+    var listaLinhas = [];
     function verificarurl(texto)
     {
          document.getElementById("msgLoad").innerHTML = texto;
@@ -80,26 +82,54 @@
         contadorID++;
          currentMarker.addListener('click', function(){
 				if(this.id == 0){
-					 var caminho = [ultimoMarcador.position, this.position];
-		        	 var linha = new google.maps.Polyline({
-		        		 path:caminho,
-		        		 geodesic: true,
-		                 strokeColor: '#000000',
-		                 strokeOpacity: 1.0,
-		                 strokeWeight: 2});
-		        	 PF('maparea').addOverlay(linha);
-		        	 var param = list.join("&");
-		        	 fecharArea([{name: "marcadores", value:param}]);
-		        	 contadorID = 0;
-		        	 list = [];
-		        	 listaMarkers = [];
-		        	 currentMarker = null;
-		        	 primeiroMarcador = null;
-		        	 ultimoMarcador = null;
+					if(listaMarkers.length > 2){
+						 var caminho = [ultimoMarcador.position, this.position];
+			        	 var linha = new google.maps.Polyline({
+			        		 path:caminho,
+			        		 geodesic: true,
+			                 strokeColor: '#000000',
+			                 strokeOpacity: 1.0,
+			                 strokeWeight: 1});
+			        	 PF('maparea').addOverlay(linha);
+			        	 
+			        	 var param = list.join("&");
+			        	 fecharArea([{name: "marcadores", value:param}]);
+			        	 contadorID = 0;
+			        	 contadorIDLinha = 0;
+			        	 list = [];
+			        	 listaMarkers = [];
+			        	 currentMarker = null;
+			        	 primeiroMarcador = null;
+			        	 ultimoMarcador = null;
+					}else{
+						
+						while(listaMarkers.length > 0){
+							listaMarkers[0].setMap(null);
+							listaMarkers.shift();
+													
+						}
+						cont = 0;
+						while(listaLinhas.length > 0){
+							listaLinhas[0].setMap(null);
+							listaLinhas.shift();
+								
+						}
+
+						 listaLinhas = [];
+						 contadorID = 0;
+						 contadorIDLinha = 0;
+			        	 list = [];
+			        	 listaMarkers = [];
+			        	 currentMarker = null;
+			        	 primeiroMarcador = null;
+			        	 ultimoMarcador = null;
+					}
+					
 				}
 				else{
 					list.splice(this.id,list.length - this.id);
 					var cont = listaMarkers.length - 1; 
+					var contLinha = listaLinhas.length - 1;
 					var val = this.id;
 					while(true){
 						listaMarkers[cont].setMap(null);
@@ -108,6 +138,15 @@
 						if(cont < val)
 							break;
 					}
+					while(true){
+						listaLinhas[contLinha].setMap(null);
+						listaLinhas.pop();
+						contLinha--;
+						if(contLinha < val - 1){
+							break;
+						}
+					}
+					
 				}
 				
              });
@@ -130,8 +169,11 @@
         		 geodesic: true,
                  strokeColor: '#000000',
                  strokeOpacity: 1.0,
-                 strokeWeight: 2});
+                 id:contadorIDLinha,
+                 strokeWeight: 1});
 
+        	 listaLinhas.push(linha);
+        	 contadorIDLinha++;
         	 PF('maparea').addOverlay(linha);
         	 var coord = event.latLng.lat() + ";" + event.latLng.lng();
   			 list.push(coord);
