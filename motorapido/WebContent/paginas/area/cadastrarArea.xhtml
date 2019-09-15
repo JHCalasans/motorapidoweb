@@ -41,7 +41,7 @@
 				<div class="clear"></div>
 
 				<p:dataTable tableStyle="table-layout:auto;width: 100%;" id="tbArea"
-					var="area" value="#{areaBean.listaArea}" rows="10"
+					var="area" value="#{areaBean.listaArea}" rows="5"
 					style="text-align: center; max-width:100%" first="0"
 					paginatorAlwaysVisible="false" paginator="true"
 					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
@@ -98,7 +98,7 @@
 				<div class="clear"></div>
 
 				<p:gmap id="gmap" center="#{areaBean.coordenadas}" zoom="14"  type="terrain" model="#{areaBean.mapModel}" 
-					widgetVar="maparea" style="width:100%;height:400px" onPointClick="handlePointClick(event)">
+					widgetVar="maparea" style="width:100%;height:600px" onPointClick="handlePointClick(event)">
 
 					
 					<p:ajax event="overlaySelect"  

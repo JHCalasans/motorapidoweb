@@ -44,7 +44,7 @@
 				<div class="clear"></div>
 
 				<p:dataTable tableStyle="table-layout:auto;width: 100%;" id="tbMotoArea"
-					var="area" value="#{areaBean.listaArea}" rows="10"
+					var="area" value="#{areaBean.listaArea}" rows="5"
 					style="text-align: center; max-width:100%" first="0"
 					paginatorAlwaysVisible="false" paginator="true" 
 					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
@@ -107,7 +107,7 @@
 
 				<p:gmap id="gmapMoto" center="#{areaBean.coordenadas}" zoom="14"
 					type="terrain" model="#{areaBean.mapModel}" widgetVar="mapmoto"
-					style="width:100%;height:400px">
+					style="width:100%;height:600px">
 					<p:ajax event="pointSelect" listener="#{areaBean.addMarker}"
 						disabled="true" update="gmapMoto"></p:ajax>
 					<p:ajax event="overlaySelect" disabled="true"

@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/meuPosto" reloadable="true">
-	<Resource auth="Container"
-		driverClassName="org.postgresql.Driver" logAbandoned="true"
-		maxActive="5" maxIdle="5" maxWait="10000" name="jdbc/postgresapp"
+	<Resource auth="Container" driverClassName="org.postgresql.Driver"
+		logAbandoned="true" maxActive="5" maxIdle="5" maxWait="10000"
+		name="jdbc/postgresapp" removeAbandoned="true" removeAbandonedTimeout="60"
+		type="javax.sql.DataSource" 
+		url="jdbc:postgresql://104.248.186.97:5432/diego"
+		username="diego" password="d16082017" 
+		
+		 />
+		
+	<!--url="jdbc:postgresql://localhost:5432/diego" username="postgres" password="jota01"  -->
+	
+	<ResourceLink global="jdbc/postgresapp" name="jdbc/postgresapp"
+		factory="org.apache.naming.factory.DataSourceLinkFactory" type="javax.sql.DataSource"
+		
+		username="diego" password="d16082017"
+		/>
 
-		removeAbandoned="true" removeAbandonedTimeout="60"
-		type="javax.sql.DataSource"
-
-		url="jdbc:postgresql://localhost:5432/diego" username="postgres"
-		password="jota01" />
-	<!-- url="jdbc:postgresql://104.248.186.97:5432/diego" username="diego" 
-		password="d16082017" -->
-	<ResourceLink global="jdbc/postgresapp"
-		name="jdbc/postgresapp"
-		factory="org.apache.naming.factory.DataSourceLinkFactory"
-		type="javax.sql.DataSource" username="postgres" password="jota01" />
-
-	<!-- username="diego" password="d16082017" -->
+	<!--  username="postgres" password="jota01" -->
 </Context>
