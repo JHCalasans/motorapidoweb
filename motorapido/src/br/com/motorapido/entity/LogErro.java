@@ -39,6 +39,8 @@ public class LogErro extends Entidade {
 	@Column(name = "pagina", nullable = true)
 	private String pagina;
 	
+	@Column(name = "cod_funcionario", nullable = true)
+	private Integer codFuncionario;
 
 
 	public Long getCodLogErro() {
@@ -80,5 +82,13 @@ public class LogErro extends Entidade {
 
 	public void setPagina(String pagina) {
 		this.pagina = pagina;
+	}
+
+	public Integer getCodFuncionario() {
+		return codFuncionario;
+	}
+
+	public void setCodFuncionario(Integer codFuncionario) {
+		this.codFuncionario = codFuncionario;
 	}
 }

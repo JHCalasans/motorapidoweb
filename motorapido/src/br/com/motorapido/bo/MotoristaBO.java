@@ -486,6 +486,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			motorista.setAtivo("S");
 			motorista.setDisponivel("N");
 			motorista.setBloqueado("N");
+			motorista.setVerDestino("N");
 
 			IBinarioMotoristaDAO binarioMotoristaDAO = fabricaDAO.getPostgresBinarioMotoristaDAO();
 			BinarioMotorista binarioMotorista = new BinarioMotorista();

@@ -76,7 +76,7 @@
 			     		   Motoristas
 			   			 </f:facet>
 
-					<p:column style="width:130px">
+					<p:column style="width:90px">
 						<f:facet name="header">
 							<h:outputText value="Prefixo"
 								styleClass="cabecalhoDataTable" />
@@ -85,7 +85,7 @@
 
 						</h:outputText>
 					</p:column>
-					<p:column style="width:130px">
+					<p:column style="width:150px">
 						<f:facet name="header">
 							<h:outputText value="#{bundle.motorista_nome}"
 								styleClass="cabecalhoDataTable" />
@@ -105,7 +105,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width:130px">
+					<p:column style="width:90px">
 						<f:facet name="header">
 							<h:outputText value="#{bundle.motorista_situacao}"
 								styleClass="cabecalhoDataTable" />
@@ -116,7 +116,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width:90px">
+					<p:column style="width:120px">
 						<f:facet name="header">
 							<h:outputText value="#{bundle.operacoes}"
 								styleClass="cabecalhoDataTable" />
@@ -127,45 +127,45 @@
 								style="border-style: none" />
 						</h:commandLink>
 						<h:commandLink title="Editar" immediate="true"
-							style="margin-left:10px;"
+							style="margin-left:3px;"
 							action="#{motoristaBean.navegarAlteracao(motorista.codigo)}">
 							<h:graphicImage url="/resources/edit.png"
 								style="border-style: none" />
 						</h:commandLink>
 						<h:commandLink title="Doc. Criminais" immediate="true"
-							style="margin-left:10px;"
+							style="margin-left:3px;"
 							action="#{motoristaBean.downloadDocCriminais(motorista)}">
 							<h:graphicImage url="/resources/pdf.png"
 								style="border-style: none" />
 						</h:commandLink>
 						<h:commandLink title="Comp. Residência" immediate="true"
-							style="margin-left:10px;"
+							style="margin-left:3px;"
 							action="#{motoristaBean.downloadCompResidencia(motorista)}">
 							<h:graphicImage url="/resources/pdf2.png"
 								style="border-style: none" />
 						</h:commandLink>
 						<h:commandLink title="Bloquear" immediate="true"
-							style="margin-left:10px;"
+							style="margin-left:3px;"
 							actionListener="#{motoristaBean.carregarMotoristaBloquear(motorista, true)}"
 							rendered="#{motorista.bloqueado eq 'N'}">
 							<h:graphicImage url="/resources/bloquear.png"
 								style="border-style: none" />
 						</h:commandLink>
 						<h:commandLink title="Desbloquear" immediate="true"
-							style="margin-left:10px;"
+							style="margin-left:3px;"
 							actionListener="#{motoristaBean.carregarMotoristaBloquear(motorista, false)}"
 							rendered="#{motorista.bloqueado eq 'S'}">
 							<h:graphicImage url="/resources/desbloquear.png"
 								style="border-style: none" />
 						</h:commandLink>
 							<h:commandLink title="Liberar Destino da Chamada" immediate="true"
-							style="margin-left:10px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, true)}"							
+							style="margin-left:3px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, true)}"							
 							rendered="#{motorista.verDestino eq 'N'}">
 							<h:graphicImage url="/resources/cad_aberto.png"
 								style="border-style: none" />
 						</h:commandLink>
 							<h:commandLink title="Não Ver Destino da Chamada" immediate="true"
-							style="margin-left:10px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, false)}"							
+							style="margin-left:3px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, false)}"							
 							rendered="#{motorista.verDestino eq 'S'}">
 							<h:graphicImage url="/resources/cad_fechado.png"
 								style="border-style: none" />

@@ -15,6 +15,7 @@ import br.com.minhaLib.dao.impl.GenericDAOImpl;
 import br.com.minhaLib.util.EntityManagerUtil;
 import br.com.minhaLib.util.excecao.Log;
 import br.com.motorapido.dao.ILogErroDAO;
+import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.LogErro;
 
 
@@ -35,10 +36,15 @@ class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Long> implements IL
 		try {
 			transaction.begin();
 			FacesContext facesContext = FacesContext.getCurrentInstance();
+			
 			if (facesContext != null) {
+				Funcionario funcionarioLogado = null;
+				if (facesContext.getExternalContext().getSessionMap().containsKey("motoRapido.funcionario"))
+					funcionarioLogado = (Funcionario) facesContext.getExternalContext().getSessionMap().get("motoRapido.funcionario");
 				LogErro logErro = new LogErro();
 				logErro.setDataHoraErro(new Date());
 				logErro.setErro(erro);
+				logErro.setCodFuncionario(funcionarioLogado.getCodigo());
 				this.save(logErro, em);
 			}
 			emUtil.commitTransaction(transaction);

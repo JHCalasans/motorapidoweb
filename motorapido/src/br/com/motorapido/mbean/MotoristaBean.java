@@ -319,6 +319,7 @@ public class MotoristaBean extends SimpleController {
 			
 			
 			motorista.setSenha(msgSalvar);
+			motorista.setCep(cep);
 			MotoristaBO.getInstance().salvarMotorista(motorista, listaCaracteristicasSelecionadas, foto != null ? foto.getContents() : null, 
 					compResidencial != null ? compResidencial.getContents() : null, docCriminais != null ? docCriminais.getContents() : null);
 			// limparCampos();
