@@ -484,7 +484,7 @@
 		
 		<p:dialog widgetVar="dlgMotoChamada" id="dlgMotoChamada1" showEffect="fade"
 			resizable="false" styleClass="dialogBox" closable="true"
-			scrollable="true" scrollHeight="150" width="450px"
+			scrollable="true" scrollHeight="150" width="550px"
 			header="Histórico da Chamada">
 			<h:form prependId="false">
 				<h:form>
@@ -497,17 +497,24 @@
 						            Histórico
 						    </f:facet>
 							<p:column headerText="Motorista"
-								style="width:50%;text-align: center;">
-								<p:outputLabel value="#{chamada.veiculo.motorista.nome}" style="float: none;"
+								style="width:30%;text-align: center;float: none !important;">
+								<p:outputLabel value="#{chamada.veiculo.motorista.nome}" 
 									styleClass="OutputLabelValue"></p:outputLabel>
 							</p:column>
-							<p:column headerText="Aceita">
-								<p:outputLabel value="#{chamada.flgAceita}"
-									styleClass="OutputLabelValue"></p:outputLabel>
+							<p:column headerText="Aceita" style="text-align: center;">
+								<p:outputLabel value="#{chamada.flgAceita == 'S' ? 'Sim' : 'Não'}"
+									styleClass="OutputLabelValue" >
+									</p:outputLabel>
 							</p:column>			
 							<p:column headerText="Veículo">
 								<p:outputLabel value="#{chamada.veiculo.placa}"
 									styleClass="OutputLabelValue"></p:outputLabel>
+							</p:column>			
+							<p:column headerText="Horário" style="width:30%;">
+								<p:outputLabel value="#{chamada.dataDecisao}"
+									styleClass="OutputLabelValue">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+								</p:outputLabel>
 							</p:column>							
 
 						</p:dataTable>

@@ -145,8 +145,8 @@ public class ChamadaBO extends MotoRapidoBO {
 		try {
 			transaction.begin();
 			Chamada retorno = SimpleController.getListaChamadasAceitas().stream()
-					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
-
+					.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
+			
 			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.EM_CORRIDA.getCodigo()));
 			retorno.setDataInicioCorrida(param.getInicioCorrida());
 			retorno.setLatitudeInicioCorrida(param.getChamada().getLatitudeInicioCorrida());
@@ -175,7 +175,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			transaction.begin();
 
 			Chamada retorno = SimpleController.getListaChamadasEmCorrida().stream()
-					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
+					.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
 
 			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.FINALIZADA.getCodigo()));
 			retorno.setDataFimCorrida(param.getChamada().getDataFimCorrida());
@@ -415,30 +415,31 @@ public class ChamadaBO extends MotoRapidoBO {
 				MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
 				motoristaAparelho.setAtivo("S");
 				motoristaAparelho.setMotorista(listaMotoristas.get(0).getMotorista());
-				List<MotoristaAparelho> lista = motoristaAparelhoDAO.obterAparelhoPorMotorista(listaMotoristas.get(0).getMotorista().getCodigo(), em);
+				List<MotoristaAparelho> lista = motoristaAparelhoDAO
+						.obterAparelhoPorMotorista(listaMotoristas.get(0).getMotorista().getCodigo(), em);
 				if (lista != null && lista.size() > 0) {
 
 					listaParaNotificacao.add(lista.get(0).getIdPush());
 
 					IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
-					Veiculo veiculo = veiculoDAO.obterVeiculosEmUsoPorMotorista(lista.get(0).getMotorista().getCodigo(), em);
+					Veiculo veiculo = veiculoDAO.obterVeiculosEmUsoPorMotorista(lista.get(0).getMotorista().getCodigo(),
+							em);
 					chamadaVeiculo.setChamada(chamada);
 					chamadaVeiculo.setFlgAceita("A");
 					chamadaVeiculo.setFlgUltimoMovimento("S");
 					chamadaVeiculo.setDataCriacao(new Date());
 					if (veiculo == null)
-						throw new ExcecaoNegocio(
-								"Não existe veículo em uso para o motorista " + lista.get(0).getMotorista().getCodigo());
+						throw new ExcecaoNegocio("Não existe veículo em uso para o motorista "
+								+ lista.get(0).getMotorista().getCodigo());
 					chamadaVeiculo.setVeiculo(veiculo);
 
 					chamadaVeiculo = chamadaVeiculoDAO.save(chamadaVeiculo, em);
 
-					
 					chamada.setCodChamadaVeiculo(chamadaVeiculo.getCodigo());
 					Gson gson = new Gson();
-					
-					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(lista.get(0).getMotorista().getCodigo(),
-							gson.toJson(chamada) + "=>"
+
+					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(
+							lista.get(0).getMotorista().getCodigo(), gson.toJson(chamada) + "=>"
 									+ FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo()));
 
 					if (!enviou)
@@ -524,7 +525,7 @@ public class ChamadaBO extends MotoRapidoBO {
 
 			// IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			Chamada retorno = SimpleController.getListaChamadasEmEsperaGeral().stream()
-					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
+					.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
 			if (retorno == null)
 				throw new ExcecaoNegocio("Chamada já foi aceita por outro motorista.");
 
@@ -606,7 +607,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			transaction.begin();
 
 			Chamada retorno = SimpleController.getListaChamadasEmEspera().stream()
-					.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
+					.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
 			if (retorno == null)
 				throw new ExcecaoNegocio("Chamada já foi aceita por outro motorista.");
 
@@ -684,9 +685,9 @@ public class ChamadaBO extends MotoRapidoBO {
 			Chamada retorno;
 			boolean jaExistia = false;
 			if (SimpleController.getListaChamadasAceitas().stream()
-					.anyMatch(ch -> ch.getCodigo() == param.getChamada().getCodigo())) {
+					.anyMatch(ch -> ch.getCodigo().equals(param.getChamada().getCodigo()))) {
 				retorno = SimpleController.getListaChamadasAceitas().stream()
-						.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
+						.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
 				if (param.getCodChamadaVeiculo() != retorno.getCodChamadaVeiculo())
 					throw new Exception("Essa chamada já foi aceita por outro motorista");
 
@@ -697,25 +698,29 @@ public class ChamadaBO extends MotoRapidoBO {
 				 */
 
 			} else if (SimpleController.getListaChamadasEmEspera().stream()
-					.anyMatch(ch -> ch.getCodigo() == param.getChamada().getCodigo())) {
+					.anyMatch(ch -> ch.getCodigo().equals(param.getChamada().getCodigo()))) {
 				retorno = SimpleController.getListaChamadasEmEspera().stream()
-						.filter(ch -> ch.getCodigo() == param.getChamada().getCodigo()).findFirst().get();
+						.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
 				jaExistia = true;
 			} else
-				throw new Exception("Chamada já foi aceita ou cancelada");
+				throw new ExcecaoNegocio("Chamada já foi aceita ou cancelada");
 
 			// retorno.setSituacaoChamada(new
 			// SituacaoChamada(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo()));
 
-			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.PENDENTE.getCodigo()));
+			if(!retorno.getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo()))
+				retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.PENDENTE.getCodigo()));
 
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			chamadaDAO.save(retorno, em);
 
 			IChamadaVeiculoDAO chamadaVeiculoDAO = fabricaDAO.getPostgresChamadaVeiculoDAO();
 			ChamadaVeiculo chamadaVeiculo = chamadaVeiculoDAO.findById(param.getCodChamadaVeiculo(), em);
-			chamadaVeiculo.setFlgUltimoMovimento("N");
-			chamadaVeiculoDAO.save(chamadaVeiculo, em);
+
+			if (chamadaVeiculo != null) {
+				chamadaVeiculo.setFlgUltimoMovimento("N");
+				chamadaVeiculoDAO.save(chamadaVeiculo, em);
+			}
 			ChamadaVeiculo chamadaVeiculo2 = new ChamadaVeiculo();
 			chamadaVeiculo2.setDataDecisao(param.getDataCancelamento());
 			chamadaVeiculo2.setFlgAceita("N");
