@@ -4,6 +4,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
@@ -12,6 +15,8 @@ import javax.persistence.PersistenceContext;
 
 import br.com.minhaLib.dao.CriterioOrdenacao;
 import br.com.minhaLib.dao.impl.GenericDAOImpl;
+import br.com.minhaLib.excecao.excecaobanco.ExcecaoBanco;
+import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
 import br.com.minhaLib.util.EntityManagerUtil;
 import br.com.minhaLib.util.excecao.Log;
 import br.com.motorapido.dao.ILogErroDAO;
@@ -66,6 +71,15 @@ class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Long> implements IL
 			res = res.substring(0, MAX_SIZE);
 		}
 		this.logarErro(res);
+	}
+
+	@Override
+	public List<LogErro> obterPorData(Date dtInicial, Date dtFinal, EntityManager em) throws ExcecaoBancoConexao, ExcecaoBanco {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("dtInicial", dtInicial);
+		params.put("dtFinal", dtFinal);
+		return findByNamedQueryAndNamedParams("LogErro.obterPorData", params, em);
+		
 	}
 
 

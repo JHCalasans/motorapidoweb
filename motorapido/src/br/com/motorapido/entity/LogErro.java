@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,6 +19,9 @@ import br.com.minhaLib.dao.Entidade;
 
 @Entity
 @Table(name = LogErro.nomeTabela, schema = LogErro.esquema, catalog = "diego")
+@NamedQueries(value = {
+		@NamedQuery(name = "LogErro.obterPorData", query = "select lo from LogErro lo where lo.dataHoraErro >= :dtInicial and lo.dataHoraErro <= :dtFinal "
+				+ " order by lo.dataHoraErro desc")})
 public class LogErro extends Entidade {
 
 	public final static String esquema = "diego";

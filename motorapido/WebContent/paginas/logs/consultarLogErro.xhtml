@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</h:head>
+<ui:composition template="/paginas/masterPage.xhtml">
+	<ui:param name="tituloPagina" value="Consulta de Logs" />
+	<ui:param name="headerConteudo" value="Consulta de Logs" />
+	<ui:param name="bean" value="#{logBean}" />
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{logBean.verificaSessaoValida}" />
+	</f:metadata>
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formCadastro">
+
+			<p:panel id="panelCadastro">
+
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel for="dataInicial" value="Data Inicial"
+						styleClass="OutputLabelCampo" style="width:150px;" />
+					<p:calendar showOn="button" id="dataInicial"
+						requiredMessage="#{bundle.campoObrigatorio} : Data Inicial"
+						value="#{logBean.dataInicial}" mask="true"
+						validatorMessage="#{bundle.dataInvalida}"
+						converterMessage="#{bundle.formatodataInvalidaddMMyyyy}"
+						pattern="dd/MM/yyyy HH:mm:ss" locale="pt" size="20"
+						required="true">
+						<p:ajax process="@this" update="dataInicial :msgs, dataFinal"
+							event="change" />
+
+
+					</p:calendar>
+				</h:panelGroup>
+
+				<div class="clear"></div>
+
+
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel for="dataFinal" value="Data Final"
+						styleClass="OutputLabelCampo" style="width:150px;" />
+					<p:calendar showOn="button" id="dataFinal"
+						requiredMessage="#{bundle.campoObrigatorio} : Data Final"
+						value="#{logBean.dataFinal}" mask="true"
+						mindate="#{logBean.dataInicial}"
+						validatorMessage="#{bundle.dataInvalida}"
+						converterMessage="#{bundle.formatodataInvalidaddMMyyyy}"
+						pattern="dd/MM/yyyy HH:mm:ss" locale="pt" size="20">
+
+					</p:calendar>
+				</h:panelGroup>
+				<div class="clear"></div>
+
+			
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton value="#{bundle.pesquisarRegistro}"
+						id="btnPesquisar" actionListener="#{logBean.pesquisarLog}"
+						style="margin-right: 10px;" update="formCadastro, msgs, conteudo">
+					</p:commandButton>
+					
+				</h:panelGroup>
+
+				<br />
+				<div class="clear"></div>
+			</p:panel>
+
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup>
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbErros" var="erro" value="#{logBean.listaErros}"
+					rows="10" style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" paginator="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+					<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Logs
+			   			 </f:facet>
+					<p:column style="width:100px">
+						<f:facet name="header">
+							<h:outputText value="Data"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbDescricao" value="#{erro.dataHoraErro}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:330px">
+						<f:facet name="header">
+							<h:outputText value="Erro"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText 
+							value="#{erro.erro}">
+
+						</h:outputText>
+					</p:column>
+
+					
+				
+				</p:dataTable>
+			</h:panelGroup>
+
+		</h:form>
+
+		
+	</ui:define>
+</ui:composition>
+</html>
