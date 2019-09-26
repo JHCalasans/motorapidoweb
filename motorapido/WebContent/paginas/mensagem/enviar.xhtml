@@ -41,7 +41,7 @@
 						emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
 						rows="10">
 						<p:column style="width:16px;text-align:center">
-							<p:commandLink immediate="true" update="panelMensagem"
+							<p:commandLink immediate="true" update="panelMensagem" oncomplete="iniciarListaMsgsChat()"
 								action="#{mensagemBean.ajustarMotoristaSelecionado(motorista)}">
 								<h:graphicImage url="/resources/message.png"
 									style="border-style: none" />
@@ -81,12 +81,12 @@
 
 			<br />
 
-			<p:panel id="panelMensagem"
+			<p:panel id="panelMensagem" 
 				header="Chat - #{mensagemBean.motoristaSelecionado.nome}">
-
-
+				
+					<p:outputLabel style="visibility: hidden;" value="#{mensagemBean.motoristaSelecionado.codigo}" id="lblmotoCodChat"></p:outputLabel>
 				<p:dataScroller value="#{mensagemBean.historico}" var="historico" 
-					chunkSize="10" mode="inline" scrollHeight="300" id="scrollChat" widgetVar="scrollChatVar">
+					 mode="inline" scrollHeight="300" id="scrollChat" widgetVar="scrollChatVar">
 
 
 					<h:panelGrid columns="2" style="width:100%"

@@ -29,7 +29,7 @@
 		<link type="text/css" rel="stylesheet"
 			href="#{request.contextPath}/resources/css/estilo.css" />
 		<link rel="shortcut icon" type="image/x-icon"
-			href="#{request.contextPath}/resources/favicon.ico" />
+			href="#{request.contextPath}/resources/moto_icon.ico" />
 	</f:facet>
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnSw7uj9P9oZIc_7c74peSmkmkYU1O5s"
@@ -213,6 +213,8 @@
     var myAudio=document.getElementById('audio');
 
 	var posis = [];
+
+	var msgs = [];
 	
     function handleMessage(facesmessage) {
 
@@ -267,9 +269,24 @@
 	        facesmessage.detail = res[0]; */
 			facesmessage.severity = 'info';
 	    	//alert(facesmessage);		
-			myAudio.play();
+			//myAudio.play();
 			//document.getElementById("formMsg:lblMsg").value = "opa";
-			if(PF('dlgMensagem').isVisible()){
+			if(window.location.href.indexOf('enviar') )
+			{
+				var resu = facesmessage.detail.toString().split(';');
+				var codMoto = document.getElementById("lblmotoCodChat");
+				//verifico se o chat aberto é o do motorista que enviou a mensagem
+				if(codMoto.innerHTML == resu[1])
+				{
+					var nvmsg = msgs[window.msgs.length-1];
+					window.msgs.push(nvmsg);
+					var x = document.getElementById('scrollChat').childNodes;
+					var y = x[0].childNodes;
+					var z = y[0].childNodes;
+					y[0].insertNode(nvmsg);
+				}
+			}
+			/* if(PF('dlgMensagem').isVisible()){
 				document.getElementById("lblOrigemMsg2").innerHTML = "Mensagem de " + facesmessage.detail;
 				PF('dlgMensagem2').show();
 			}else{
@@ -282,11 +299,21 @@
 				
 				  var interval = setInterval('ajustaMsg()',
 			    			2000); 
-			}
+			} */
 			return facesmessage.detail;
          }
 		
 	}
+
+	function iniciarListaMsgsChat()
+	{
+		var x = document.getElementById('scrollChat').childNodes;
+		var y = x[0].childNodes;
+		var z = y[0].childNodes;
+	//	var msgsChat = document.getElementById('scrollChat');
+		msgs = Array.from(z); 
+	}
+	
 
 	function  ajustaMsg() {
 		document.getElementById('formMenuNorth:btnMsg').click();

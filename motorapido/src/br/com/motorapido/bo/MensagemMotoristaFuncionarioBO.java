@@ -69,9 +69,24 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			objetoMsg.setMessagem(param.getMensagem());
 			objetoMsg.setNomeMotorista(moto.getNome());
 			
+			
 			EventBus eventBus = EventBusFactory.getDefault().eventBus();
-			eventBus.publish(CHANELL, new FacesMessage(StringEscapeUtils.escapeHtml3(summary),
-										StringEscapeUtils.escapeHtml3(moto.getNome())));
+			try {
+				Thread.sleep(500);
+				eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("NovaMensagem"),
+						moto.getNome() + ";" + moto.getCodigo()));
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			/*
+			 * EventBus eventBus = EventBusFactory.getDefault().eventBus();
+			 * eventBus.publish(CHANELL, new
+			 * FacesMessage(StringEscapeUtils.escapeHtml3(summary),
+			 * StringEscapeUtils.escapeHtml3(moto.getNome())));
+			 */
 			SimpleController.setUltimoMotMsg(param.getCodMotorista());
 			SimpleController.setUltimaMsgEnviada(mensag);
 			
