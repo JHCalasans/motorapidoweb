@@ -20,6 +20,7 @@ import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.mbean.SimpleController;
+import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.ObjetoMensagem;
 import br.com.motorapido.util.ws.params.MensagemParam;
 import jersey.repackaged.com.google.common.collect.Lists;
@@ -160,7 +161,7 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			mensag.setFuncionario(mensagem.getFuncionario());
 			mensag = mensagemMotoristaFuncionarioDAO.save(mensag, em);
 			//SimpleController.setUltimaMsgEnviada(mensag);
-			
+			ControleSessaoWS.enviarMensagemChat(mensagem.getMotorista().getCodigo(), mensagem.getDescricao(), new SimpleDateFormat("dd/MM/yyyy hh:mm").format(mensag.getDataCriacao()));
 		/*	PushNotificationUtil.enviarNotificacaoPlayerId(FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em), 
 					FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em), listaParaNotificacao, mensagem.getDescricao());
 		

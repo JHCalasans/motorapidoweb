@@ -5,17 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.FacesMessage;
 import javax.websocket.Session;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.primefaces.push.EventBus;
-import org.primefaces.push.EventBusFactory;
 
 import com.google.gson.Gson;
 
 import br.com.motorapido.entity.Motorista;
-import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.util.ws.retornos.RetornoVerificaPosicao;
 
 public class ControleSessaoWS {
@@ -101,6 +95,18 @@ public class ControleSessaoWS {
 
 		if(sMap.containsKey(codMotorista)){
 			sMap.get(codMotorista).getSessao().getBasicRemote().sendText("NovaChamada=>"+msg);
+			return true;
+		}else
+			return false;
+			
+		
+		
+	}
+	
+	public static boolean enviarMensagemChat(Integer codMotorista, String msg, String data) throws IOException {
+
+		if(sMap.containsKey(codMotorista)){
+			sMap.get(codMotorista).getSessao().getBasicRemote().sendText("NovaMensagemChat=>"+msg+"=>"+data);
 			return true;
 		}else
 			return false;
