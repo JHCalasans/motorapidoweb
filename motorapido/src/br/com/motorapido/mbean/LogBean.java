@@ -8,7 +8,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import br.com.motorapido.bo.LogErroBO;
+import br.com.motorapido.bo.LogErroMotoristaBO;
 import br.com.motorapido.entity.LogErro;
+import br.com.motorapido.entity.LogErroMotorista;
 import br.com.motorapido.util.ExcecoesUtil;
 
 @ManagedBean(name = "logBean")
@@ -21,6 +23,7 @@ public class LogBean extends SimpleController{
 	private Date dataInicial;
 	private Date dataFinal;
 	private List<LogErro> listaErros;
+	private List<LogErroMotorista> listaErrosMotoristas;
 	
 	
 	@PostConstruct
@@ -40,6 +43,14 @@ public class LogBean extends SimpleController{
 	public void pesquisarLog() {
 		try {
 			listaErros = LogErroBO.getInstance().pesquisarLogPorData(dataInicial, dataFinal);
+		}catch(Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
+	public void pesquisarLogMotoristas() {
+		try {
+			listaErrosMotoristas = LogErroMotoristaBO.getInstance().pesquisarLogPorData(dataInicial, dataFinal);
 		}catch(Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -75,6 +86,16 @@ public class LogBean extends SimpleController{
 
 	public void setListaErros(List<LogErro> listaErros) {
 		this.listaErros = listaErros;
+	}
+
+
+	public List<LogErroMotorista> getListaErrosMotoristas() {
+		return listaErrosMotoristas;
+	}
+
+
+	public void setListaErrosMotoristas(List<LogErroMotorista> listaErrosMotoristas) {
+		this.listaErrosMotoristas = listaErrosMotoristas;
 	}
 
 }

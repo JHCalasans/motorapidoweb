@@ -1,5 +1,6 @@
 package br.com.motorapido.bo;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -74,7 +75,7 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			try {
 				Thread.sleep(500);
 				eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("NovaMensagem"),
-						moto.getNome() + ";" + moto.getCodigo()));
+						moto.getNome() + ";" + moto.getCodigo() + ";" + param.getMensagem() + ";" + new SimpleDateFormat("dd/MM/yyyy hh:mm").format(mensag.getDataCriacao())));
 
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -158,7 +159,7 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			mensag.setDataCriacao(new Date());
 			mensag.setFuncionario(mensagem.getFuncionario());
 			mensag = mensagemMotoristaFuncionarioDAO.save(mensag, em);
-			SimpleController.setUltimaMsgEnviada(mensag);
+			//SimpleController.setUltimaMsgEnviada(mensag);
 			
 		/*	PushNotificationUtil.enviarNotificacaoPlayerId(FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em), 
 					FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em), listaParaNotificacao, mensagem.getDescricao());

@@ -11,8 +11,8 @@
 	<meta http-equiv="Expires" content="0" />
 </h:head>
 <ui:composition template="/paginas/masterPage.xhtml">
-	<ui:param name="tituloPagina" value="Consulta de Logs de Erro" />
-	<ui:param name="headerConteudo" value="Consulta de Logs de Erro" />
+	<ui:param name="tituloPagina" value="Consulta de Logs de Erro Motoristas" />
+	<ui:param name="headerConteudo" value="Consulta de Logs de Erro Motoristas" />
 	<ui:param name="bean" value="#{logBean}" />
 	<f:metadata>
 		<f:event type="preRenderView"
@@ -63,7 +63,7 @@
 				<h:panelGroup styleClass="p_like buttonPosition">
 
 					<p:commandButton value="#{bundle.pesquisarRegistro}"
-						id="btnPesquisar" actionListener="#{logBean.pesquisarLog}"
+						id="btnPesquisar" actionListener="#{logBean.pesquisarLogMotoristas}"
 						style="margin-right: 10px;" update="formCadastro, msgs, conteudo">
 					</p:commandButton>
 					
@@ -77,14 +77,14 @@
 			<div class="clear"></div>
 			<h:panelGroup>
 				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
-					id="tbErros" var="erro" value="#{logBean.listaErros}"
+					id="tbErros" var="erro" value="#{logBean.listaErrosMotoristas}"
 					rows="10" style="text-align: center; max-width:100%" first="0"
 					paginatorAlwaysVisible="false" paginator="true"
 					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
 					<f:facet name="header" styleClass="cabecalhoDataTable">
 			     		   Logs
 			   			 </f:facet>
-					<p:column style="width:100px">
+					<p:column style="width:10%px">
 						<f:facet name="header">
 							<h:outputText value="Data"
 								styleClass="cabecalhoDataTable" />
@@ -93,8 +93,19 @@
 							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 						</h:outputText>
 					</p:column>
+					
+					<p:column style="width:15%">
+						<f:facet name="header">
+							<h:outputText value="Motorista"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText 
+							value="#{erro.motorista.nome}">
 
-					<p:column style="width:330px">
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:75%">
 						<f:facet name="header">
 							<h:outputText value="Erro"
 								styleClass="cabecalhoDataTable" />

@@ -278,12 +278,11 @@
 				//verifico se o chat aberto é o do motorista que enviou a mensagem
 				if(codMoto.innerHTML == resu[1])
 				{
-					var nvmsg = msgs[window.msgs.length-1];
-					window.msgs.push(nvmsg);
-					var x = document.getElementById('scrollChat').childNodes;
-					var y = x[0].childNodes;
-					var z = y[0].childNodes;
-					y[0].insertNode(nvmsg);
+					//var nvmsg = msgs[window.msgs.length-1];
+					//window.msgs.push(nvmsg);
+					//var x = document.getElementById('btnAtualizaChat');
+					//x.click();
+					atualizarChat([{name: "msg", value : resu[2]}, {name: "dataMsg", value : resu[3]},{name: "codMotorista", value : resu[1]} ]);
 				}
 			}
 			/* if(PF('dlgMensagem').isVisible()){
@@ -307,7 +306,11 @@
 
 	function iniciarListaMsgsChat()
 	{
+		
+		var scroll = document.getElementById('scrollChat');
+	
 		var x = document.getElementById('scrollChat').childNodes;
+		
 		var y = x[0].childNodes;
 		var z = y[0].childNodes;
 	//	var msgsChat = document.getElementById('scrollChat');

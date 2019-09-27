@@ -438,7 +438,7 @@ public class ChamadaBean extends SimpleController {
 
 	public void removerChamada(Chamada chamadaRemover) {
 		try {
-			getListaChamadasEmEspera().removeIf(cha -> cha.getCodigo() == chamadaRemover.getCodigo());
+			getListaChamadasEmEspera().removeIf(cha -> cha.getCodigo().equals(chamadaRemover.getCodigo()));
 			ChamadaBO.getInstance().removerChamada(chamadaRemover);
 			atualizarChamadasFiltro();
 			addMsg(FacesMessage.SEVERITY_INFO, "Chamada cancelada com sucesso.");

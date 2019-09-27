@@ -28,7 +28,7 @@
 
 		<h:form prependId="false" id="formConsulta">
 
-		
+
 			<p:panel id="panelMotoristas" header="Motoristas">
 
 				<h:panelGroup>
@@ -41,7 +41,8 @@
 						emptyMessage="#{bundle.nenhumRegistroEncontrado}" paginator="true"
 						rows="10">
 						<p:column style="width:16px;text-align:center">
-							<p:commandLink immediate="true" update="panelMensagem" oncomplete="iniciarListaMsgsChat()"
+							<p:commandLink immediate="true" update="dlgChat1"
+								oncomplete="PF('dlgChat').show()"
 								action="#{mensagemBean.ajustarMotoristaSelecionado(motorista)}">
 								<h:graphicImage url="/resources/message.png"
 									style="border-style: none" />
@@ -78,15 +79,58 @@
 				</h:panelGroup>
 			</p:panel>
 			<p:spacer height="20"></p:spacer>
-
 			<br />
+			<div class="clear" />
 
-			<p:panel id="panelMensagem" 
-				header="Chat - #{mensagemBean.motoristaSelecionado.nome}">
-				
-					<p:outputLabel style="visibility: hidden;" value="#{mensagemBean.motoristaSelecionado.codigo}" id="lblmotoCodChat"></p:outputLabel>
-				<p:dataScroller value="#{mensagemBean.historico}" var="historico" 
-					 mode="inline" scrollHeight="300" id="scrollChat" widgetVar="scrollChatVar">
+
+
+		</h:form>
+
+		<p:dialog widgetVar="dlgChat" id="dlgChat1" showEffect="fade"
+			resizable="false" 
+			styleClass="dialogBox" closable="true"
+			header="Chat - #{mensagemBean.motoristaSelecionado.nome}"
+			width="660px">
+			<h:form prependId="false">
+
+				<p:messages closable="true" id="msgsChat" />
+
+				<p:outputLabel style="visibility: hidden;"
+					value="#{mensagemBean.motoristaSelecionado.codigo}"
+					id="lblmotoCodChat"></p:outputLabel>
+
+				<h:panelGroup>
+					<p:inputTextarea widgetVar="editor" rows="5"
+						value="#{mensagemBean.mensagem.descricao}"
+						style="margin-bottom:5px; width:99%;border-width: 2px;border-color: darkcyan;"
+						required="true" placeholder="Digite aqui a mensagem"
+						requiredMessage="Favor digite algo na mensagem">
+
+					</p:inputTextarea>
+
+				</h:panelGroup>
+
+				<div class="clear" />
+
+				<h:panelGroup styleClass="p_like buttonPosition">
+
+					<p:commandButton actionListener="#{mensagemBean.enviarMensagem}"
+						update="msgsChat,scrollChat"  value="Enviar" global="false">
+					</p:commandButton>
+					
+					<p:remoteCommand id="btnAtualizaChat" immediate="true" actionListener="#{mensagemBean.atualizarMensagensChat}"
+						update="scrollChat"   global="false" style="display: none;" name="atualizarChat">
+					</p:remoteCommand>
+
+				</h:panelGroup>
+				<div class="clear" />
+
+				<br />
+
+
+				<p:dataScroller value="#{mensagemBean.historico}" var="historico"
+					mode="inline" scrollHeight="250" id="scrollChat"
+					widgetVar="scrollChatVar">
 
 
 					<h:panelGrid columns="2" style="width:100%"
@@ -141,33 +185,9 @@
 
 				<p:spacer height="20"></p:spacer>
 
-				<br />
 
-				<h:panelGroup>
-					<p:inputTextarea widgetVar="editor" rows="5"
-						value="#{mensagemBean.mensagem.descricao}"
-						style="margin-bottom:10px; width:99%" required="true"
-						placeholder="Digite aqui a mensagem" requiredMessage="Favor digite algo na mensagem">
-
-					</p:inputTextarea>
-
-				</h:panelGroup>
-
-
-				<h:panelGroup styleClass="p_like buttonPosition">
-					<br></br>
-					<p:commandButton action="#{mensagemBean.enviarMensagem}"
-						value="Enviar" update=":msgs,:growl, panelMensagem" icon="ui-icon ui-icon-plus">
-					</p:commandButton>
-
-				</h:panelGroup>
-				<div class="clear" />
-
-			</p:panel>
-
-
-		</h:form>
-
+			</h:form>
+		</p:dialog>
 
 	</ui:define>
 </ui:composition>

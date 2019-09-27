@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -20,6 +22,9 @@ import br.com.minhaLib.dao.Entidade;
 
 @Entity
 @Table(name = LogErroMotorista.nomeTabela, schema = LogErroMotorista.esquema, catalog = "diego")
+@NamedQueries(value = {
+		@NamedQuery(name = "LogErroMotorista.obterPorData", query = "select lo from LogErroMotorista lo join fetch lo.motorista mo where lo.dataHoraErro >= :dtInicial and lo.dataHoraErro <= :dtFinal "
+				+ " order by lo.dataHoraErro desc")})
 public class LogErroMotorista extends Entidade {
 
 	public final static String esquema = "diego";

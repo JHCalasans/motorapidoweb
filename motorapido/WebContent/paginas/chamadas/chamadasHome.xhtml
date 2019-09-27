@@ -16,6 +16,14 @@
 		<meta http-equiv="Expires" content="0" />
 
 	</f:facet>
+	
+	<f:facet name="last">
+
+		<link rel="shortcut icon" type="image/x-icon"
+			href="#{request.contextPath}/resources/moto_icon.ico" />
+
+	</f:facet>
+	
 
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnSw7uj9P9oZIc_7c74peSmkmkYU1O5s"
@@ -469,7 +477,7 @@
 						</f:facet>
 
 						<p:commandLink title="Cancelar" process="@this"
-							rendered="#{chamada.situacaoChamada.descricao eq 'PENDENTE' or chamada.situacaoChamada.descricao eq 'PENDENTE_GERAL'}"
+							rendered="#{chamada.situacaoChamada.descricao.equals('PENDENTE') or chamada.situacaoChamada.descricao.equals('PENDENTE GERAL')}"
 							style="margin-left:10px;" update="conteudo"
 							actionListener="#{chamadaBean.removerChamada(chamada)}">
 							<h:graphicImage url="/resources/delete.png"

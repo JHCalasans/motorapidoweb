@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -28,7 +29,6 @@ import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.excecao.ExcecaoMotoristaPosicaoArea;
 import br.com.motorapido.mbean.SimpleController;
-import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.MensagemParam;
@@ -63,17 +63,19 @@ public class MotoristaWS {
 
 	@POST
 	@Path("/logoff")
-	public Response logoff(Motorista motorista) {
+	public Response logoff(@HeaderParam("CodMotorista") String codMotorista,Motorista motorista) {
 		try {
 
 			MotoristaBO.getInstance().logoff(motorista);
 			// ControleSessaoWS.remove(motorista.getCodigo());
 			return Response.status(Status.OK).entity(motorista).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			//ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			//ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar efetuar logoff").build();
 		}
 	}
@@ -86,10 +88,10 @@ public class MotoristaWS {
 			MotoristaBO.getInstance().alterarDisponivel(codMotorista, situacao);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, codMotorista, new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, codMotorista, new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar alterar disponibilidade")
 					.build();
 		}
@@ -97,15 +99,15 @@ public class MotoristaWS {
 	
 	@POST
 	@Path("/enviarID")
-	public Response enviarID(Motorista motorista) {
+	public Response enviarID(@HeaderParam("CodMotorista") String codMotorista,Motorista motorista) {
 		try {
 			MotoristaAparelhoBO.getInstance().enviarID(motorista);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
 					.entity("Falha ao tentar enviar ID de Aparelho").build();
 		}
@@ -132,10 +134,10 @@ public class MotoristaWS {
 			};
 			return Response.status(Status.OK).entity(entidade).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
 					.entity("Falha ao tentar obter informações dos veículos").build();
 		}
@@ -150,10 +152,10 @@ public class MotoristaWS {
 			VeiculoBO.getInstance().selecionarVeiculo(codMotorista, codVeiculo);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, codMotorista, new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, codMotorista, new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter selecionar veículo")
 					.build();
 		}
@@ -161,7 +163,7 @@ public class MotoristaWS {
 
 	@POST
 	@Path("/verificarPosicao")
-	public Response verificarPosicao(VerificaPosicaoParam param) {
+	public Response verificarPosicao(@HeaderParam("CodMotorista") String codMotorista,VerificaPosicaoParam param) {
 		try {
 			MotoristaPosicaoArea motoPosicao = MotoristaPosicaoAreaBO.getInstance().obterPosicaoMotoristaArea(param);
 			RetornoVerificaPosicao retorno = new RetornoVerificaPosicao();
@@ -169,52 +171,52 @@ public class MotoristaWS {
 			retorno.setPosicaoNaArea(motoPosicao.getPosicao());
 			return Response.status(Status.OK).entity(retorno).build();
 		} catch (ExcecaoMotoristaPosicaoArea e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path("/alterarSenha")
-	public Response alterarSenha(Motorista motorista) {
+	public Response alterarSenha(@HeaderParam("CodMotorista") String codMotorista,Motorista motorista) {
 		try {
 			motorista = MotoristaBO.getInstance().alterarSenha(motorista);
 			return Response.status(Status.OK).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path("/iniciarCorrida")
-	public Response iniciarCorrida(SelecaoChamadaParam param) {
+	public Response iniciarCorrida(@HeaderParam("CodMotorista") String codMotorista,SelecaoChamadaParam param) {
 		try {
 			ChamadaBO.getInstance().iniciarCorrida(param);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar iniciar corrida").build();
 		}
 	}
 
 	@POST
 	@Path("/cancelarChamada")
-	public Response cancelarChamada(CancelarChamadaParam param) {
+	public Response cancelarChamada(@HeaderParam("CodMotorista") String codMotorista,CancelarChamadaParam param) {
 		try {
 			ChamadaBO.getInstance().cancelarChamadaMotorista(param);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar corrida").build();
 		}
 	}
@@ -228,27 +230,27 @@ public class MotoristaWS {
 
 	@POST
 	@Path("/finalizarCorrida")
-	public Response finalizarCorrida(CancelarChamadaParam param) {
+	public Response finalizarCorrida(@HeaderParam("CodMotorista") String codMotorista,CancelarChamadaParam param) {
 		try {
 			ChamadaBO.getInstance().finalizarCorrida(param);
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar finalizar corrida").build();
 		}
 	}
 
 	@POST
 	@Path("/buscarInformacoesBase")
-	public Response buscarInformacoesBase() {
+	public Response buscarInformacoesBase(@HeaderParam("CodMotorista") String codMotorista) {
 		try {
 			System.out.println("Chamou atualização");
 			return Response.status(Status.OK).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter informações da base")
 					.build();
 		}
@@ -256,7 +258,7 @@ public class MotoristaWS {
 
 	@POST
 	@Path("/atualizarMensagens")
-	public Response atualizarMensagens(MensagemParam param) {
+	public Response atualizarMensagens(@HeaderParam("CodMotorista") String codMotorista,MensagemParam param) {
 		try {
 			List<MensagemMotoristaFuncionario> lista = MensagemMotoristaFuncionarioBO.getInstance()
 					.obterMensagens(param.getCodMotorista());
@@ -275,7 +277,7 @@ public class MotoristaWS {
 			};
 			return Response.status(Status.OK).entity(entidade).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter informações da base")
 					.build();
 		}
@@ -295,7 +297,7 @@ public class MotoristaWS {
 
 	@GET
 	@Path("/buscarChamadasPendentes")
-	public Response buscarChamadasPendentes() {
+	public Response buscarChamadasPendentes(@HeaderParam("CodMotorista") String codMotorista) {
 		try {
 
 			List<Chamada> chamadas = new ArrayList<Chamada>();
@@ -308,7 +310,7 @@ public class MotoristaWS {
 
 			return Response.status(Status.OK).entity(entidade).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter chamadas pendentes")
 					.build();
 		}
@@ -329,7 +331,7 @@ public class MotoristaWS {
 
 			return Response.status(Status.OK).entity(entidade).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter histórico do motorista")
 					.build();
 		}
@@ -338,16 +340,16 @@ public class MotoristaWS {
 
 	@POST
 	@Path("/selecionarChamada")
-	public Response selecionarChamada(SelecaoChamadaParam param) {
+	public Response selecionarChamada(@HeaderParam("CodMotorista") String codMotorista, SelecaoChamadaParam param) {
 		try {
 			Chamada chamada = ChamadaBO.getInstance().selecionarChamadaPendentePeloApp(param);
 
 			return Response.status(Status.OK).entity(chamada).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar selecionar chamada").build();
 		}
 
@@ -355,16 +357,18 @@ public class MotoristaWS {
 
 	@POST
 	@Path("/aceitarChamada")
-	public Response aceitarChamada(SelecaoChamadaParam param) {
+	public Response aceitarChamada(@HeaderParam("CodMotorista") String codMotorista, SelecaoChamadaParam param) {
 		try {
 			Chamada chamada = ChamadaBO.getInstance().aceitarChamadaPeloApp(param);
 
 			return Response.status(Status.OK).entity(chamada).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			//ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			//ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar aceitar chamada").build();
 		}
 
@@ -372,16 +376,16 @@ public class MotoristaWS {
 
 	@POST
 	@Path("/recusarChamada")
-	public Response recusarChamada(CancelarChamadaParam param) {
+	public Response recusarChamada(@HeaderParam("CodMotorista") String codMotorista,CancelarChamadaParam param) {
 		try {
 			ChamadaBO.getInstance().cancelarChamadaMotorista(param);
 
 			return Response.status(Status.OK).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar cancelar chamada").build();
 		}
 
@@ -389,20 +393,22 @@ public class MotoristaWS {
 
 	@GET
 	@Path("/buscarDetalhesChamada/{codChamadaVeiculo}")
-	public Response buscarDetalhesChamada(@PathParam("codChamadaVeiculo") Long codChamadaVeiculo) {
+	public Response buscarDetalhesChamada(@HeaderParam("CodMotorista") String codMotorista,@PathParam("codChamadaVeiculo") Long codChamadaVeiculo) {
 		try {
 			Chamada chamada = ChamadaBO.getInstance().obterDetalhesChamada(codChamadaVeiculo);
 
 			return Response.status(Status.OK).entity(chamada).build();
 		} catch (ExcecaoNegocio e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		} catch (Exception e) {
-			ExcecoesUtil.TratarExcecao(e);
+			ExcecoesUtil.logarErroMotorista(e, Integer.parseInt(codMotorista), new Object(){}.getClass().getEnclosingMethod().getName());
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Falha ao tentar obter detalhes da chamada")
 					.build();
 		}
 
 	}
+	
+	
 
 }

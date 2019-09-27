@@ -5,6 +5,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.com.motorapido.bo.MotoristaBO;
+import br.com.motorapido.mbean.SimpleController;
 import br.com.motorapido.util.ExcecoesUtil;
 
 
@@ -20,6 +21,8 @@ public class JobProject implements Job {
 			
 			MotoristaBO.getInstance().desbloquearMotoristaRotina();
 			
+			//a cada 5 min atualiza a lista de chamadas
+			SimpleController.iniciarListaChamadas();
 		} catch (Exception ex) {
 			ExcecoesUtil.TratarExcecao(ex);
 		}

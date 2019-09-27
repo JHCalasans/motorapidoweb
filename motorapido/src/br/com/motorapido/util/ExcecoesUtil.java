@@ -5,16 +5,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
-import br.com.minhaLib.util.FacesUtil;
 import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.dao.FabricaDAO;
-import br.com.motorapido.entity.Funcionario;
 
 
 

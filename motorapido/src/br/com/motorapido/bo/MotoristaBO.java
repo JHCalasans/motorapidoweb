@@ -36,7 +36,6 @@ import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
-import br.com.motorapido.util.PushNotificationUtil;
 import br.com.motorapido.util.ws.retornos.RetornoHistoricoMotorista;
 import br.com.motorapido.util.ws.retornos.RetornoVeiculosMotorista;
 

@@ -1,6 +1,9 @@
 package br.com.motorapido.mbean;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -82,9 +85,32 @@ public class MensagemBean extends SimpleController {
 				historico.remove(historico.get(historico.size() - 1));
 
 			historico.add(0, getUltimaMsgEnviada());
-			enviarUpdate("panelMensagem");
+			//enviarUpdate("panelMensagem");
 
 		}
+	}
+	
+	public void atualizarMensagensChat() {
+		Map<String, String> requestParamMap = 
+			       FacesContext.getCurrentInstance().getExternalContext()
+			       .getRequestParameterMap();
+		 String codMotorista = requestParamMap.get("codMotorista");
+		 String msg = requestParamMap.get("msg");
+		 String dataMsg = requestParamMap.get("dataMsg");
+		 MensagemMotoristaFuncionario mensagem = new MensagemMotoristaFuncionario();
+		 try {
+			mensagem.setDataCriacao(new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(dataMsg));
+			 mensagem.setDescricao(msg);
+			 mensagem.setEnviadaPorMotorista("S");
+			 historico.add(0, mensagem);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+			//enviarUpdate("panelMensagem");
+
+		
 	}
 
 	public void enviarMensagem() {
@@ -100,7 +126,7 @@ public class MensagemBean extends SimpleController {
 
 			historico.add(0, mensagem);
 			mensagem = new MensagemMotoristaFuncionario();
-			enviarUpdate("panelMensagem");
+		//	enviarUpdate("scrollChatVar");
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
