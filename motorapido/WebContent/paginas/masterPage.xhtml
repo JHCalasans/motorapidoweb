@@ -271,7 +271,7 @@
 	    	//alert(facesmessage);		
 			//myAudio.play();
 			//document.getElementById("formMsg:lblMsg").value = "opa";
-			if(window.location.href.indexOf('enviar') )
+			if(window.location.href.indexOf('enviar') > -1)
 			{
 				var resu = facesmessage.detail.toString().split(';');
 				var codMoto = document.getElementById("lblmotoCodChat");
@@ -283,6 +283,25 @@
 					//var x = document.getElementById('btnAtualizaChat');
 					//x.click();
 					atualizarChat([{name: "msg", value : resu[2]}, {name: "dataMsg", value : resu[3]},{name: "codMotorista", value : resu[1]} ]);
+				}else{
+					
+					 if(PF('dlgMensagem').isVisible()){
+							document.getElementById("lblOrigemMsg2").innerHTML = "Mensagem de " + resu[0];
+							PF('dlgMensagem2').show();
+						}else{
+							document.getElementById("lblOrigemMsg").innerHTML = "Mensagem de " + resu[0];
+				    		PF('dlgMensagem').show();
+					}
+				}
+			}else{
+				var res = facesmessage.detail.split(";");
+		        facesmessage.detail = res[0];
+				 if(PF('dlgMensagem').isVisible()){
+						document.getElementById("lblOrigemMsg2").innerHTML = "Mensagem de " + res[0];
+						PF('dlgMensagem2').show();
+					}else{
+						document.getElementById("lblOrigemMsg").innerHTML = "Mensagem de " + res[0];
+			    		PF('dlgMensagem').show();
 				}
 			}
 			/* if(PF('dlgMensagem').isVisible()){
@@ -463,53 +482,35 @@
 
 		</p:dialog>
 
-		<p:dialog header="Nova Mensagem!" widgetVar="dlgMensagem" height="80"
+		<p:dialog header="Nova Mensagem!" widgetVar="dlgMensagem" height="50"
 			styleClass="nova-mensagem" visible="false" draggable="false"
-			onShow="timerDialog();" resizable="false" width="300"
+			onShow="timerDialog();" resizable="false" width="250"
 			id="dlgMensagem1" onHide="myStopFunction();">
 
 			<span class="img-nova-mensagem"></span>
 			<div align="left" style="margin-top: 10px;">
 				<span id="lblOrigemMsg"
-					style="margin-left: 10px; font-size: 15px; font-weight: bold;">Mensagem
+					style="margin-left: 10px; font-size: 10px; font-weight: bold;">Mensagem
 					de Mauro</span>
 			</div>
 			<br />
-			<br />
-			<h:form>
-				<div align="center">
-					<p:commandButton value="Visualizar"
-						style="width: 80px;color:blue;background: antiquewhite;margin-right: 20px;border: transparent;"></p:commandButton>
-					<p:commandButton value="Cancelar"
-						onclick="PF('dlgMensagem').hide()"
-						style="width: 80px;background: lightcoral;color: white;border: transparent;"></p:commandButton>
-				</div>
-			</h:form>
+			
 
 		</p:dialog>
 
-		<p:dialog header="Nova Mensagem!" widgetVar="dlgMensagem2" height="80"
+		<p:dialog header="Nova Mensagem!" widgetVar="dlgMensagem2" height="50"
 			styleClass="nova-mensagem" visible="false" draggable="false"
-			onShow="timerDialog2();" resizable="false" width="300"
+			onShow="timerDialog2();" resizable="false" width="250"
 			id="dlgMensagem2" onHide="myStopFunction2();">
 
 			<span class="img-nova-mensagem"></span>
 			<div align="left" style="margin-top: 10px;">
 				<span id="lblOrigemMsg2"
-					style="margin-left: 10px; font-size: 15px; font-weight: bold;">Mensagem
+					style="margin-left: 10px; font-size: 10px; font-weight: bold;">Mensagem
 					de Mauro</span>
 			</div>
 			<br />
-			<br />
-			<h:form>
-				<div align="center">
-					<p:commandButton value="Visualizar"
-						style="width: 80px;color:blue;background: antiquewhite;margin-right: 20px;border: transparent;"></p:commandButton>
-					<p:commandButton value="Cancelar"
-						onclick="PF('dlgMensagem2').hide()"
-						style="width: 80px;background: lightcoral;color: white;border: transparent;"></p:commandButton>
-				</div>
-			</h:form>
+			
 
 		</p:dialog>
 

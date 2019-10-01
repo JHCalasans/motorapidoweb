@@ -39,25 +39,19 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 
 		return instance;
 	}
-	
 
-	private String summary = "Nova Mensagem de ";
-	private String CHANELL = "/notify";
 	
-	public MensagemMotoristaFuncionario enviarMensagemDoMotorista(MensagemParam param)
-			throws ExcecaoNegocio {
+	public MensagemMotoristaFuncionario enviarMensagemDoMotorista(MensagemParam param) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
 			IMensagemMotoristaFuncionarioDAO mensagemMotoristaFuncionarioDAO = fabricaDAO
 					.getPostgresMensagemMotoristaFuncionarioDAO();
-			
-			IMotoristaDAO motoristaDAO = fabricaDAO
-					.getPostgresMotoristaDAO();
+
+			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
 
 			Motorista moto = motoristaDAO.findById(param.getCodMotorista(), em);
-			
 
 			MensagemMotoristaFuncionario mensag = new MensagemMotoristaFuncionario();
 			mensag.setMotorista(moto);
@@ -65,18 +59,19 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			mensag.setEnviadaPorMotorista("S");
 			mensag.setDataCriacao(new Date());
 			mensag = mensagemMotoristaFuncionarioDAO.save(mensag, em);
-			
+
 			ObjetoMensagem objetoMsg = new ObjetoMensagem();
 			objetoMsg.setCodMotorista(moto.getCodigo());
 			objetoMsg.setMessagem(param.getMensagem());
 			objetoMsg.setNomeMotorista(moto.getNome());
-			
-			
+
 			EventBus eventBus = EventBusFactory.getDefault().eventBus();
 			try {
 				Thread.sleep(500);
-				eventBus.publish("/notify", new FacesMessage(StringEscapeUtils.escapeHtml3("NovaMensagem"),
-						moto.getNome() + ";" + moto.getCodigo() + ";" + param.getMensagem() + ";" + new SimpleDateFormat("dd/MM/yyyy hh:mm").format(mensag.getDataCriacao())));
+				eventBus.publish("/notify",
+						new FacesMessage(StringEscapeUtils.escapeHtml3("NovaMensagem"),
+								moto.getNome() + ";" + moto.getCodigo() + ";" + param.getMensagem() + ";"
+										+ new SimpleDateFormat("dd/MM/yyyy hh:mm").format(mensag.getDataCriacao())));
 
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -91,7 +86,7 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			 */
 			SimpleController.setUltimoMotMsg(param.getCodMotorista());
 			SimpleController.setUltimaMsgEnviada(mensag);
-			
+
 			emUtil.commitTransaction(transaction);
 			return mensag;
 		} catch (Exception e) {
@@ -102,8 +97,7 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 		}
 	}
 
-	public List<MensagemMotoristaFuncionario> obterMensagens(Integer codMotorista)
-			throws ExcecaoNegocio {
+	public List<MensagemMotoristaFuncionario> obterMensagens(Integer codMotorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -119,20 +113,19 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 
 			List<MensagemMotoristaFuncionario> lista = mensagemMotoristaFuncionarioDAO.findByExample(mensag, em);
 
-			Collections.sort(lista, new Comparator<MensagemMotoristaFuncionario>(){
+			Collections.sort(lista, new Comparator<MensagemMotoristaFuncionario>() {
 
 				@Override
 				public int compare(MensagemMotoristaFuncionario o1, MensagemMotoristaFuncionario o2) {
 					return o1.getDataCriacao().compareTo(o2.getDataCriacao());
 				}
-				
+
 			});
-			
-			
-			if (lista.size() > 30){
+
+			if (lista.size() > 30) {
 				lista = lista.subList(lista.size() - 30, lista.size());
 			}
-			
+
 			lista = Lists.reverse(lista);
 			emUtil.commitTransaction(transaction);
 			return lista;
@@ -143,13 +136,14 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
-	
-	public MensagemMotoristaFuncionario enviarMensagemDaCentral(MensagemMotoristaFuncionario mensagem) throws ExcecaoNegocio {
+
+	public MensagemMotoristaFuncionario enviarMensagemDaCentral(MensagemMotoristaFuncionario mensagem)
+			throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
+
 			IMensagemMotoristaFuncionarioDAO mensagemMotoristaFuncionarioDAO = fabricaDAO
 					.getPostgresMensagemMotoristaFuncionarioDAO();
 
@@ -159,15 +153,26 @@ public class MensagemMotoristaFuncionarioBO extends MotoRapidoBO {
 			mensag.setEnviadaPorMotorista("N");
 			mensag.setDataCriacao(new Date());
 			mensag.setFuncionario(mensagem.getFuncionario());
+
+			if (!ControleSessaoWS.enviarMensagemChat(mensagem.getMotorista().getCodigo(), mensagem.getDescricao(),
+					new SimpleDateFormat("dd/MM/yyyy hh:mm").format(mensag.getDataCriacao()))) {
+				throw new ExcecaoNegocio("Sem conexão com o motorista");
+			}
+
 			mensag = mensagemMotoristaFuncionarioDAO.save(mensag, em);
-			//SimpleController.setUltimaMsgEnviada(mensag);
-			ControleSessaoWS.enviarMensagemChat(mensagem.getMotorista().getCodigo(), mensagem.getDescricao(), new SimpleDateFormat("dd/MM/yyyy hh:mm").format(mensag.getDataCriacao()));
-		/*	PushNotificationUtil.enviarNotificacaoPlayerId(FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em), 
-					FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em), listaParaNotificacao, mensagem.getDescricao());
-		
-		*/	emUtil.commitTransaction(transaction);
+			// SimpleController.setUltimaMsgEnviada(mensag);
+			/*
+			 * PushNotificationUtil.enviarNotificacaoPlayerId(FuncoesUtil.getParam(
+			 * ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
+			 * FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
+			 * listaParaNotificacao, mensagem.getDescricao());
+			 * 
+			 */ emUtil.commitTransaction(transaction);
 			return mensag;
-		}catch (Exception e) {
+		} catch (ExcecaoNegocio e) {
+			emUtil.rollbackTransaction(transaction);
+			throw e;
+		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar enviar mensagem.", e);
 		} finally {
