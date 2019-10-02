@@ -420,9 +420,8 @@ public class ChamadaBean extends SimpleController {
 
 	public void pesquisarClientePorCelular() {
 		try {
-
+		
 			
-			ControleSessaoWS.enviarMensagemMotoristaChamada(2, "teste");
 			cliente = ClienteBO.getInstance().obterClientePorCelular(numCelPesquisa);
 			if (cliente == null) {
 				addMsg(FacesMessage.SEVERITY_WARN, "Cliente não encontrado.");
@@ -431,7 +430,7 @@ public class ChamadaBean extends SimpleController {
 			} else
 				vincularCliente(cliente);
 
-		} catch (IOException | ExcecaoNegocio e) {
+		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		} 
 	}

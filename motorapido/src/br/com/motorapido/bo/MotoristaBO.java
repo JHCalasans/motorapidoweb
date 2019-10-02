@@ -311,7 +311,7 @@ public class MotoristaBO extends MotoRapidoBO {
 		try {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
-			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
+			/*IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
 			MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
 			Motorista motoTemp = new Motorista(codMotorista);
 			motoristaAparelho.setMotorista(motoTemp);
@@ -320,7 +320,7 @@ public class MotoristaBO extends MotoRapidoBO {
 				moto.setAtivo("N");
 				moto.setDesativacao(new Date());
 				motoristaAparelhoDAO.save(moto, em);
-			}
+			}*/
 
 			Motorista motorista = motoristaDAO.findById(codMotorista, em);
 

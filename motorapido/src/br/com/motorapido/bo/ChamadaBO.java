@@ -437,10 +437,15 @@ public class ChamadaBO extends MotoRapidoBO {
 
 					chamada.setCodChamadaVeiculo(chamadaVeiculo.getCodigo());
 					Gson gson = new Gson();
-
+					Chamada chamadaJson = new Chamada();
+					chamadaJson = chamada;
+					chamadaJson.setFuncionario(null);
+					String json = gson.toJson(chamadaJson);
 					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(
-							lista.get(0).getMotorista().getCodigo(), gson.toJson(chamada) + "=>"
-									+ FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo()));
+							lista.get(0).getMotorista().getCodigo(), json + "=>"
+							+ FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo()));
+					
+					
 
 					if (!enviou)
 						PushNotificationUtil.enviarNotificacaoPlayerIdChamada(
