@@ -198,7 +198,9 @@ public class MotoristaPosicaoAreaBO extends MotoRapidoBO {
 			Area area = validarAreaDoMotorista(Double.parseDouble(param.getLatitude()),
 					Double.parseDouble(param.getLongitude()), param.getCodMotorista(), param.getLoginMotorista(), em);
 			if (param.getCodUltimaArea() == null
-					|| (param.getCodUltimaArea() != null && param.getCodUltimaArea() != area.getCodigo())) {
+					|| (param.getCodUltimaArea() != null && param.getCodUltimaArea() != area.getCodigo()) ||
+					(param.getCorridaRecusada() != null && param.getCorridaRecusada()) ||
+					(param.getCorridaPendenteRecusada() != null && param.getCorridaPendenteRecusada())) {
 
 				List<MotoristaPosicaoArea> listOrdem = motoristaPosicaoAreaDAO.obterMotoristasPorArea(area, em);
 				// reordena a lista de posição na área

@@ -194,6 +194,9 @@ public class Chamada extends Entidade {
 	@Transient 
 	private String valorFinalAjustado;
 	
+	@Transient 
+	private Integer tempoParaResposta;
+	
 
 	public Chamada() {
 
@@ -594,6 +597,14 @@ public class Chamada extends Entidade {
 
 	public void setValorFinalAjustado(String valorFinalAjustado) {
 		this.valorFinalAjustado = valorFinalAjustado;
+	}
+
+	public Integer getTempoParaResposta() {
+		return tempoParaResposta;
+	}
+
+	public void setTempoParaResposta(Integer tempoParaResposta) {
+		this.tempoParaResposta = tempoParaResposta;
 	}
 
 

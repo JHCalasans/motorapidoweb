@@ -21,6 +21,9 @@ public class VerificaPosicaoParam implements Serializable{
 	
 	private String loginMotorista;
 	
+	private Boolean corridaRecusada;
+	
+	private Boolean corridaPendenteRecusada;
 	
 	public VerificaPosicaoParam(){
 		
@@ -84,6 +87,27 @@ public class VerificaPosicaoParam implements Serializable{
 
 	public void setLoginMotorista(String loginMotorista) {
 		this.loginMotorista = loginMotorista;
+	}
+
+	
+
+	public Boolean getCorridaPendenteRecusada() {
+		return corridaPendenteRecusada;
+	}
+
+
+	public void setCorridaPendenteRecusada(Boolean corridaPendenteRecusada) {
+		this.corridaPendenteRecusada = corridaPendenteRecusada;
+	}
+
+
+	public Boolean getCorridaRecusada() {
+		return corridaRecusada;
+	}
+
+
+	public void setCorridaRecusada(Boolean corridaRecusada) {
+		this.corridaRecusada = corridaRecusada;
 	}
 	
 

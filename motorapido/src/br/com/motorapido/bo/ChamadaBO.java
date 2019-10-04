@@ -440,10 +440,10 @@ public class ChamadaBO extends MotoRapidoBO {
 					Chamada chamadaJson = new Chamada();
 					chamadaJson = chamada;
 					chamadaJson.setFuncionario(null);
+					chamadaJson.setTempoParaResposta(Integer.parseInt(FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo())));
 					String json = gson.toJson(chamadaJson);
 					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(
-							lista.get(0).getMotorista().getCodigo(), json + "=>"
-							+ FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo()));
+							lista.get(0).getMotorista().getCodigo(), json);
 					
 					
 
