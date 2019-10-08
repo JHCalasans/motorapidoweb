@@ -16,14 +16,14 @@
 		<meta http-equiv="Expires" content="0" />
 
 	</f:facet>
-	
+
 	<f:facet name="last">
 
 		<link rel="shortcut icon" type="image/x-icon"
 			href="#{request.contextPath}/resources/moto_icon.ico" />
 
 	</f:facet>
-	
+
 
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnSw7uj9P9oZIc_7c74peSmkmkYU1O5s"
@@ -50,8 +50,8 @@
 	<ui:define name="conteudo">
 		<h:form prependId="false" id="formConsulta">
 
-		
-		
+
+
 			<p:panelGrid style="width:100%" id="pngEsquerda">
 				<p:row>
 					<p:column style="width:50%" id="colNovaChamada">
@@ -63,8 +63,8 @@
 									for="celular" styleClass="OutputLabelCampo" style="width:80px;" />
 								<p:outputLabel value="(79)"
 									style="margin-left:-30px; margin-top: inherit"></p:outputLabel>
-								<p:inputMask id="celular"  size="35"
-									mask="99999-9999" value="#{chamadaBean.numCelPesquisa}"
+								<p:inputMask id="celular" size="35" mask="99999-9999"
+									value="#{chamadaBean.numCelPesquisa}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_celular}">
 									<p:ajax event="blur" update=":formConsulta"
 										listener="#{chamadaBean.pesquisarClientePorCelular}" />
@@ -78,7 +78,7 @@
 							<h:panelGroup id="pngNome" styleClass="p_like">
 								<p:outputLabel value="#{bundle.funcionario_nome}:" for="nome"
 									styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputText id="nome"  size="55"
+								<p:inputText id="nome" size="55"
 									value="#{chamadaBean.cliente.nome}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_nome}" />
 
@@ -97,18 +97,18 @@
 								<p:outputLabel value="#{bundle.funcionario_logradouro}:"
 									for="logradouro" styleClass="OutputLabelCampo"
 									style="width:80px;" />
-								<p:autoComplete id="logradouro" cache="true" 
+								<p:autoComplete id="logradouro" cache="true"
 									cacheTimeout="30000" value="#{chamadaBean.logradouro}"
 									var="logradouro" itemLabel="#{logradouro.logradouroComCidade}"
 									itemValue="#{logradouro}" converter="logradouroConverter"
 									size="55" completeMethod="#{chamadaBean.completeText}"
 									maxResults="5">
-									<p:ajax event="query" global="false"/>
-									<p:ajax event="itemSelect"  
+									<p:ajax event="query" global="false" />
+									<p:ajax event="itemSelect"
 										listener="#{chamadaBean.logradouroSelecionado}"
 										update="fieldOrigem, gmap" />
 								</p:autoComplete>
-								
+
 							</h:panelGroup>
 
 							<br />
@@ -214,7 +214,7 @@
 									itemValue="#{logradouro}" converter="logradouroConverter"
 									size="55" completeMethod="#{chamadaBean.completeText}"
 									maxResults="5">
-									<p:ajax event="query" global="false"/>
+									<p:ajax event="query" global="false" />
 									<p:ajax event="itemSelect"
 										listener="#{chamadaBean.logradouroDestinoSelecionado}"
 										update="fieldDestino" />
@@ -331,11 +331,11 @@
 
 							<p:panel>
 								<p:gmap id="gmap" center="#{chamadaBean.coordenadas}" zoom="14"
-									type="terrain" onPointClick="handlePointClickChamada(event)" 
+									type="terrain" onPointClick="handlePointClickChamada(event)"
 									style="width:600px;height:550px; text-align:center;"
 									model="#{chamadaBean.mapModel}" widgetVar="map">
-									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}" global="false"
-										update="gmap, :fieldOrigem, :fieldDestino" ></p:ajax>
+									<p:ajax event="pointSelect" listener="#{chamadaBean.addMarker}"
+										global="false" update="gmap, :fieldOrigem, :fieldDestino"></p:ajax>
 									<p:ajax event="overlaySelect"
 										listener="#{chamadaBean.marcadorSelecionado}"
 										update="gmap, :fieldOrigem, :fieldDestino" />
@@ -448,10 +448,10 @@
 							<h:graphicImage url="/resources/lupa.png"
 								style="border-style: none" />
 						</p:commandLink>
-						
+
 					</p:column>
 
-					<p:column style="width: 60px" >
+					<p:column style="width: 60px">
 						<f:facet name="header">
 							<h:outputText value="Valor Previsto"
 								styleClass="cabecalhoDataTable" />
@@ -460,14 +460,13 @@
 							<f:convertNumber pattern="R$ #.00" locale="pt_BR" />
 						</h:outputText>
 					</p:column>
-					
-					<p:column style="width: 60px" >
+
+					<p:column style="width: 60px">
 						<f:facet name="header">
-							<h:outputText value="Valor Final"
-								styleClass="cabecalhoDataTable" />
+							<h:outputText value="Valor Final" styleClass="cabecalhoDataTable" />
 						</f:facet>
 						<h:outputText value="R$ #{chamada.valorFinalFormatado}">
-							
+
 						</h:outputText>
 					</p:column>
 
@@ -487,12 +486,20 @@
 
 				</p:dataTable>
 			</h:panelGroup>
+			<br />
+			<div class="clear"></div>
+
+			<h:panelGroup styleClass="p_like buttonPosition">
+
+				<p:commandButton value="Atualizar" actionListener="#{chamadaBean.atualizarListaChamadas()}" update="tbChamadas"></p:commandButton>
+
+			</h:panelGroup>
 
 		</h:form>
-		
-		<p:dialog widgetVar="dlgMotoChamada" id="dlgMotoChamada1" showEffect="fade"
-			resizable="false" styleClass="dialogBox" closable="true"
-			scrollable="true" scrollHeight="150" width="550px"
+
+		<p:dialog widgetVar="dlgMotoChamada" id="dlgMotoChamada1"
+			showEffect="fade" resizable="false" styleClass="dialogBox"
+			closable="true" scrollable="true" scrollHeight="150" width="550px"
 			header="Histórico da Chamada">
 			<h:form prependId="false">
 				<h:form>
@@ -506,24 +513,25 @@
 						    </f:facet>
 							<p:column headerText="Motorista"
 								style="width:30%;text-align: center;float: none !important;">
-								<p:outputLabel value="#{chamada.veiculo.motorista.nome}" 
+								<p:outputLabel value="#{chamada.veiculo.motorista.nome}"
 									styleClass="OutputLabelValue"></p:outputLabel>
 							</p:column>
 							<p:column headerText="Aceita" style="text-align: center;">
-								<p:outputLabel value="#{chamada.flgAceita == 'S' ? 'Sim' : 'Não'}"
-									styleClass="OutputLabelValue" >
-									</p:outputLabel>
-							</p:column>			
+								<p:outputLabel
+									value="#{chamada.flgAceita == 'S' ? 'Sim' : 'Não'}"
+									styleClass="OutputLabelValue">
+								</p:outputLabel>
+							</p:column>
 							<p:column headerText="Veículo">
 								<p:outputLabel value="#{chamada.veiculo.placa}"
 									styleClass="OutputLabelValue"></p:outputLabel>
-							</p:column>			
+							</p:column>
 							<p:column headerText="Horário" style="width:30%;">
 								<p:outputLabel value="#{chamada.dataDecisao}"
 									styleClass="OutputLabelValue">
 									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 								</p:outputLabel>
-							</p:column>							
+							</p:column>
 
 						</p:dataTable>
 					</h:panelGroup>
@@ -531,10 +539,10 @@
 					<br></br>
 					<div class="clear"></div>
 
-				</h:form>			
+				</h:form>
 
 			</h:form>
-		</p:dialog>		
+		</p:dialog>
 
 		<ui:include src="/paginas/chamadas/dlgPesquisaCliente.xhtml">
 			<ui:param name="bean" value="#{chamadaBean}" />

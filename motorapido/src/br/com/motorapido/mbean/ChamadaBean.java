@@ -446,6 +446,11 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
+	
+	public void atualizarListaChamadas() {
+		SimpleController.iniciarListaChamadas();
+		atualizarChamadasFiltro();
+	}
 
 	public void adicionarChamada() {
 		try {

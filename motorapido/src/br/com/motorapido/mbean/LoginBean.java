@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import br.com.minhaLib.mbean.AbstractUsuarioLogadoBean;
 import br.com.motorapido.bo.FuncionarioBO;
 import br.com.motorapido.entity.Funcionario;
+import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.FacesUtil;
 import br.com.motorapido.util.Paginas;
@@ -67,6 +68,14 @@ public class LoginBean extends SimpleController {
 					addMsg(FacesMessage.SEVERITY_ERROR, "Usuário sem permissão para acessar.");
 			} else
 				addMsg(FacesMessage.SEVERITY_ERROR, "Login/Senha incorretos.");
+		} catch (Exception e) {
+			ExcecoesUtil.TratarExcecao(e);
+		}
+	}
+	
+	public void testarChamada() {
+		try {
+			 ControleSessaoWS.enviarTesteMotoristaChamada(2);
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}

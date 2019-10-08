@@ -514,7 +514,7 @@ public class Chamada extends Entidade {
 	@XmlTransient
 	public String getValorFinalFormatado(){
 		if(valorFinal != null)
-			return String.format("%.2f", Float.parseFloat(valorFinal));
+			return String.format("%.2f", Float.parseFloat(valorFinal.replace(',', '.')));
 		else
 			return null;
 	}

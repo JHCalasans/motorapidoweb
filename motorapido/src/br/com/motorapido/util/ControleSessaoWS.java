@@ -97,7 +97,15 @@ public class ControleSessaoWS {
 			sMap.get(codMotorista).getSessao().getBasicRemote().sendText("NovaChamada=>"+msg);
 			return true;
 		}else
-			return false;
+			return false;		
+		
+		
+	}
+	
+	public static void enviarTesteMotoristaChamada(Integer codMotorista) throws IOException {
+
+		if(sMap.containsKey(codMotorista))
+			sMap.get(codMotorista).getSessao().getBasicRemote().sendText("TesteChamada=>");
 			
 		
 		

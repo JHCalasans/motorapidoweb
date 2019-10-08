@@ -184,7 +184,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			// DecimalFormat dc = new DecimalFormat("0.00");
 			// retorno.setValorFinal(Float.parseFloat(dc.format(param.getChamada().getValorFinal()).replace(",",
 			// ".")));
-			retorno.setValorFinal(String.format("%.2f", Float.parseFloat(param.getChamada().getValorFinal())));
+			retorno.setValorFinal(String.format("%.2f", Float.parseFloat(param.getChamada().getValorFinal().replace(',', '.'))));
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			chamadaDAO.save(retorno, em);
 
@@ -690,10 +690,10 @@ public class ChamadaBO extends MotoRapidoBO {
 			Chamada retorno;
 			boolean jaExistia = false;
 			if (SimpleController.getListaChamadasAceitas().stream()
-					.anyMatch(ch -> ch.getCodigo().equals(param.getChamada().getCodigo()))) {
+					.anyMatch(ch -> ch.getCodigo() == (param.getChamada().getCodigo()))) {
 				retorno = SimpleController.getListaChamadasAceitas().stream()
 						.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
-				if (param.getCodChamadaVeiculo() != retorno.getCodChamadaVeiculo())
+				if (!param.getCodChamadaVeiculo().equals(retorno.getCodChamadaVeiculo()))
 					throw new Exception("Essa chamada já foi aceita por outro motorista");
 
 				/*

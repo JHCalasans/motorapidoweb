@@ -67,6 +67,7 @@ public class MotoristaAparelhoBO extends MotoRapidoBO {
 			boolean encontrou = false;
 			Date dtEntrada = null;
 			String idPush = null;
+			//desativo todos os outros motoristas para este aparelho e ativo apenas o motorista selecionado
 			for (MotoristaAparelho motoAp : lista) {
 				if (motoAp.getMotorista() != null) {
 					if (motoAp.getMotorista().getCodigo().equals(codMotorista)) {
@@ -101,6 +102,15 @@ public class MotoristaAparelhoBO extends MotoRapidoBO {
 				motoristaAparelhoDAO.save(motoristaAparelho, em);
 			}
 
+			//desativo todos os aparelhos ativos para esse motorista deixando apenas o aparelhos selecionado
+			lista = motoristaAparelhoDAO.obterAparelhoPorMotorista(codMotorista, em);
+			for (MotoristaAparelho motoAp : lista) {
+				if(!motoAp.getIdAparelho().equals(idAparelho) && motoAp.getAtivo().equals("S")) {
+					motoAp.setDesativacao(new Date());
+					motoAp.setAtivo("N");
+					motoristaAparelhoDAO.save(motoAp, em);
+				}
+			}
 			emUtil.commitTransaction(transaction);
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
