@@ -690,7 +690,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			Chamada retorno;
 			boolean jaExistia = false;
 			if (SimpleController.getListaChamadasAceitas().stream()
-					.anyMatch(ch -> ch.getCodigo() == (param.getChamada().getCodigo()))) {
+					.anyMatch(ch -> ch.getCodigo().equals((param.getChamada().getCodigo())))) {
 				retorno = SimpleController.getListaChamadasAceitas().stream()
 						.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
 				if (!param.getCodChamadaVeiculo().equals(retorno.getCodChamadaVeiculo()))

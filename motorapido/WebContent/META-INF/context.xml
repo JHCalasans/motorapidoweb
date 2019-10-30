@@ -13,7 +13,7 @@
 	
 	<ResourceLink global="jdbc/postgresapp" name="jdbc/postgresapp"
 		factory="org.apache.naming.factory.DataSourceLinkFactory" type="javax.sql.DataSource"
-		username="postgres" password="jota01"		
+		username="postgres" password="jota01"
 		
 		/>
 

@@ -183,8 +183,7 @@
 						value="#{motoristaBean.compResidencial}"
 						cancelLabel="#{bundle.cancelar}" styleClass="upload"
 						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
-						mode="advanced" skinSimple="true" auto="true"
-						update=":msgs"
+						mode="advanced" skinSimple="true" auto="true" update=":msgs"
 						fileUploadListener="#{motoristaBean.comprovanteResidencialUploadAction}"
 						fileLimitMessage="Tamanho do arquivo excedido"
 						invalidFileMessage="Tipo de arquivo não suportado">
@@ -305,12 +304,11 @@
 					<div class="clear"></div>
 					<p:outputLabel value="#{bundle.motorista_documentosCriminais}:"
 						for="criminais" styleClass="OutputLabelCampo" style="width:120px;" />
-					<p:fileUpload id="criminais" label="#{bundle.selecione}" 
+					<p:fileUpload id="criminais" label="#{bundle.selecione}"
 						value="#{motoristaBean.docCriminais}"
 						cancelLabel="#{bundle.cancelar}" styleClass="upload"
 						allowTypes="/(\.|\/)(pdf)$/" multiple="false" sizeLimit="1000000"
-						mode="advanced" skinSimple="true" auto="true"
-						update=":msgs"
+						mode="advanced" skinSimple="true" auto="true" update=":msgs"
 						fileUploadListener="#{motoristaBean.DocCriminaisUploadAction}"
 						fileLimitMessage="Tamanho do arquivo excedido"
 						invalidFileMessage="Tipo de arquivo não suportado">
@@ -318,6 +316,18 @@
 
 
 				</h:panelGroup>
+
+				<h:panelGroup id="pngIDmoto" styleClass="p_like">
+
+					<div class="clear"></div>
+					<p:outputLabel value="Identificador:" for="idmoto"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputNumber id="idmoto"
+						value="#{motoristaBean.motorista.IDMotorista}" required="true"
+						requiredMessage="#{bundle.campoObrigatorio} : Identificador"></p:inputNumber>
+
+				</h:panelGroup>
+
 
 				<br />
 				<div class="clear"></div>
@@ -340,7 +350,8 @@
 				<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
 
 					<h3>Características</h3>
-					<p:selectManyCheckbox id="caracteristicas" converter="caracteristicaConverter"
+					<p:selectManyCheckbox id="caracteristicas"
+						converter="caracteristicaConverter"
 						value="#{motoristaBean.listaCaracteristicasSelecionadas}"
 						layout="grid" columns="4">
 						<f:selectItems value="#{motoristaBean.obterCaracteristicas()}"
@@ -355,7 +366,8 @@
 
 				<h:panelGroup styleClass="p_like buttonPosition">
 
-					<p:commandButton value="Salvar" id="btnSalvar" onclick="verificarurl('Validando CPF, RG, CNH e EMAIL...')"
+					<p:commandButton value="Salvar" id="btnSalvar"
+						onclick="verificarurl('Validando CPF, RG, CNH e EMAIL...')"
 						actionListener="#{motoristaBean.alterarMotorista}"
 						update="formCadastro, msgs, conteudo">
 					</p:commandButton>

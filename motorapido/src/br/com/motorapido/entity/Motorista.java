@@ -54,6 +54,9 @@ public class Motorista  extends Entidade {
 	@Column(name = "nome", nullable = false, length = 100)
 	private String nome;
 	
+	@Column(name = "identificador_motorista", nullable = false)
+	private Integer IDMotorista;
+	
 	@Column(name = "num_identidade", nullable = false)
 	private String identidade;
 
@@ -500,6 +503,16 @@ public class Motorista  extends Entidade {
 
 	public void setIdAparelho(String idAparelho) {
 		this.idAparelho = idAparelho;
+	}
+
+
+	public Integer getIDMotorista() {
+		return IDMotorista;
+	}
+
+
+	public void setIDMotorista(Integer iDMotorista) {
+		IDMotorista = iDMotorista;
 	}
 
 
