@@ -322,9 +322,9 @@
 					<div class="clear"></div>
 					<p:outputLabel value="Identificador:" for="idmoto"
 						styleClass="OutputLabelCampo" style="width:120px;" />
-					<p:inputNumber id="idmoto"
-						value="#{motoristaBean.motorista.IDMotorista}" required="true"
-						requiredMessage="#{bundle.campoObrigatorio} : Identificador"></p:inputNumber>
+					<p:inputMask id="idmoto" maxlength="5"
+						value="#{motoristaBean.motorista.IDMotorista}" required="true" mask="9?9999"
+						requiredMessage="#{bundle.campoObrigatorio} : Identificador"></p:inputMask>
 
 				</h:panelGroup>
 
