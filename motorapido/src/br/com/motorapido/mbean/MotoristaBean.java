@@ -60,6 +60,8 @@ public class MotoristaBean extends SimpleController {
 	private Date vencimentoCNH;
 
 	private String cep;
+	
+	private String senhaGerada;
 
 	private UploadedFile docCriminais;
 
@@ -330,6 +332,19 @@ public class MotoristaBean extends SimpleController {
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
+	}
+	
+	public void regerarSenha(Motorista motori) {
+		
+		try {
+			motori.setSenha(FuncoesUtil.gerarSenha());
+			senhaGerada = motori.getSenha();
+			MotoristaBO.getInstance().alterarSenha(motori);			
+			enviarJavascript("PF('dlgRegSenha').show();");
+		} catch (ExcecaoNegocio e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void alterarMotorista() {
@@ -796,6 +811,14 @@ public class MotoristaBean extends SimpleController {
 
 	public void setPunicaoSelecionada(TipoPunicao punicaoSelecionada) {
 		this.punicaoSelecionada = punicaoSelecionada;
+	}
+
+	public String getSenhaGerada() {
+		return senhaGerada;
+	}
+
+	public void setSenhaGerada(String senhaGerada) {
+		this.senhaGerada = senhaGerada;
 	}
 
 }

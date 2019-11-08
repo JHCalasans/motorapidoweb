@@ -170,12 +170,40 @@
 							<h:graphicImage url="/resources/cad_fechado.png"
 								style="border-style: none" />
 						</h:commandLink>
+						<h:commandLink title="Regerar Senha" immediate="true"
+							style="margin-left:3px;"
+							actionListener="#{motoristaBean.regerarSenha(motorista)}">
+							<h:graphicImage url="/resources/refresh.png"
+								style="border-style: none" />
+						</h:commandLink>
+						
 
 					</p:column>
 				</p:dataTable>
 			</h:panelGroup>
 
 		</h:form>
+		
+		<!-- CONFIRMACAO SENHA REGERADA -->
+		<p:dialog header="Senha Regerada!" widgetVar="dlgRegSenha" height="100"
+			draggable="false" resizable="false" width="300" id="dlgRegSenha1">
+			<h:form>
+				<div align="center">
+					<p:panel>
+						<p:outputLabel value="Senha Regerada Com Sucesso!"
+							styleClass="OutputLabelCampo"></p:outputLabel>
+						<div class="clear"></div>
+						<br />
+						<p:outputLabel value="Senha Gerada:" styleClass="OutputLabelValor"></p:outputLabel>
+						<p:outputLabel value="#{motoristaBean.senhaGerada}" styleClass="OutputLabelCampo"></p:outputLabel>
+						<div class="clear"></div>
+						<br />
+						<p:commandButton value="Ok"	onclick="PF('dlgRegSenha').hide();"></p:commandButton>
+					</p:panel>
+				</div>
+			</h:form>
+
+		</p:dialog>
 
 		<!-- CONFIRMACAO DESBLOQUEIO -->
 		<p:dialog header="Desbloquear Motorista"
