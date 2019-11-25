@@ -170,6 +170,9 @@ public class Chamada extends Entidade {
 	@JoinColumn(name = "cod_area", nullable = true)
 	private Area area;
 	
+	@Column(name = "referencia_origem", nullable = true)
+	private String referenciaOrigem;
+	
 	@Column(name = "valor_previsto")
 	private BigDecimal valorPrevisto;
 	
@@ -605,6 +608,15 @@ public class Chamada extends Entidade {
 
 	public void setTempoParaResposta(Integer tempoParaResposta) {
 		this.tempoParaResposta = tempoParaResposta;
+	}
+
+	
+	public String getReferenciaOrigem() {
+		return referenciaOrigem;
+	}
+
+	public void setReferenciaOrigem(String referenciaOrigem) {
+		this.referenciaOrigem = referenciaOrigem;
 	}
 
 

@@ -172,8 +172,9 @@ public class ChamadaBean extends SimpleController {
 		return retorno;
 	}
 
-	public void teste() {
-		
+	public void limparChamada() {
+		mapModel.getMarkers().clear();
+		limparCampos();
 	}
 	
 	public void verificarLista(){
