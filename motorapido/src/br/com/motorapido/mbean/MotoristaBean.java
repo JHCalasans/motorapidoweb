@@ -176,7 +176,7 @@ public class MotoristaBean extends SimpleController {
 
 	public void pesquisarMotorista() {
 		try {
-			listaMotoristas = MotoristaBO.getInstance().obterMotoristas(nomePesquisa, cpfPesquisa, null, null, null);
+			listaMotoristas = MotoristaBO.getInstance().obterMotoristas(nomePesquisa, cpfPesquisa, null, null, null, null);
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -203,7 +203,7 @@ public class MotoristaBean extends SimpleController {
 				 * moto.setCpf(motorista.getCpf());
 				 */
 				List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, motorista.getCpf(), null, null,
-						null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
+						null, null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
 				if (lista != null && lista.size() > 0
 						&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 					MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CPF já cadastrado na base de dados!.", "");
@@ -226,7 +226,7 @@ public class MotoristaBean extends SimpleController {
 			 * moto.setIdentidade(motorista.getIdentidade());
 			 */
 			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null,
-					motorista.getIdentidade());// MotoristaBO.getInstance().obterMotoristasExample(moto);
+					motorista.getIdentidade(), null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "RG já cadastrado na base de dados!.", "");
@@ -248,7 +248,7 @@ public class MotoristaBean extends SimpleController {
 			 * moto.setEmail(motorista.getEmail());
 			 */
 			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, motorista.getEmail(),
-					null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
+					null, null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "Email já cadastrado na base de dados!.", "");
@@ -278,10 +278,28 @@ public class MotoristaBean extends SimpleController {
 			 * moto.setCnh(motorista.getCnh());
 			 */
 			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, motorista.getCnh(), null,
-					null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
+					null, null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "CNH já cadastrada na base de dados!.", "");
+				return false;
+			}
+			return true;
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			return false;
+		}
+
+	}
+	
+	public boolean validarIDMotorista() {
+		try {
+			
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null,
+					null, motorista.getIDMotorista());
+			if (lista != null && lista.size() > 0
+					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
+				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "ID de motorista já cadastrado na base de dados!.", "");
 				return false;
 			}
 			return true;
@@ -310,6 +328,8 @@ public class MotoristaBean extends SimpleController {
 			return;
 		if (!validarCNH())
 			return;
+		if (!validarCNH())
+			return;
 
 		try {
 		/*	if (foto != null) {
@@ -317,10 +337,10 @@ public class MotoristaBean extends SimpleController {
 				binarioFoto.setBinario(foto.getContents());
 				motorista.setFoto(binarioFoto);
 			}*/
-			msgSalvar = FuncoesUtil.gerarSenha();
+			//msgSalvar = FuncoesUtil.gerarSenha();
 			
 			
-			motorista.setSenha(msgSalvar);
+			//motorista.setSenha(msgSalvar);
 			motorista.setCep(cep);
 			MotoristaBO.getInstance().salvarMotorista(motorista, listaCaracteristicasSelecionadas, foto != null ? foto.getContents() : null, 
 					compResidencial != null ? compResidencial.getContents() : null, docCriminais != null ? docCriminais.getContents() : null);

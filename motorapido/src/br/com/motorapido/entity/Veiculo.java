@@ -47,7 +47,7 @@ public class Veiculo extends Entidade{
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "veiculo_cod_veiculo_seq")
 	private Integer codigo;
 	
-	@Column(name = "chassi", nullable = false, length = 50)
+	@Column(name = "chassi", nullable = true, length = 50)
 	private String chassi;
 	
 	@Column(name = "cor", nullable = false, length = 50)

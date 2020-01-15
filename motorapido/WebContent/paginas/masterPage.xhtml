@@ -468,12 +468,7 @@
 							styleClass="OutputLabelCampo"></p:outputLabel>
 						<div class="clear"></div>
 						<br />
-						<p:outputLabel value="Senha Gerada:"
-							rendered="#{msgSalvar != null}" styleClass="OutputLabelValor"></p:outputLabel>
-						<p:outputLabel value="#{msgSalvar}"
-							rendered="#{msgSalvar != null}" styleClass="OutputLabelCampo"></p:outputLabel>
-						<div class="clear"></div>
-						<br />
+					
 						<p:commandButton action="#{bean.salvoSucesso}" value="Ok"
 							onclick="PF('dlgSucesso').hide();"></p:commandButton>
 					</p:panel>

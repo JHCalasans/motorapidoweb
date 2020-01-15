@@ -90,14 +90,14 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 
-	public List<Motorista> obterMotoristas(String nome, String cpf, String cnh, String email, String identidade)
+	public List<Motorista> obterMotoristas(String nome, String cpf, String cnh, String email, String identidade, Integer IDMotorista)
 			throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
-			List<Motorista> lista = motoristaDAO.obterMotoristas(nome, cpf, cnh, email, identidade, em);
+			List<Motorista> lista = motoristaDAO.obterMotoristas(nome, cpf, cnh, email, identidade, IDMotorista,em);
 			emUtil.commitTransaction(transaction);
 			return lista;
 		} catch (Exception e) {

@@ -348,6 +348,18 @@
 						requiredMessage="#{bundle.campoObrigatorio} : Identificador"></p:inputMask>
 
 				</h:panelGroup>
+				
+				<h:panelGroup id="pngSenha" styleClass="p_like">
+
+					<div class="clear"></div>
+					<p:outputLabel value="Senha:" for="motoSenha" 
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:password  feedback="false" id="motoSenha" required="true"
+						value="#{motoristaBean.motorista.senha}" placeholder="Senha"
+						style="width:150px;margin-left:4px;"
+						validatorMessage="Senha não pode estar em branco!" minLength="6"></p:password>
+
+				</h:panelGroup>
 
 				<h:panelGroup id="pngCaracteristicas" styleClass="p_like">
 

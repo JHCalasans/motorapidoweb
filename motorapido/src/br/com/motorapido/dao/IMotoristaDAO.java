@@ -10,7 +10,7 @@ import br.com.motorapido.entity.Motorista;
 
 public interface IMotoristaDAO extends GenericDAO<Motorista, Integer> {
 
-	public List<Motorista> obterMotoristas(String nome, String cpf,  String cnh,  String email,  String identidade, EntityManager em) throws ExcecaoBanco;
+	public List<Motorista> obterMotoristas(String nome, String cpf,  String cnh,  String email,  String identidade,  Integer IDMotorista,EntityManager em) throws ExcecaoBanco;
 
 	public List<Motorista> obterTodos(EntityManager em) throws ExcecaoBanco;
 
