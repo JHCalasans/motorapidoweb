@@ -116,7 +116,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width:120px">
+					<p:column style="width:120px;">
 						<f:facet name="header">
 							<h:outputText value="#{bundle.operacoes}"
 								styleClass="cabecalhoDataTable" />
@@ -165,18 +165,11 @@
 								style="border-style: none" />
 						</h:commandLink>
 							<h:commandLink title="Não Ver Destino da Chamada" immediate="true"
-							style="margin-left:3px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, false)}"							
+							style="margin-left:3px; margin-right: auto;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, false)}"							
 							rendered="#{motorista.verDestino eq 'S'}">
 							<h:graphicImage url="/resources/cad_fechado.png"
 								style="border-style: none" />
-						</h:commandLink>
-						<h:commandLink title="Regerar Senha" immediate="true"
-							style="margin-left:3px;"
-							actionListener="#{motoristaBean.regerarSenha(motorista)}">
-							<h:graphicImage url="/resources/refresh.png"
-								style="border-style: none" />
-						</h:commandLink>
-						
+						</h:commandLink>				
 
 					</p:column>
 				</p:dataTable>

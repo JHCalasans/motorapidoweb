@@ -134,7 +134,12 @@
 							<h:graphicImage url="/resources/capacete.png"
 								style="border-style: none" />
 						</h:commandLink>
-
+						<h:commandLink title="Desativar" immediate="true"
+							action="#{idAparelhoBean.desativarAparelho(aparelho)}"
+							style="margin-left:3px; margin-right: auto;">
+							<h:graphicImage url="/resources/delete.png"
+								style="border-style: none" />
+						</h:commandLink>
 
 					</p:column>
 				</p:dataTable>
@@ -221,27 +226,27 @@
 								id="dlConfirmaVinculacao" resizable="false"
 								styleClass="dialogBox" closable="true" header="Confirmação"
 								width="600px">
-									<h:graphicImage url="/resources/alerta.png"
-										style="border-style: none; width: 20px;vertical-align: middle;margin-right: 10px;" />
-									<p:outputLabel
-										value="Ao vincular aparelho a esse motorista se houver outro motorista vinculado será desvinculado."></p:outputLabel>
-									<br />
-									<p:spacer height="20"></p:spacer>
-									<p:outputLabel value="Continuar?" style="font-weight: bold;"></p:outputLabel>
-									<br />
-									<p:spacer height="20"></p:spacer>
-									<h:panelGroup styleClass="p_like buttonPosition">
-										<p:commandButton value="Confirmar" id="btnCOnfirmar"
-											actionListener="#{idAparelhoBean.confirmarVincularMoto}"
-											style="margin-right: 10px;"
-											update="formCadastro, msgs, conteudo">
-										</p:commandButton>
-										<p:commandButton value="Cancelar"
-											onclick="PF('dlgConfirmaVinculacao').hide();"
-											immediate="true" style="margin-left:10px;" />
+								<h:graphicImage url="/resources/alerta.png"
+									style="border-style: none; width: 20px;vertical-align: middle;margin-right: 10px;" />
+								<p:outputLabel
+									value="Ao vincular aparelho a esse motorista se houver outro motorista vinculado será desvinculado."></p:outputLabel>
+								<br />
+								<p:spacer height="20"></p:spacer>
+								<p:outputLabel value="Continuar?" style="font-weight: bold;"></p:outputLabel>
+								<br />
+								<p:spacer height="20"></p:spacer>
+								<h:panelGroup styleClass="p_like buttonPosition">
+									<p:commandButton value="Confirmar" id="btnCOnfirmar"
+										actionListener="#{idAparelhoBean.confirmarVincularMoto}"
+										style="margin-right: 10px;"
+										update="formCadastro, msgs, conteudo">
+									</p:commandButton>
+									<p:commandButton value="Cancelar"
+										onclick="PF('dlgConfirmaVinculacao').hide();" immediate="true"
+										style="margin-left:10px;" />
 
 
-									</h:panelGroup>
+								</h:panelGroup>
 
 							</p:dialog>
 

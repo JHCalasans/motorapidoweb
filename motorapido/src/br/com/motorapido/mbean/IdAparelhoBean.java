@@ -18,18 +18,15 @@ import br.com.motorapido.util.ExcecoesUtil;
 @ViewScoped
 public class IdAparelhoBean extends SimpleController {
 
-
 	private static final long serialVersionUID = -5259409692084765770L;
 
-	
 	private String ativo;
-	private String nomeMotoPesquisa;	
+	private String nomeMotoPesquisa;
 	private List<MotoristaAparelho> aparelhos;
 	private List<Motorista> motoristas;
 	private String idAparelho;
 	private Integer codMotoristaVincular;
-	
-	
+
 	@PostConstruct
 	public void carregar() {
 		if (getFacesContext().isPostback()) {
@@ -42,7 +39,7 @@ public class IdAparelhoBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void pesquisarAparelhos() {
 		try {
 			aparelhos = MotoristaAparelhoBO.getInstance().obterAparelhosMotoristas(ativo);
@@ -50,7 +47,7 @@ public class IdAparelhoBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void pesquisarMotorista() {
 		try {
 			motoristas = MotoristaBO.getInstance().obterMotoristasPorNome(nomeMotoPesquisa);
@@ -58,23 +55,20 @@ public class IdAparelhoBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void abrirVincular(String idAparelho) {
 		this.idAparelho = idAparelho;
 		enviarJavascript("PF('dlgVincularMotorista').show();");
 	}
-	
-	
+
 	public void vincularMoto(Integer codMotorista) {
 		codMotoristaVincular = codMotorista;
 		enviarJavascript("PF('dlgConfirmaVinculacao').show();");
-	
-	
+
 	}
-	
-	
+
 	public void confirmarVincularMoto() {
-	
+
 		try {
 			MotoristaAparelhoBO.getInstance().vincularMotorista(codMotoristaVincular, getIdAparelho());
 			addMsg(FacesMessage.SEVERITY_INFO, "Aparelho vinculado com sucesso.");
@@ -83,20 +77,30 @@ public class IdAparelhoBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	
-	
+
+	public void desativarAparelho(MotoristaAparelho aparelho) {
+		if (aparelho.getAtivo().equals("N"))
+			addMsg(FacesMessage.SEVERITY_INFO, "Aparelho já se encontra desativado.");
+		else {
+			try {
+				MotoristaAparelhoBO.getInstance().desativarAparelho(aparelho);
+				addMsg(FacesMessage.SEVERITY_INFO, "Aparelho desativado com sucesso.");
+				pesquisarAparelhos();
+			} catch (ExcecaoNegocio e) {
+				ExcecoesUtil.TratarExcecao(e);
+			}
+		}
+	}
+
 	@Override
 	public String salvoSucesso() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
 	public String getAtivo() {
 		return ativo;
 	}
-
 
 	public void setAtivo(String ativo) {
 		this.ativo = ativo;

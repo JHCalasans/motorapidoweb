@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import org.joda.time.DateTime;
-
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.entity.Motorista;
@@ -132,6 +130,25 @@ public class MotoristaAparelhoBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar obter aparelhos.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public void desativarAparelho(MotoristaAparelho aparelho) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
+			aparelho.setAtivo("N");
+			aparelho.setDesativacao(new Date());
+			motoristaAparelhoDAO.save(aparelho, em);
+			emUtil.commitTransaction(transaction);
+			
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar desativar aparelho.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}
