@@ -311,15 +311,15 @@ public class MotoristaBean extends SimpleController {
 	}
 
 	public void salvarMotorista() {
-		if (docCriminais == null) {
-			addMsg(FacesMessage.SEVERITY_ERROR, "Documentos Criminais não Anexados.");
-			return;
-		}
-
-		if (compResidencial == null) {
-			addMsg(FacesMessage.SEVERITY_ERROR, "Comprovante Residencial não Anexado.");
-			return;
-		}
+		
+		//Removido obrigatoriedade de incluir documentos na fase de testes
+		/*
+		 * if (docCriminais == null) { addMsg(FacesMessage.SEVERITY_ERROR,
+		 * "Documentos Criminais não Anexados."); return; }
+		 * 
+		 * if (compResidencial == null) { addMsg(FacesMessage.SEVERITY_ERROR,
+		 * "Comprovante Residencial não Anexado."); return; }
+		 */
 		if (!validarCpf())
 			return;
 		if (!validarRG())

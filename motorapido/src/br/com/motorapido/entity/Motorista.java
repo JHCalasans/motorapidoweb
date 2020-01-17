@@ -129,7 +129,7 @@ public class Motorista  extends Entidade {
 	/*@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "documentos_criminais", nullable = true, referencedColumnName = "cod_binario_motorista")
 	@LazyToOne(LazyToOneOption.NO_PROXY)*/
-	@Column(name = "documentos_criminais", nullable = false)
+	@Column(name = "documentos_criminais", nullable = true)
 	private Long codBinarioDocCriminal;
 	
 	@Column(name = "flg_disponivel", nullable = false)
@@ -137,7 +137,7 @@ public class Motorista  extends Entidade {
 	
 	/*@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "comprovante_residencia", nullable = true, referencedColumnName = "cod_binario_motorista")*/
-	@Column(name = "comprovante_residencia", nullable = false)
+	@Column(name = "comprovante_residencia", nullable = true)
 	private Long codBinarioCompResidencia;	
 	
 	@Column(name = "flg_ver_destino", nullable = false)
