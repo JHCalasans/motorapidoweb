@@ -35,6 +35,10 @@ public class PagamentoMotorista extends Entidade {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cod_funcionario_baixa", nullable = false)
 	private Funcionario funcionario;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cod_motorista", nullable = false)
+	private Motorista motorista;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_pagamento", nullable = false)
@@ -73,6 +77,14 @@ public class PagamentoMotorista extends Entidade {
 
 	public void setDataPagamento(Date dataPagamento) {
 		this.dataPagamento = dataPagamento;
+	}
+
+	public Motorista getMotorista() {
+		return motorista;
+	}
+
+	public void setMotorista(Motorista motorista) {
+		this.motorista = motorista;
 	}
 
 	

@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:tjse="http://www.tjse.jus.br/jsf/components">
+
+	<p:dialog header="Pagamentos" widgetVar="varDlgPagamentoMoto"
+		width="600" height="220" resizable="false" showEffect="fade"
+		dynamic="true" appendTo="@(body)" closeOnEscape="true" closable="true"
+		hideEffect="fade" modal="true" draggable="false" id="dlgPagamentoMoto">
+		<h:form id="formbusca" prependId="false">
+			<p:panel>
+				<p:messages closable="true" globalOnly="true" id="msgDlg" />
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel styleClass="OutputLabelCampo"
+						value="Adicionar novo registro de pagamento?" />
+					<p:commandButton icon="ui-icon ui-icon-disk" value="Adicionar"
+						update="@form, tbMotoristas"
+						actionListener="#{motoristaBean.bloquearMotorista}" />
+
+				</h:panelGroup>
+				<div class="clear"></div>
+				<h:panelGroup styleClass="p_like buttonPosition">
+					<p:commandButton icon="ui-icon ui-icon-disk"
+						value="#{bundle.salvarRegistro}" update="@form, tbMotoristas"
+						actionListener="#{motoristaBean.adicionarPagamento()}" />
+				</h:panelGroup>
+				<div class="clear"></div>
+			</p:panel>
+
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup>
+				<p:dataTable tableStyle="table-layout:auto;width: 100%;"
+					id="tbPagamentos" var="pagamento"
+					value="#{motoristaBean.listaPagamentosMotorista}" rows="10"
+					style="text-align: center; max-width:100%" first="0"
+					paginatorAlwaysVisible="false" paginator="true"
+					emptyMessage="#{bundle.nenhumRegistroEncontrado}">
+					<f:facet name="header" styleClass="cabecalhoDataTable">
+			     		   Pagamentos
+			   			 </f:facet>
+
+					<p:column style="width:20px">
+						<f:facet name="header">
+							<h:outputText value="Data Cadastro Do Pagamento"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbData" value="#{pagamento.dataPagamento}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column style="width:150px">
+						<f:facet name="header">
+							<h:outputText value="Funcionário Responsável"
+								styleClass="cabecalhoDataTable" />
+						</f:facet>
+						<h:outputText id="tbFuncionario" value="#{pagamento.funcionario.nome}">
+
+						</h:outputText>
+					</p:column>
+
+
+				</p:dataTable>
+			</h:panelGroup>
+
+
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

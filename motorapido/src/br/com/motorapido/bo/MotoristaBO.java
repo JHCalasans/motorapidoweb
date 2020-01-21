@@ -20,6 +20,7 @@ import br.com.motorapido.dao.IChamadaVeiculoDAO;
 import br.com.motorapido.dao.IMotoristaAparelhoDAO;
 import br.com.motorapido.dao.IMotoristaDAO;
 import br.com.motorapido.dao.IMotoristaPosicaoAreaDAO;
+import br.com.motorapido.dao.IPagamentoMotoristaDAO;
 import br.com.motorapido.dao.IVeiculoDAO;
 import br.com.motorapido.entity.BinarioMotorista;
 import br.com.motorapido.entity.BloqueioMotorista;
@@ -30,6 +31,7 @@ import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
+import br.com.motorapido.entity.PagamentoMotorista;
 import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.enums.ParametroEnum;
@@ -85,6 +87,47 @@ public class MotoristaBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar checar disponibilidade", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public PagamentoMotorista adicionarPagamento(Motorista motorista, Funcionario funcionario) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IPagamentoMotoristaDAO pagamentoMotoristaDAO = fabricaDAO.getPostgresPagamentoMotoristaDAO();
+			PagamentoMotorista novoPagamento = new PagamentoMotorista();
+			novoPagamento.setDataPagamento(new Date());
+			novoPagamento.setFuncionario(funcionario);
+			novoPagamento.setMotorista(motorista);
+			novoPagamento = pagamentoMotoristaDAO.save(novoPagamento, em);
+			emUtil.commitTransaction(transaction);
+			return novoPagamento;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar adicionar pagamento", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public List<PagamentoMotorista> obterPagamentosMotorista(Motorista motorista)
+			throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IPagamentoMotoristaDAO pagamentoMotoristaDAO = fabricaDAO.getPostgresPagamentoMotoristaDAO();
+			PagamentoMotorista pagamento = new PagamentoMotorista();
+			pagamento.setMotorista(motorista);
+			List<PagamentoMotorista> lista = pagamentoMotoristaDAO.findByExample(pagamento, em); 
+			emUtil.commitTransaction(transaction);
+			return lista;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter pagamentos do motorista.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}

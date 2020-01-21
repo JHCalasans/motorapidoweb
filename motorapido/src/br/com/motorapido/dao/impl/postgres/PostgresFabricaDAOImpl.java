@@ -60,6 +60,7 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 	private static PostgresBinarioUsuarioDAOImpl postgresBinarioUsuarioDAOImpl;
 	private static PostgresLogRequisicaoSocketDAOImpl postgresLogRequisicaoSocketDAOImpl;
 	private static PostgresLogErroMotoristaDAOImpl postgresLogErroMotoristaDAOImpl;
+	private static PostgresPagamentoMotoristaDAOImpl postgresPagamentoMotoristaDAOImpl;
 
 	private PostgresFabricaDAOImpl() {
 
@@ -423,6 +424,14 @@ final class PostgresFabricaDAOImpl extends FabricaDAO {
 			postgresLogErroMotoristaDAOImpl = new PostgresLogErroMotoristaDAOImpl();
 		}
 		return postgresLogErroMotoristaDAOImpl;
+	}
+	
+	@Override
+	public PostgresPagamentoMotoristaDAOImpl getPostgresPagamentoMotoristaDAO() {
+		if (postgresPagamentoMotoristaDAOImpl == null) {
+			postgresPagamentoMotoristaDAOImpl = new PostgresPagamentoMotoristaDAOImpl();
+		}
+		return postgresPagamentoMotoristaDAOImpl;
 	}
 	
 	

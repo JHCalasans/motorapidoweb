@@ -35,6 +35,7 @@ import br.com.motorapido.bo.TipoPunicaoBO;
 import br.com.motorapido.entity.BinarioMotorista;
 import br.com.motorapido.entity.Caracteristica;
 import br.com.motorapido.entity.Motorista;
+import br.com.motorapido.entity.PagamentoMotorista;
 import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.enums.ParametroEnum;
 import br.com.motorapido.util.EnderecoCep;
@@ -60,7 +61,7 @@ public class MotoristaBean extends SimpleController {
 	private Date vencimentoCNH;
 
 	private String cep;
-	
+
 	private String senhaGerada;
 
 	private UploadedFile docCriminais;
@@ -72,6 +73,8 @@ public class MotoristaBean extends SimpleController {
 	private String cpfPesquisa;
 
 	private List<Motorista> listaMotoristas;
+	
+	private List<PagamentoMotorista> listaPagamentosMotorista;
 
 	private String msgSalvar;
 
@@ -139,10 +142,10 @@ public class MotoristaBean extends SimpleController {
 
 			motorista = MotoristaBO.getInstance().obterMotoristaPorCodigo(codMotorista);
 			if (motorista.getCodBinarioFoto() != null) {
-				
-				 BinarioMotorista binarioFoto =	MotoristaBO.getInstance().obterBinarioMotoristaPorCodigo(motorista.getCodBinarioFoto());
-				streamFoto = new DefaultStreamedContent(new ByteArrayInputStream(binarioFoto.getBinario()),
-						"image/*");
+
+				BinarioMotorista binarioFoto = MotoristaBO.getInstance()
+						.obterBinarioMotoristaPorCodigo(motorista.getCodBinarioFoto());
+				streamFoto = new DefaultStreamedContent(new ByteArrayInputStream(binarioFoto.getBinario()), "image/*");
 			}
 
 			listaCaracteristicasSelecionadas = CaracteristicaBO.getInstance()
@@ -153,8 +156,8 @@ public class MotoristaBean extends SimpleController {
 	}
 
 	/*
-	 * public void carregarCaracteristicasAtivas() { try { listaCaracteristicas
-	 * = CaracteristicaBO.getInstance().obterCaracteristicas(null, "S"); } catch
+	 * public void carregarCaracteristicasAtivas() { try { listaCaracteristicas =
+	 * CaracteristicaBO.getInstance().obterCaracteristicas(null, "S"); } catch
 	 * (ExcecaoNegocio e) { ExcecoesUtil.TratarExcecao(e); } }
 	 */
 
@@ -176,7 +179,8 @@ public class MotoristaBean extends SimpleController {
 
 	public void pesquisarMotorista() {
 		try {
-			listaMotoristas = MotoristaBO.getInstance().obterMotoristas(nomePesquisa, cpfPesquisa, null, null, null, null);
+			listaMotoristas = MotoristaBO.getInstance().obterMotoristas(nomePesquisa, cpfPesquisa, null, null, null,
+					null);
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -199,8 +203,7 @@ public class MotoristaBean extends SimpleController {
 		} else {
 			try {
 				/*
-				 * Motorista moto = new Motorista();
-				 * moto.setCpf(motorista.getCpf());
+				 * Motorista moto = new Motorista(); moto.setCpf(motorista.getCpf());
 				 */
 				List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, motorista.getCpf(), null, null,
 						null, null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
@@ -244,8 +247,7 @@ public class MotoristaBean extends SimpleController {
 
 		try {
 			/*
-			 * Motorista moto = new Motorista();
-			 * moto.setEmail(motorista.getEmail());
+			 * Motorista moto = new Motorista(); moto.setEmail(motorista.getEmail());
 			 */
 			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, motorista.getEmail(),
 					null, null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
@@ -274,8 +276,7 @@ public class MotoristaBean extends SimpleController {
 
 		try {
 			/*
-			 * Motorista moto = new Motorista();
-			 * moto.setCnh(motorista.getCnh());
+			 * Motorista moto = new Motorista(); moto.setCnh(motorista.getCnh());
 			 */
 			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, motorista.getCnh(), null,
 					null, null);// MotoristaBO.getInstance().obterMotoristasExample(moto);
@@ -291,15 +292,16 @@ public class MotoristaBean extends SimpleController {
 		}
 
 	}
-	
+
 	public boolean validarIDMotorista() {
 		try {
-			
-			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null,
-					null, motorista.getIDMotorista());
+
+			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null, null,
+					motorista.getIDMotorista());
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
-				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "ID de motorista já cadastrado na base de dados!.", "");
+				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "ID de motorista já cadastrado na base de dados!.",
+						"");
 				return false;
 			}
 			return true;
@@ -311,8 +313,8 @@ public class MotoristaBean extends SimpleController {
 	}
 
 	public void salvarMotorista() {
-		
-		//Removido obrigatoriedade de incluir documentos na fase de testes
+
+		// Removido obrigatoriedade de incluir documentos na fase de testes
 		/*
 		 * if (docCriminais == null) { addMsg(FacesMessage.SEVERITY_ERROR,
 		 * "Documentos Criminais não Anexados."); return; }
@@ -332,18 +334,18 @@ public class MotoristaBean extends SimpleController {
 			return;
 
 		try {
-		/*	if (foto != null) {
-				BinarioMotorista binarioFoto = new BinarioMotorista();
-				binarioFoto.setBinario(foto.getContents());
-				motorista.setFoto(binarioFoto);
-			}*/
-			//msgSalvar = FuncoesUtil.gerarSenha();
-			
-			
-			//motorista.setSenha(msgSalvar);
+			/*
+			 * if (foto != null) { BinarioMotorista binarioFoto = new BinarioMotorista();
+			 * binarioFoto.setBinario(foto.getContents()); motorista.setFoto(binarioFoto); }
+			 */
+			// msgSalvar = FuncoesUtil.gerarSenha();
+
+			// motorista.setSenha(msgSalvar);
 			motorista.setCep(cep);
-			MotoristaBO.getInstance().salvarMotorista(motorista, listaCaracteristicasSelecionadas, foto != null ? foto.getContents() : null, 
-					compResidencial != null ? compResidencial.getContents() : null, docCriminais != null ? docCriminais.getContents() : null);
+			MotoristaBO.getInstance().salvarMotorista(motorista, listaCaracteristicasSelecionadas,
+					foto != null ? foto.getContents() : null,
+					compResidencial != null ? compResidencial.getContents() : null,
+					docCriminais != null ? docCriminais.getContents() : null);
 			// limparCampos();
 			// addMsg(FacesMessage.SEVERITY_INFO, "Motorista cadastrado com
 			// sucesso.");
@@ -353,18 +355,40 @@ public class MotoristaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void regerarSenha(Motorista motori) {
-		
+
 		try {
 			motori.setSenha(FuncoesUtil.gerarSenha());
 			senhaGerada = motori.getSenha();
-			MotoristaBO.getInstance().alterarSenha(motori);			
+			MotoristaBO.getInstance().alterarSenha(motori);
 			enviarJavascript("PF('dlgRegSenha').show();");
 		} catch (ExcecaoNegocio e) {
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	public void adicionarPagamento(Motorista motorista) {
+		try {
+			
+			PagamentoMotorista pagamento = MotoristaBO.getInstance().adicionarPagamento(motorista, getFuncionarioLogado());
+			listaPagamentosMotorista.add(0, pagamento);
+			MsgUtil.updateMessage(FacesMessage.SEVERITY_INFO, "Pagamento cadastrado com sucesso!","");
+		} catch (ExcecaoNegocio e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void buscarPagamentos(Motorista motorista) {
+		try {
+			
+			listaPagamentosMotorista = MotoristaBO.getInstance().obterPagamentosMotorista(motorista);
+		} catch (ExcecaoNegocio e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public void alterarMotorista() {
@@ -378,24 +402,22 @@ public class MotoristaBean extends SimpleController {
 		if (!validarCNH())
 			return;
 		try {
-			/*if (foto != null && foto.getContents() != null) {
-				BinarioMotorista binarioFoto = new BinarioMotorista();
-				binarioFoto.setBinario(foto.getContents());
-				motorista.setFoto(binarioFoto);
-			}
-			if (docCriminais != null) {
-				BinarioMotorista binarioDocCirminais = new BinarioMotorista();
-				binarioDocCirminais.setBinario(docCriminais.getContents());
-				motorista.setDocCriminais(binarioDocCirminais);
-			}
-			
-			if (compResidencial != null) {
-				BinarioMotorista binarioCompResidencia = new BinarioMotorista();
-				binarioCompResidencia.setBinario(compResidencial.getContents());
-				motorista.setComprovanteResidencia(binarioCompResidencia);
-			}
-*/
-			MotoristaBO.getInstance().alterarMotorista(motorista, listaCaracteristicasSelecionadas, foto != null ? foto.getContents() : null, docCriminais != null ? docCriminais.getContents() : null,
+			/*
+			 * if (foto != null && foto.getContents() != null) { BinarioMotorista
+			 * binarioFoto = new BinarioMotorista();
+			 * binarioFoto.setBinario(foto.getContents()); motorista.setFoto(binarioFoto); }
+			 * if (docCriminais != null) { BinarioMotorista binarioDocCirminais = new
+			 * BinarioMotorista();
+			 * binarioDocCirminais.setBinario(docCriminais.getContents());
+			 * motorista.setDocCriminais(binarioDocCirminais); }
+			 * 
+			 * if (compResidencial != null) { BinarioMotorista binarioCompResidencia = new
+			 * BinarioMotorista();
+			 * binarioCompResidencia.setBinario(compResidencial.getContents());
+			 * motorista.setComprovanteResidencia(binarioCompResidencia); }
+			 */
+			MotoristaBO.getInstance().alterarMotorista(motorista, listaCaracteristicasSelecionadas,
+					foto != null ? foto.getContents() : null, docCriminais != null ? docCriminais.getContents() : null,
 					compResidencial != null ? compResidencial.getContents() : null);
 			enviarJavascript("PF('dlgSucesso').show();");
 
@@ -406,7 +428,8 @@ public class MotoristaBean extends SimpleController {
 
 	public void downloadDocCriminais(Motorista moto) {
 		try {
-			BinarioMotorista binario = MotoristaBO.getInstance().obterBinarioMotoristaPorCodigo(moto.getCodBinarioDocCriminal());
+			BinarioMotorista binario = MotoristaBO.getInstance()
+					.obterBinarioMotoristaPorCodigo(moto.getCodBinarioDocCriminal());
 			UtilDownload.download(binario.getBinario(), "Documentos Criminais de " + moto.getNome() + ".pdf",
 					UtilDownload.MIMETYPE_OCTETSTREAM, UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
 		} catch (Exception e) {
@@ -416,10 +439,10 @@ public class MotoristaBean extends SimpleController {
 
 	public void downloadCompResidencia(Motorista moto) {
 		try {
-			BinarioMotorista binario = MotoristaBO.getInstance().obterBinarioMotoristaPorCodigo(moto.getCodBinarioCompResidencia());
-			UtilDownload.download(binario.getBinario(),
-					"Comprovante de residência de " + moto.getNome() + ".pdf", UtilDownload.MIMETYPE_OCTETSTREAM,
-					UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
+			BinarioMotorista binario = MotoristaBO.getInstance()
+					.obterBinarioMotoristaPorCodigo(moto.getCodBinarioCompResidencia());
+			UtilDownload.download(binario.getBinario(), "Comprovante de residência de " + moto.getNome() + ".pdf",
+					UtilDownload.MIMETYPE_OCTETSTREAM, UtilDownload.CONTENT_DISPOSITION_ATTACHMENT);
 		} catch (Exception e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
@@ -451,8 +474,6 @@ public class MotoristaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
-	
 
 	private Date calculaDataFinalBloqueio(String periodo) {
 		Calendar calendar = Calendar.getInstance();
@@ -475,11 +496,11 @@ public class MotoristaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void alterarPermissaoDestinoMotorista(Motorista motorista, boolean habilitado) {
 		try {
 			MotoristaBO.getInstance().alterarPermissaoDestinoMotorista(motorista, habilitado);
-			if(habilitado)
+			if (habilitado)
 				addMsg(FacesMessage.SEVERITY_INFO, "Permissão para visualizar destino desbloqueada com sucesso!");
 			else
 				addMsg(FacesMessage.SEVERITY_INFO, "Permissão para visualizar destino bloqueada com sucesso!");
@@ -839,6 +860,14 @@ public class MotoristaBean extends SimpleController {
 
 	public void setSenhaGerada(String senhaGerada) {
 		this.senhaGerada = senhaGerada;
+	}
+
+	public List<PagamentoMotorista> getListaPagamentosMotorista() {
+		return listaPagamentosMotorista;
+	}
+
+	public void setListaPagamentosMotorista(List<PagamentoMotorista> listaPagamentosMotorista) {
+		this.listaPagamentosMotorista = listaPagamentosMotorista;
 	}
 
 }

@@ -90,6 +90,8 @@ public abstract class FabricaDAO {
 	public abstract IBinarioUsuarioDAO getPostgresBinarioUsuarioDAO();
 	
 	public abstract ILogRequisicaoSocketDAO getPostgresLogRequisicaoSocketDAO();
+	
+	public abstract IPagamentoMotoristaDAO getPostgresPagamentoMotoristaDAO();
 
 
 	/**
