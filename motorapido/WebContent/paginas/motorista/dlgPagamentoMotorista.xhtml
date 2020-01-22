@@ -7,24 +7,22 @@
 
 	<p:dialog header="Pagamentos" widgetVar="varDlgPagamentoMoto"
 		width="600" height="220" resizable="false" showEffect="fade"
-		dynamic="true" appendTo="@(body)" closeOnEscape="true" closable="true"
+		dynamic="true"  closeOnEscape="true" closable="true"
 		hideEffect="fade" modal="true" draggable="false" id="dlgPagamentoMoto">
-		<h:form id="formbusca" prependId="false">
+		<h:form id="formPagamento" prependId="false">
 			<p:panel>
-				<p:messages closable="true" globalOnly="true" id="msgDlg" />
-				<h:panelGroup styleClass="p_like">
-					<p:outputLabel styleClass="OutputLabelCampo"
-						value="Adicionar novo registro de pagamento?" />
-					<p:commandButton icon="ui-icon ui-icon-disk" value="Adicionar"
-						update="@form, tbMotoristas"
-						actionListener="#{motoristaBean.bloquearMotorista}" />
+				<p:messages closable="true" globalOnly="true" id="msgDlgPag" />
+				<h:panelGroup styleClass="p_like" >
+					<p:outputLabel styleClass="OutputLabelCampo" style="width: 100%;text-align: center"
+						value="Adicionar novo registro de pagamento?" />					
 
 				</h:panelGroup>
+				<br />
 				<div class="clear"></div>
 				<h:panelGroup styleClass="p_like buttonPosition">
-					<p:commandButton icon="ui-icon ui-icon-disk"
-						value="#{bundle.salvarRegistro}" update="@form, tbMotoristas"
-						actionListener="#{motoristaBean.adicionarPagamento()}" />
+					<p:commandButton icon="ui-icon ui-icon-disk" value="Adicionar"
+						update="tbPagamentos, tbPagamentos"
+						actionListener="#{motoristaBean.adicionarPagamento(motorista)}"/>
 				</h:panelGroup>
 				<div class="clear"></div>
 			</p:panel>
@@ -42,7 +40,7 @@
 			     		   Pagamentos
 			   			 </f:facet>
 
-					<p:column style="width:20px">
+					<p:column style="width:100px">
 						<f:facet name="header">
 							<h:outputText value="Data Cadastro Do Pagamento"
 								styleClass="cabecalhoDataTable" />

@@ -104,6 +104,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			novoPagamento.setMotorista(motorista);
 			novoPagamento = pagamentoMotoristaDAO.save(novoPagamento, em);
 			emUtil.commitTransaction(transaction);
+			novoPagamento.setFuncionario(funcionario);
 			return novoPagamento;
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
@@ -122,7 +123,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			IPagamentoMotoristaDAO pagamentoMotoristaDAO = fabricaDAO.getPostgresPagamentoMotoristaDAO();
 			PagamentoMotorista pagamento = new PagamentoMotorista();
 			pagamento.setMotorista(motorista);
-			List<PagamentoMotorista> lista = pagamentoMotoristaDAO.findByExample(pagamento, em); 
+			List<PagamentoMotorista> lista = pagamentoMotoristaDAO.obterPagamentosMotorista(motorista.getCodigo(), em);
 			emUtil.commitTransaction(transaction);
 			return lista;
 		} catch (Exception e) {

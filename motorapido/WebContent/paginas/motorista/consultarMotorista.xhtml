@@ -121,7 +121,7 @@
 							<h:outputText value="#{bundle.operacoes}"
 								styleClass="cabecalhoDataTable" />
 						</f:facet>
-						<h:commandLink title="Veículos" immediate="true" 
+						<h:commandLink title="Veículos" immediate="true"
 							action="#{motoristaBean.navegarVeiculos(motorista.codigo)}">
 							<h:graphicImage url="/resources/roda.png"
 								style="border-style: none" />
@@ -158,28 +158,37 @@
 							<h:graphicImage url="/resources/desbloquear.png"
 								style="border-style: none" />
 						</h:commandLink>
-							<h:commandLink title="Liberar Destino da Chamada" immediate="true"
-							style="margin-left:3px;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, true)}"							
+						<h:commandLink title="Liberar Destino da Chamada" immediate="true"
+							style="margin-left:3px;"
+							actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, true)}"
 							rendered="#{motorista.verDestino eq 'N'}">
 							<h:graphicImage url="/resources/cad_aberto.png"
 								style="border-style: none" />
 						</h:commandLink>
-							<h:commandLink title="Não Ver Destino da Chamada" immediate="true"
-							style="margin-left:3px; margin-right: auto;" actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, false)}"							
+						<h:commandLink title="Não Ver Destino da Chamada" immediate="true"
+							style="margin-left:3px;"
+							actionListener="#{motoristaBean.alterarPermissaoDestinoMotorista(motorista, false)}"
 							rendered="#{motorista.verDestino eq 'S'}">
 							<h:graphicImage url="/resources/cad_fechado.png"
 								style="border-style: none" />
-						</h:commandLink>				
+						</h:commandLink>
+						<h:commandLink title="Pagamentos" immediate="true"
+							style="margin-left:3px;"
+							actionListener="#{motoristaBean.buscarPagamentos(motorista)}">
+							<h:graphicImage url="/resources/pagamento.png"
+								style="border-style: none" />
+						</h:commandLink>
 
 					</p:column>
 				</p:dataTable>
 			</h:panelGroup>
 
 		</h:form>
-		
+
 		<!-- CONFIRMACAO SENHA REGERADA -->
-		<p:dialog header="Senha Regerada!" widgetVar="dlgRegSenha" height="100"
-			draggable="false" resizable="false" width="300" id="dlgRegSenha1">
+		<p:dialog header="Senha Regerada!" widgetVar="dlgRegSenha"
+			height="100" draggable="false" resizable="false" width="300"
+			id="dlgRegSenha1">
 			<h:form>
 				<div align="center">
 					<p:panel>
@@ -188,10 +197,11 @@
 						<div class="clear"></div>
 						<br />
 						<p:outputLabel value="Senha Gerada:" styleClass="OutputLabelValor"></p:outputLabel>
-						<p:outputLabel value="#{motoristaBean.senhaGerada}" styleClass="OutputLabelCampo"></p:outputLabel>
+						<p:outputLabel value="#{motoristaBean.senhaGerada}"
+							styleClass="OutputLabelCampo"></p:outputLabel>
 						<div class="clear"></div>
 						<br />
-						<p:commandButton value="Ok"	onclick="PF('dlgRegSenha').hide();"></p:commandButton>
+						<p:commandButton value="Ok" onclick="PF('dlgRegSenha').hide();"></p:commandButton>
 					</p:panel>
 				</div>
 			</h:form>
@@ -233,6 +243,11 @@
 
 		<ui:include src="/paginas/motorista/dlgBloquearMotorista.xhtml">
 			<ui:param name="bean" value="#{motoristaBean}" />
+		</ui:include>
+
+		<ui:include src="/paginas/motorista/dlgPagamentoMotorista.xhtml">
+			<ui:param name="bean" value="#{motoristaBean}" />
+			<ui:param name="motorista" value="#{motoristaBean.motoristaPagamento}" />
 		</ui:include>
 
 	</ui:define>

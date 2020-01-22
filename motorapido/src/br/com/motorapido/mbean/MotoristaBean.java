@@ -81,6 +81,8 @@ public class MotoristaBean extends SimpleController {
 	private String motivoBloqueio;
 
 	private Motorista motoristaBloqeuar;
+	
+	private Motorista motoristaPagamento;
 
 	private Date dataInicioBloqueio;
 
@@ -176,6 +178,8 @@ public class MotoristaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
+	
+	
 
 	public void pesquisarMotorista() {
 		try {
@@ -383,8 +387,9 @@ public class MotoristaBean extends SimpleController {
 	
 	public void buscarPagamentos(Motorista motorista) {
 		try {
-			
+			motoristaPagamento = motorista;
 			listaPagamentosMotorista = MotoristaBO.getInstance().obterPagamentosMotorista(motorista);
+			enviarJavascript("PF('varDlgPagamentoMoto').show();");
 		} catch (ExcecaoNegocio e) {
 			e.printStackTrace();
 		}
@@ -868,6 +873,14 @@ public class MotoristaBean extends SimpleController {
 
 	public void setListaPagamentosMotorista(List<PagamentoMotorista> listaPagamentosMotorista) {
 		this.listaPagamentosMotorista = listaPagamentosMotorista;
+	}
+
+	public Motorista getMotoristaPagamento() {
+		return motoristaPagamento;
+	}
+
+	public void setMotoristaPagamento(Motorista motoristaPagamento) {
+		this.motoristaPagamento = motoristaPagamento;
 	}
 
 }
