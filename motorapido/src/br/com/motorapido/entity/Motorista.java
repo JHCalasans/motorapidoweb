@@ -24,7 +24,7 @@ import br.com.motorapido.util.ws.retornos.RetornoVeiculosMotorista;
 @NamedQueries(value = { 
 		@NamedQuery(name = "Motorista.obterMotoristas", query = "select m from Motorista m  where (:nome is null or lower(m.nome) like '%' || :nome || '%') and (:cpf is null or m.cpf like '%' || :cpf || '%')"
 				+ " and (:identidade is null or m.identidade like '%' || :identidade || '%') and (:email is null or m.email like '%' || :email || '%') and (:cnh is null or m.cnh like '%' || :cnh || '%') "
-				+ " and (:idMoto is null or m.cnh = :idMoto) "),		
+				+ " and (:idMoto is null or m.iDMotorista = :idMoto) "),		
 		@NamedQuery(name = "Motorista.obterTodos", query = "select m from Motorista m "),
 		@NamedQuery(name = "Motorista.obterPorCod", query = "select m from Motorista m where m.codigo = :codigo"),
 		@NamedQuery(name = "Motorista.obterSemRestricoesClientes", query = "select m from Motorista m where m.ativo like 'S' and m.codigo not in "
@@ -56,7 +56,7 @@ public class Motorista  extends Entidade {
 	private String nome;
 	
 	@Column(name = "identificador_motorista", nullable = false)
-	private Integer IDMotorista;
+	private Integer iDMotorista;
 	
 	@Column(name = "num_identidade", nullable = false)
 	private String identidade;
@@ -506,14 +506,13 @@ public class Motorista  extends Entidade {
 		this.idAparelho = idAparelho;
 	}
 
-
-	public Integer getIDMotorista() {
-		return IDMotorista;
+	public Integer getiDMotorista() {
+		return iDMotorista;
 	}
 
 
-	public void setIDMotorista(Integer iDMotorista) {
-		IDMotorista = iDMotorista;
+	public void setiDMotorista(Integer iDMotorista) {
+		this.iDMotorista = iDMotorista;
 	}
 
 

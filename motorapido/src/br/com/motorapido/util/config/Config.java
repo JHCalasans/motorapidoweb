@@ -72,13 +72,17 @@ public class Config implements ServletContextListener {
 			JobDetail job = newJob(JobProject.class).withIdentity("JobProject", "GrupoMotoRapido").build();
 			
 			JobDetail jobSegundos = newJob(JobProjectSegundos.class).withIdentity("JobProjectSegundos", "GrupoMotoRapido").build();
+			
+			JobDetail jobBloqueioPagamentoMotorista = newJob(JobProject.class).withIdentity("JobProject", "GrupoMotoRapido").build();
 
 			Trigger trigger = newTrigger().withIdentity("MotoRapidoTrigger", "GrupoMotoRapido").startNow()
 					.withSchedule(simpleSchedule().withIntervalInMinutes(5).repeatForever()).build();
 			
 			Trigger triggerSegundos = newTrigger().withIdentity("MotoRapidoTriggerSegundos", "GrupoMotoRapido").startNow()
-					.withSchedule(simpleSchedule().withIntervalInSeconds(25).repeatForever()).build();
+					.withSchedule(simpleSchedule().withIntervalInSeconds(25).repeatForever()).build();			
 			
+			Trigger triggerBloqueioPagamentoMotorista = newTrigger().withIdentity("MotoRapidoTrigger", "GrupoMotoRapido").startNow()
+					.withSchedule(simpleSchedule().withIntervalInHours(24).repeatForever()).build();
 			//Aloca Lista de Logradouros em cache
 			SimpleController.iniciarListaLogradouros();
 			//Aloca Lista de características em cache

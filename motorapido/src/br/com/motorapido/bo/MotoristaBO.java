@@ -534,11 +534,15 @@ public class MotoristaBO extends MotoRapidoBO {
 
 			IBinarioMotoristaDAO binarioMotoristaDAO = fabricaDAO.getPostgresBinarioMotoristaDAO();
 			BinarioMotorista binarioMotorista = new BinarioMotorista();
-			binarioMotorista.setBinario(documentoCriminal);
-			motorista.setCodBinarioDocCriminal(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());
-			binarioMotorista.setBinario(comprovanteResidencia);
-			motorista.setCodBinarioCompResidencia(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());
-
+			if(documentoCriminal != null) {
+				binarioMotorista.setBinario(documentoCriminal);
+				motorista.setCodBinarioDocCriminal(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());
+			}
+			if(comprovanteResidencia != null) {
+				binarioMotorista.setBinario(comprovanteResidencia);
+				motorista.setCodBinarioCompResidencia(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());
+			}
+			
 			if (foto != null) {
 				binarioMotorista.setBinario(foto);
 				motorista.setCodBinarioFoto(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());

@@ -25,7 +25,8 @@ import br.com.minhaLib.dao.Entidade;
 				+ " where lo.estado like :estado"), })
 public class Logradouro extends Entidade {
 
-	private static final long serialVersionUID = 2422010721322522023L;
+
+	private static final long serialVersionUID = -5234107195155097874L;
 	public final static String esquema = "diego";
 	public final static String nomeTabela = "logradouro";
 

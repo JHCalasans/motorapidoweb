@@ -296,12 +296,15 @@ public class MotoristaBean extends SimpleController {
 		}
 
 	}
+	
+	
+
 
 	public boolean validarIDMotorista() {
 		try {
 
 			List<Motorista> lista = MotoristaBO.getInstance().obterMotoristas(null, null, null, null, null,
-					motorista.getIDMotorista());
+					motorista.getiDMotorista());
 			if (lista != null && lista.size() > 0
 					&& (motorista.getCodigo() == null || motorista.getCodigo() != lista.get(0).getCodigo())) {
 				MsgUtil.updateMessage(FacesMessage.SEVERITY_ERROR, "ID de motorista já cadastrado na base de dados!.",
@@ -335,6 +338,8 @@ public class MotoristaBean extends SimpleController {
 		if (!validarCNH())
 			return;
 		if (!validarCNH())
+			return;		
+		if (!validarIDMotorista())
 			return;
 
 		try {
@@ -405,6 +410,8 @@ public class MotoristaBean extends SimpleController {
 		if (!validarEmail())
 			return;
 		if (!validarCNH())
+			return;
+		if (!validarIDMotorista())
 			return;
 		try {
 			/*
