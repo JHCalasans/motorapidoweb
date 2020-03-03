@@ -436,7 +436,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width:130px">
+					<p:column style="width:130px; text-align:left;">
 						<f:facet name="header">
 							<h:outputText value="Cliente" styleClass="cabecalhoDataTable" />
 						</f:facet>
@@ -444,7 +444,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width:130px">
+					<p:column style="width:130px; text-align:left;">
 						<f:facet name="header">
 							<h:outputText value="Endereço" styleClass="cabecalhoDataTable" />
 						</f:facet>
@@ -470,7 +470,7 @@
 
 					<p:column style="width: 60px">
 						<f:facet name="header">
-							<h:outputText value="Valor Previsto"
+							<h:outputText value="Valor"
 								styleClass="cabecalhoDataTable" />
 						</f:facet>
 						<h:outputText value="#{chamada.valorPrevisto}">
@@ -478,7 +478,7 @@
 						</h:outputText>
 					</p:column>
 
-					<p:column style="width: 60px">
+					<p:column style="width: 60px" rendered="false">
 						<f:facet name="header">
 							<h:outputText value="Valor Final" styleClass="cabecalhoDataTable" />
 						</f:facet>
