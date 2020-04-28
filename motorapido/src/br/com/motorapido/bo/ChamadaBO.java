@@ -46,6 +46,7 @@ import br.com.motorapido.util.GoogleWSUtil;
 import br.com.motorapido.util.MotorapidoWebSocket;
 import br.com.motorapido.util.PushNotificationUtil;
 import br.com.motorapido.util.RetornoMatrixGoogleAPI;
+import br.com.motorapido.util.SessaoWS;
 import br.com.motorapido.util.ws.params.CalculoValorParam;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.NovaChamadaParam;
@@ -471,6 +472,7 @@ public class ChamadaBO extends MotoRapidoBO {
 				chamada.setSituacaoChamada(situacaChamada);
 				IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 				chamadaDAO.save(chamada, em);
+				ControleSessaoWS.enviarAlertaPendencia("true");
 				// SimpleController.getListaChamadasEmEsperaGeral().add(chamada);
 			}
 
@@ -483,6 +485,8 @@ public class ChamadaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
+	
+	
 
 	public List<Chamada> obterChamadasAbertas() throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
@@ -587,12 +591,10 @@ public class ChamadaBO extends MotoRapidoBO {
 			retorno.setValorFinal(valorInicial.toString());
 			SimpleController.getListaChamadasEmEsperaGeral().remove(retorno);
 			SimpleController.getListaChamadasAceitas().add(retorno);
-			/*
-			 * retorno.setCodChamadaVeiculo(chamadaVeiculo.getCodigo());
-			 * retorno.setValorPorDistancia(valor);
-			 * retorno.setDistanciaInicial(distancia);
-			 * retorno.setValorFinal(valorInicial.toString());
-			 */
+			
+			if(SimpleController.getListaChamadasEmEsperaGeral().size() < 1 )
+				ControleSessaoWS.enviarAlertaPendencia("false");
+		
 			return retorno;
 		} catch (ExcecaoNegocio e) {
 			emUtil.rollbackTransaction(transaction);

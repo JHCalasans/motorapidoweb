@@ -1,5 +1,6 @@
 package br.com.motorapido.mbean;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import br.com.motorapido.entity.Logradouro;
 import br.com.motorapido.entity.MensagemMotoristaFuncionario;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.enums.SituacaoChamadaEnum;
+import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.ExcecoesUtil;
 import br.com.motorapido.util.MotoristaPontoMapa;
 import br.com.motorapido.util.Paginas;
@@ -115,7 +117,7 @@ public abstract class SimpleController implements Serializable {
 
 	}*/
 	
-	public static void iniciarListaChamadas() {
+	public static void iniciarListaChamadas() throws IOException {
 		try {
 			
 			/*if(listaChamadasEmEsperaGeral != null)
@@ -136,6 +138,9 @@ public abstract class SimpleController implements Serializable {
 			
 			if(listaChamadasEmCorrida != null)
 				listaChamadasEmCorrida.clear();
+			
+			if(listaChamadasEmEspera.size() < 1 )
+				ControleSessaoWS.enviarAlertaPendencia("false");
 			
 			listaChamadasEmCorrida = ChamadaBO.getInstance().obterChamadasFiltro(SituacaoChamadaEnum.EM_CORRIDA.getCodSituacao());
 			

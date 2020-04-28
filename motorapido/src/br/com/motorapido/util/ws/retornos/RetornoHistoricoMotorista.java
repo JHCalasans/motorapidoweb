@@ -21,6 +21,8 @@ public class RetornoHistoricoMotorista implements Serializable{
 	
 	private String destino;
 	
+	private String valor;
+	
 	
 	
 	public RetornoHistoricoMotorista(){
@@ -85,6 +87,18 @@ public class RetornoHistoricoMotorista implements Serializable{
 
 	public void setDestino(String destino) {
 		this.destino = destino;
+	}
+
+
+
+	public String getValor() {
+		return valor;
+	}
+
+
+
+	public void setValor(String valor) {
+		this.valor = valor;
 	}
 
 }

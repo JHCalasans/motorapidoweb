@@ -35,6 +35,7 @@ import br.com.motorapido.entity.PagamentoMotorista;
 import br.com.motorapido.entity.TipoPunicao;
 import br.com.motorapido.entity.Veiculo;
 import br.com.motorapido.enums.ParametroEnum;
+import br.com.motorapido.enums.SituacaoChamadaEnum;
 import br.com.motorapido.util.ControleSessaoWS;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.JWTUtil;
@@ -790,12 +791,15 @@ public class MotoristaBO extends MotoRapidoBO {
 			List<RetornoHistoricoMotorista> retorno = new ArrayList<RetornoHistoricoMotorista>();
 			for (ChamadaVeiculo chamadaVei : lista) {
 				RetornoHistoricoMotorista retHistorico = new RetornoHistoricoMotorista();
-				retHistorico.setDataChamada(chamadaVei.getChamada().getDataInicioCorrida());
+				retHistorico.setDataChamada(chamadaVei.getChamada().getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.CANCELADA.getCodigo())?
+						chamadaVei.getDataDecisao() : chamadaVei.getChamada().getDataInicioCorrida());
 				retHistorico.setPlaca(chamadaVei.getVeiculo().getPlaca());
 				retHistorico.setSituacao(chamadaVei.getChamada().getSituacaoChamada().getDescricao());
 				retHistorico.setTipoVeiculo(chamadaVei.getVeiculo().getModelo().getTipoVeiculo().getDescricao());
 				retHistorico.setDestino(chamadaVei.getChamada().getLogradouroDestino() + " - "
 						+ chamadaVei.getChamada().getBairroDestino());
+				retHistorico.setValor(chamadaVei.getChamada().getValorFinalFormatado() != null ?
+						"R$ " + chamadaVei.getChamada().getValorFinalFormatado() : "R$ 0,00");
 				retorno.add(retHistorico);
 			}
 			emUtil.commitTransaction(transaction);

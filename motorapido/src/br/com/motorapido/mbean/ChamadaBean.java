@@ -92,7 +92,7 @@ public class ChamadaBean extends SimpleController {
 	private Integer situacaoChamadaFiltro;
 
 	private List<Chamada> chamadas;
-	
+
 	private List<ChamadaVeiculo> detalheChamadas;
 
 	private List<Caracteristica> listaCaracteristicasSelecionadas;
@@ -116,7 +116,7 @@ public class ChamadaBean extends SimpleController {
 	private Boolean showBotaoRemover = false;
 
 	private InputText numeroOrigem;
-	
+
 	private Integer contadorLista;
 
 	@PostConstruct
@@ -157,10 +157,8 @@ public class ChamadaBean extends SimpleController {
 				break;
 			}
 		}
-	
-	}
 
-	
+	}
 
 	public Boolean botaoRemoverHabilitado() {
 		Boolean retorno = false;
@@ -176,10 +174,10 @@ public class ChamadaBean extends SimpleController {
 		mapModel.getMarkers().clear();
 		limparCampos();
 	}
-	
-	public void verificarLista(){
-		if(getSituacaoChamadaFiltro().equals(SituacaoChamadaEnum.PENDENTE.getCodigo()) ||
-				getSituacaoChamadaFiltro().equals(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo())){
+
+	public void verificarLista() {
+		if (getSituacaoChamadaFiltro().equals(SituacaoChamadaEnum.PENDENTE.getCodigo())
+				|| getSituacaoChamadaFiltro().equals(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo())) {
 			System.out.println("Teste");
 		}
 	}
@@ -209,10 +207,14 @@ public class ChamadaBean extends SimpleController {
 
 			RetornoGoogleWSCoordenadas retorno = GoogleWSUtil
 					.buscarCoordenadas(String.valueOf(coord.getLat()) + "," + String.valueOf(coord.getLng()));
-		/*	Logradouro logra = getListaLogradouro().stream()
-					.filter(lo -> lo.getLatitude().substring(0, 8).equals(String.valueOf(-10.9289523).substring(0, 8)))
-					.filter(lo -> lo.getLongitude().substring(0, 8).equals(String.valueOf(-37.0503594).substring(0,8)))
-					.findFirst().get();*/
+			/*
+			 * Logradouro logra = getListaLogradouro().stream() .filter(lo ->
+			 * lo.getLatitude().substring(0,
+			 * 8).equals(String.valueOf(-10.9289523).substring(0, 8)))
+			 * .filter(lo -> lo.getLongitude().substring(0,
+			 * 8).equals(String.valueOf(-37.0503594).substring(0,8)))
+			 * .findFirst().get();
+			 */
 			if (!tipoMarcador.equals("O")) {
 				marker.setIcon("/motorapido/resources/chegada.png");
 				marker.setTitle("Destino");
@@ -229,7 +231,6 @@ public class ChamadaBean extends SimpleController {
 				chamada.setLatitudeDestino(String.valueOf(coord.getLat()));
 				chamada.setLongitudeDestino(String.valueOf(coord.getLng()));
 				chamada.setComplementoDestino(null);
-				
 
 			} else {
 				marker.setTitle("Origem");
@@ -245,12 +246,12 @@ public class ChamadaBean extends SimpleController {
 				chamada.setLongitudeOrigem(String.valueOf(coord.getLng()));
 				chamada.setComplementoOrigem(null);
 			}
-			
+
 			coordenadas.lat = coord.getLat();
 			coordenadas.lng = coord.getLng();
 
 		} catch (Exception e) {
-			
+
 		}
 
 	}
@@ -363,13 +364,13 @@ public class ChamadaBean extends SimpleController {
 
 	public void atualizarChamadasFiltro() {
 		try {
-			if(getSituacaoChamadaFiltro() == SituacaoChamadaEnum.ACEITA.getCodigo())
+			if (getSituacaoChamadaFiltro() == SituacaoChamadaEnum.ACEITA.getCodigo())
 				chamadas = getListaChamadasAceitas();
 			else if (getSituacaoChamadaFiltro() == SituacaoChamadaEnum.PENDENTE.getCodigo())
 				chamadas = getListaChamadasEmEspera();
 			else if (getSituacaoChamadaFiltro() == SituacaoChamadaEnum.EM_CORRIDA.getCodigo())
 				chamadas = getListaChamadasEmCorrida();
-			else			
+			else
 				chamadas = ChamadaBO.getInstance().obterChamadasFiltro(getSituacaoChamadaFiltro());
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
@@ -409,20 +410,19 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void detalhesChamada(Chamada chamada) {
 		try {
 			detalheChamadas = ChamadaVeiculoBO.getInstance().obterChamadaVeiculoPorChamada(chamada.getCodigo());
 			enviarJavascript("PF('dlgMotoChamada').show();");
-		} catch (ExcecaoNegocio e) {			
+		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
 
 	public void pesquisarClientePorCelular() {
 		try {
-		
-			
+
 			cliente = ClienteBO.getInstance().obterClientePorCelular(numCelPesquisa);
 			if (cliente == null) {
 				addMsg(FacesMessage.SEVERITY_WARN, "Cliente não encontrado.");
@@ -433,7 +433,7 @@ public class ChamadaBean extends SimpleController {
 
 		} catch (ExcecaoNegocio e) {
 			ExcecoesUtil.TratarExcecao(e);
-		} 
+		}
 	}
 
 	public void removerChamada(Chamada chamadaRemover) {
@@ -447,10 +447,16 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 	}
-	
+
 	public void atualizarListaChamadas() {
-		SimpleController.iniciarListaChamadas();
-		atualizarChamadasFiltro();
+		try {
+			SimpleController.iniciarListaChamadas();
+			atualizarChamadasFiltro();
+		} catch (IOException e) {
+
+			ExcecoesUtil.TratarExcecao(e);
+		}
+
 	}
 
 	public void adicionarChamada() {
@@ -480,10 +486,12 @@ public class ChamadaBean extends SimpleController {
 			ChamadaBO.getInstance().iniciarChamada(getChamada(), getFuncionarioLogado(),
 					listaCaracteristicasSelecionadas);
 
-		/*	String CHANELL = "/chamadas";
-			EventBus eventBus = EventBusFactory.getDefault().eventBus();
-			eventBus.publish(CHANELL);*/
-			
+			/*
+			 * String CHANELL = "/chamadas"; EventBus eventBus =
+			 * EventBusFactory.getDefault().eventBus();
+			 * eventBus.publish(CHANELL);
+			 */
+
 			contadorLista = getListaChamadasEmEspera().size();
 
 			mapModel.getMarkers().clear();
