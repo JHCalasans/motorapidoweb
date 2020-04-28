@@ -521,6 +521,7 @@ public class ChamadaBean extends SimpleController {
 		chamada = new Chamada();
 
 		logradouro = new Logradouro();
+		logradouroDestino = new Logradouro();
 		/*
 		 * if(mapModel != null && mapModel.getMarkers() != null &&
 		 * mapModel.getMarkers().size() > 0) mapModel.getMarkers().clear();

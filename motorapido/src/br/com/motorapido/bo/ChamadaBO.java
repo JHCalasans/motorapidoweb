@@ -125,6 +125,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			chamada.setValorPrevisto(FuncoesUtil.formatarBigDecimal(
 					calculoValorPrevisto(retornoMatrix.getRows()[0].getElements()[0].getDistance().getValue(), em)));
 
+			chamada.setValorFinal(chamada.getValorPrevisto().toString());
 			Chamada chamadaTemp = chamadaDAO.save(chamada, em);
 			chamada.setCodigo(chamadaTemp.getCodigo());
 

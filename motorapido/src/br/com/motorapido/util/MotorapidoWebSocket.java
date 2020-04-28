@@ -166,11 +166,13 @@ public class MotorapidoWebSocket extends Configurator implements ServletRequestL
 
 	@Override
 	public void requestDestroyed(ServletRequestEvent arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void requestInitialized(ServletRequestEvent arg0) {
+		// TODO Auto-generated method stub
 
 	}
 

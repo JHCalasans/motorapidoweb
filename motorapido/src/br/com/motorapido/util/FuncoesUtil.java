@@ -233,14 +233,13 @@ public final class FuncoesUtil {
 	
 	
 	public static BigDecimal formatarBigDecimal(Float numero) throws ExcecaoNegocio{
-		  String retorno = "";
-		  DecimalFormat formatter = new DecimalFormat("#,00");		 
-		  try{
-		    retorno = formatter.format(numero);
-		  }catch(Exception ex){
-		   throw new ExcecaoNegocio("Erro ao formatar numero: " + ex);
-		  }
-		  return BigDecimal.valueOf(Double.parseDouble(retorno));
+		//  String retorno = "";
+		 // DecimalFormat formatter = new DecimalFormat("#,##");		 
+		/*
+		 * try{ retorno = formatter.format(numero); }catch(Exception ex){ throw new
+		 * ExcecaoNegocio("Erro ao formatar numero: " + ex); }
+		 */
+		  return BigDecimal.valueOf(numero).setScale(2,BigDecimal.ROUND_HALF_EVEN);
 		}
 
 	public static Date sendToNextSunday(Date data) {
