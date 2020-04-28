@@ -70,12 +70,10 @@ public class ControleSessaoWS {
 			 }catch (Exception e) {
 				 ExcecoesUtil.logarErroMotorista(e, motorista.getCodMotorista(), "AtualizarPosicao");
 			}
-		 }				
-		 
+		 }				 
 
 	}
 	
-
 	public static void enviarSolicitacaoPosicao(List<Motorista> listaMotorista) {
 		
 		Gson gson = new Gson();
@@ -85,8 +83,7 @@ public class ControleSessaoWS {
 			 }catch (Exception e) {
 				 ExcecoesUtil.logarErroMotorista(e, motorista.getCodigo(), "InformarCoordenada");
 			}
-		 }				
-		 
+		 }			 
 
 	}
 
@@ -97,8 +94,16 @@ public class ControleSessaoWS {
 			sMap.get(codMotorista).getSessao().getBasicRemote().sendText("NovaChamada=>"+msg);
 			return true;
 		}else
-			return false;		
+			return false;			
 		
+	}
+	
+	public static void enviarAlertaPendencia(String existe) throws IOException {
+
+		for(SessaoWS sessao :  sMap.values()){
+			sessao.getSessao().getBasicRemote().sendText("NovaPendencia=>" + existe);
+			
+		}
 		
 	}
 	
