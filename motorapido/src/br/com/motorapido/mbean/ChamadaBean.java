@@ -118,6 +118,8 @@ public class ChamadaBean extends SimpleController {
 	private InputText numeroOrigem;
 
 	private Integer contadorLista;
+	
+	private String valorChamada;
 
 	@PostConstruct
 	public void carregar() {
@@ -457,6 +459,39 @@ public class ChamadaBean extends SimpleController {
 			ExcecoesUtil.TratarExcecao(e);
 		}
 
+	}
+
+	public void calcularChamada() {
+		try {
+			if (cliente == null)
+				throw new ExcecaoNegocio("Nenhum cliente selecionado");
+			if (cliente.getNome() == null)
+				throw new ExcecaoNegocio("Nome do cliente obrigatório");
+			if (numCelPesquisa == null || numCelPesquisa.isEmpty())
+				throw new ExcecaoNegocio("Número de telefone obrigatório");
+
+			if (cliente.getCodigo() == null)
+				cliente.setCelular(numCelPesquisa);
+			chamada.setCliente(getCliente());
+
+			if (chamada.getLogradouroOrigem() == null || chamada.getLogradouroOrigem().isEmpty())
+				throw new ExcecaoNegocio("Informe localização de origem");
+
+			if (chamada.getLogradouroDestino() == null || chamada.getLogradouroDestino().isEmpty())
+				throw new ExcecaoNegocio("Informe localização de destino");
+			
+			valorChamada =  ChamadaBO.getInstance().calcularValorChamada(getChamada());
+			enviarJavascript("PF('dlgCalculoPreco').show();");
+			
+		} catch (ExcecaoNegocio e) {
+			ExcecoesUtil.TratarExcecao(e);
+			logradouroDestino = new Logradouro();
+			logradouroDestino.setLogradouroComCidade(chamada.getLogradouroDestino());
+
+			logradouro = new Logradouro();
+			logradouro.setLogradouroComCidade(chamada.getLogradouroOrigem());
+
+		}
 	}
 
 	public void adicionarChamada() {
@@ -929,6 +964,14 @@ public class ChamadaBean extends SimpleController {
 
 	public void setDetalheChamadas(List<ChamadaVeiculo> detalheChamadas) {
 		this.detalheChamadas = detalheChamadas;
+	}
+
+	public String getValorChamada() {
+		return valorChamada;
+	}
+
+	public void setValorChamada(String valorChamada) {
+		this.valorChamada = valorChamada;
 	}
 
 }

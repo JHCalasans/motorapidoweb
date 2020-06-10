@@ -324,15 +324,25 @@
 						<h:panelGroup styleClass="p_like buttonPosition">
 
 
-							<p:commandButton value="Cancelar" id="btnCancelar" style="margin-right:10px;"
+							<p:commandButton value="Cancelar" id="btnCancelar"
+								style="margin-right:10px;"
 								actionListener="#{chamadaBean.limparChamada}"
 								update="msgs, conteudo">
 							</p:commandButton>
 
 							<p:commandButton value="Adicionar" id="btnAdicionar"
+								style="margin-right:10px;"
 								actionListener="#{chamadaBean.adicionarChamada}"
 								update="msgs, conteudo">
 							</p:commandButton>
+
+							<p:commandButton value="Calcular preço" id="btnCalcular"
+								actionListener="#{chamadaBean.calcularChamada}"
+								update="msgs, dlgCalculoPreco1" icon="ui-icon-calculator">
+
+							</p:commandButton>
+
+
 
 						</h:panelGroup>
 
@@ -470,8 +480,7 @@
 
 					<p:column style="width: 60px">
 						<f:facet name="header">
-							<h:outputText value="Valor"
-								styleClass="cabecalhoDataTable" />
+							<h:outputText value="Valor" styleClass="cabecalhoDataTable" />
 						</f:facet>
 						<h:outputText value="#{chamada.valorPrevisto}">
 							<f:convertNumber pattern="R$ #.00" locale="pt_BR" />
@@ -515,6 +524,19 @@
 			</h:panelGroup>
 
 		</h:form>
+
+		<p:dialog widgetVar="dlgCalculoPreco" id="dlgCalculoPreco1"
+			showEffect="fade" resizable="false" closable="true" scrollable="true"
+			scrollHeight="100" width="250px" header="Valor previsto">
+			<h:form prependId="false">
+				<h:panelGroup styleClass="p_like">
+					<p:outputLabel value="Valor #{chamadaBean.valorChamada}"></p:outputLabel>
+				</h:panelGroup>
+
+			</h:form>
+		</p:dialog>
+
+
 
 		<p:dialog widgetVar="dlgMotoChamada" id="dlgMotoChamada1"
 			showEffect="fade" resizable="false" styleClass="dialogBox"

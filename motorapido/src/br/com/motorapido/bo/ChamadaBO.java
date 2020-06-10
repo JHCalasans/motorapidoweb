@@ -68,6 +68,35 @@ public class ChamadaBO extends MotoRapidoBO {
 		return instance;
 	}
 
+	public String calcularValorChamada(Chamada chamada) throws ExcecaoNegocio {
+
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		String retorno = "R$ ";
+		try {
+			transaction.begin();
+			RetornoMatrixGoogleAPI retornoMatrix = GoogleWSUtil.buscarDistanciaAPercorrer(
+					chamada.getLatitudeOrigem().toString() + "," + chamada.getLongitudeOrigem(),
+					chamada.getLatitudeDestino().toString() + "," + chamada.getLongitudeDestino(),
+					FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo(), em));
+
+			chamada.setDistanciaPrevista(retornoMatrix.getRows()[0].getElements()[0].getDistance().getText());
+
+			chamada.setValorPrevisto(FuncoesUtil.formatarBigDecimal(
+					calculoValorPrevisto(retornoMatrix.getRows()[0].getElements()[0].getDistance().getValue(), em)));
+			
+			retorno = retorno + chamada.getValorPrevisto();
+			
+			emUtil.commitTransaction(transaction);
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar calcular valor da chamada.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+		return retorno;
+	}
+
 	public Chamada iniciarChamada(Chamada chamada, Funcionario funcionario, List<Caracteristica> caracteristicas)
 			throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
@@ -148,7 +177,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			transaction.begin();
 			Chamada retorno = SimpleController.getListaChamadasAceitas().stream()
 					.filter(ch -> ch.getCodigo().equals(param.getChamada().getCodigo())).findFirst().get();
-			
+
 			retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.EM_CORRIDA.getCodigo()));
 			retorno.setDataInicioCorrida(param.getInicioCorrida());
 			retorno.setLatitudeInicioCorrida(param.getChamada().getLatitudeInicioCorrida());
@@ -186,7 +215,8 @@ public class ChamadaBO extends MotoRapidoBO {
 			// DecimalFormat dc = new DecimalFormat("0.00");
 			// retorno.setValorFinal(Float.parseFloat(dc.format(param.getChamada().getValorFinal()).replace(",",
 			// ".")));
-			retorno.setValorFinal(String.format("%.2f", Float.parseFloat(param.getChamada().getValorFinal().replace(',', '.'))));
+			retorno.setValorFinal(
+					String.format("%.2f", Float.parseFloat(param.getChamada().getValorFinal().replace(',', '.'))));
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
 			chamadaDAO.save(retorno, em);
 
@@ -442,12 +472,11 @@ public class ChamadaBO extends MotoRapidoBO {
 					Chamada chamadaJson = new Chamada();
 					chamadaJson = chamada;
 					chamadaJson.setFuncionario(null);
-					chamadaJson.setTempoParaResposta(Integer.parseInt(FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo())));
+					chamadaJson.setTempoParaResposta(
+							Integer.parseInt(FuncoesUtil.getParam(ParametroEnum.TEMPO_ESPERA_ACEITACAO.getCodigo())));
 					String json = gson.toJson(chamadaJson);
-					boolean enviou = ControleSessaoWS.enviarMensagemMotoristaChamada(
-							lista.get(0).getMotorista().getCodigo(), json);
-					
-					
+					boolean enviou = ControleSessaoWS
+							.enviarMensagemMotoristaChamada(lista.get(0).getMotorista().getCodigo(), json);
 
 					if (!enviou)
 						PushNotificationUtil.enviarNotificacaoPlayerIdChamada(
@@ -486,8 +515,6 @@ public class ChamadaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
-	
 
 	public List<Chamada> obterChamadasAbertas() throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
@@ -592,10 +619,10 @@ public class ChamadaBO extends MotoRapidoBO {
 			retorno.setValorFinal(valorInicial.toString());
 			SimpleController.getListaChamadasEmEsperaGeral().remove(retorno);
 			SimpleController.getListaChamadasAceitas().add(retorno);
-			
-			if(SimpleController.getListaChamadasEmEsperaGeral().size() < 1 )
+
+			if (SimpleController.getListaChamadasEmEsperaGeral().size() < 1)
 				ControleSessaoWS.enviarAlertaPendencia("false");
-		
+
 			return retorno;
 		} catch (ExcecaoNegocio e) {
 			emUtil.rollbackTransaction(transaction);
@@ -716,7 +743,7 @@ public class ChamadaBO extends MotoRapidoBO {
 			// retorno.setSituacaoChamada(new
 			// SituacaoChamada(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo()));
 
-			if(!retorno.getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo()))
+			if (!retorno.getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.PENDENTE_GERAL.getCodigo()))
 				retorno.setSituacaoChamada(new SituacaoChamada(SituacaoChamadaEnum.PENDENTE.getCodigo()));
 
 			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
