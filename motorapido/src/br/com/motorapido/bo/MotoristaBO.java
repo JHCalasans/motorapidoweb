@@ -74,8 +74,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
-	
+
 	public boolean estaDisponivel(Integer codMotorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -92,7 +91,7 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	public PagamentoMotorista adicionarPagamento(Motorista motorista, Funcionario funcionario) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -114,9 +113,8 @@ public class MotoristaBO extends MotoRapidoBO {
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
-	public List<PagamentoMotorista> obterPagamentosMotorista(Motorista motorista)
-			throws ExcecaoNegocio {
+
+	public List<PagamentoMotorista> obterPagamentosMotorista(Motorista motorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
@@ -135,14 +133,14 @@ public class MotoristaBO extends MotoRapidoBO {
 		}
 	}
 
-	public List<Motorista> obterMotoristas(String nome, String cpf, String cnh, String email, String identidade, Integer IDMotorista)
-			throws ExcecaoNegocio {
+	public List<Motorista> obterMotoristas(String nome, String cpf, String cnh, String email, String identidade,
+			Integer IDMotorista) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
-			List<Motorista> lista = motoristaDAO.obterMotoristas(nome, cpf, cnh, email, identidade, IDMotorista,em);
+			List<Motorista> lista = motoristaDAO.obterMotoristas(nome, cpf, cnh, email, identidade, IDMotorista, em);
 			emUtil.commitTransaction(transaction);
 			return lista;
 		} catch (Exception e) {
@@ -220,7 +218,8 @@ public class MotoristaBO extends MotoRapidoBO {
 			// Busca se o motorista estava ativo em alguma área para também
 			// desativar
 			/*
-			 * MotoristaPosicaoArea motoristaPosicaoArea = new MotoristaPosicaoArea();
+			 * MotoristaPosicaoArea motoristaPosicaoArea = new
+			 * MotoristaPosicaoArea();
 			 * motoristaPosicaoArea.setMotorista(motorista);
 			 * motoristaPosicaoArea.setAtivo("S");
 			 */
@@ -243,11 +242,13 @@ public class MotoristaBO extends MotoRapidoBO {
 			// if(SimpleController.getListaPosicaoMotorista() != null) {
 			// if(motorista.getDisponivel().equals("N")) {
 			/*
-			 * boolean existe = SimpleController.getListaPosicaoMotorista().stream().
-			 * anyMatch(mt -> mt.getMotorista().getCodigo() == motorista.getCodigo());
+			 * boolean existe =
+			 * SimpleController.getListaPosicaoMotorista().stream(). anyMatch(mt
+			 * -> mt.getMotorista().getCodigo() == motorista.getCodigo());
 			 * if(existe) { MotoristaPosicaoArea motoTemp =
-			 * SimpleController.getListaPosicaoMotorista().stream(). filter(mt ->
-			 * mt.getMotorista().getCodigo() == motorista.getCodigo()).findFirst().get();
+			 * SimpleController.getListaPosicaoMotorista().stream(). filter(mt
+			 * -> mt.getMotorista().getCodigo() ==
+			 * motorista.getCodigo()).findFirst().get();
 			 * SimpleController.getListaPosicaoMotorista().remove(motoTemp); }
 			 */
 			EventBus eventBus = EventBusFactory.getDefault().eventBus();
@@ -323,15 +324,18 @@ public class MotoristaBO extends MotoRapidoBO {
 		try {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
-			//IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
-			//MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
+			// IMotoristaAparelhoDAO motoristaAparelhoDAO =
+			// fabricaDAO.getPostgresMotoristaAparelhoDAO();
+			// MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
 			// motoristaAparelho.setCodMotorista(motorista.getCodigo());
 			Motorista motoTemp = new Motorista(motorista.getCodigo());
 			/*
 			 * motoristaAparelho.setMotorista(motoTemp);
-			 * motoristaAparelho.setIdPush(motorista.getIdPush()); List<MotoristaAparelho>
-			 * lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
-			 * motoristaAparelho = lista.get(0); motoristaAparelho.setAtivo("S");
+			 * motoristaAparelho.setIdPush(motorista.getIdPush());
+			 * List<MotoristaAparelho> lista =
+			 * motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
+			 * motoristaAparelho = lista.get(0);
+			 * motoristaAparelho.setAtivo("S");
 			 * motoristaAparelho.setDesativacao(new Date());
 			 * motoristaAparelhoDAO.save(motoristaAparelho, em);
 			 */
@@ -357,16 +361,17 @@ public class MotoristaBO extends MotoRapidoBO {
 		try {
 			transaction.begin();
 			IMotoristaDAO motoristaDAO = fabricaDAO.getPostgresMotoristaDAO();
-			/*IMotoristaAparelhoDAO motoristaAparelhoDAO = fabricaDAO.getPostgresMotoristaAparelhoDAO();
-			MotoristaAparelho motoristaAparelho = new MotoristaAparelho();
-			Motorista motoTemp = new Motorista(codMotorista);
-			motoristaAparelho.setMotorista(motoTemp);
-			List<MotoristaAparelho> lista = motoristaAparelhoDAO.findByExample(motoristaAparelho, em);
-			for (MotoristaAparelho moto : lista) {
-				moto.setAtivo("N");
-				moto.setDesativacao(new Date());
-				motoristaAparelhoDAO.save(moto, em);
-			}*/
+			/*
+			 * IMotoristaAparelhoDAO motoristaAparelhoDAO =
+			 * fabricaDAO.getPostgresMotoristaAparelhoDAO(); MotoristaAparelho
+			 * motoristaAparelho = new MotoristaAparelho(); Motorista motoTemp =
+			 * new Motorista(codMotorista);
+			 * motoristaAparelho.setMotorista(motoTemp); List<MotoristaAparelho>
+			 * lista = motoristaAparelhoDAO.findByExample(motoristaAparelho,
+			 * em); for (MotoristaAparelho moto : lista) { moto.setAtivo("N");
+			 * moto.setDesativacao(new Date()); motoristaAparelhoDAO.save(moto,
+			 * em); }
+			 */
 
 			Motorista motorista = motoristaDAO.findById(codMotorista, em);
 
@@ -410,8 +415,7 @@ public class MotoristaBO extends MotoRapidoBO {
 				motorista = lista.get(0);
 
 				// Busca se aparelho já está cadastrado para alguém
-				List<MotoristaAparelho> listaAparelho = motoristaAparelhoDAO
-						.obterAparelhoPorIdAparelho(idAparelho, em);
+				List<MotoristaAparelho> listaAparelho = motoristaAparelhoDAO.obterAparelhoPorIdAparelho(idAparelho, em);
 				boolean achou = false;
 				if (listaAparelho != null && listaAparelho.size() > 0) {
 					for (MotoristaAparelho motoAp : listaAparelho) {
@@ -422,16 +426,16 @@ public class MotoristaBO extends MotoRapidoBO {
 								if (motoAp.getAtivo().equals("S")) {
 									achou = true;
 									break;
-								}else {
-									throw new ExcecaoNegocio(
-											"Aparelho não vinculado ao motorista.");
+								} else {
+									throw new ExcecaoNegocio("Aparelho não vinculado ao motorista.");
 								}
 							}
 						}
 						// verifico se outros motoristas neste aparelho estão
 						// ativo e desativo eles nesse aparelho
 						/*
-						 * else if (motoAp.getAtivo().equals("S")) { motoAp.setAtivo("N");
+						 * else if (motoAp.getAtivo().equals("S")) {
+						 * motoAp.setAtivo("N");
 						 * motoristaAparelhoDAO.save(motoAp, em); }
 						 */
 					}
@@ -441,8 +445,10 @@ public class MotoristaBO extends MotoRapidoBO {
 						throw new ExcecaoNegocio(
 								"Aparelho ainda não vinculado ao motorista. Favor comunicar a central.");
 						/*
-						 * Motorista motoTemp = new Motorista(motorista.getCodigo());
-						 * motoristaAparelho.setMotorista(motoTemp); motoristaAparelho.setAtivo("S");
+						 * Motorista motoTemp = new
+						 * Motorista(motorista.getCodigo());
+						 * motoristaAparelho.setMotorista(motoTemp);
+						 * motoristaAparelho.setAtivo("S");
 						 * motoristaAparelho.setEntrada(new Date());
 						 * motoristaAparelhoDAO.save(motoristaAparelho, em);
 						 */
@@ -450,29 +456,34 @@ public class MotoristaBO extends MotoRapidoBO {
 				} // Se o aparelho ainda não estiver cadastrado faço o primeiro
 					// cadastro para este aparelho com este motorista
 				/*
-				 * else { Motorista motoTemp = new Motorista(motorista.getCodigo());
-				 * motoristaAparelho.setMotorista(motoTemp); motoristaAparelho.setAtivo("S");
+				 * else { Motorista motoTemp = new
+				 * Motorista(motorista.getCodigo());
+				 * motoristaAparelho.setMotorista(motoTemp);
+				 * motoristaAparelho.setAtivo("S");
 				 * motoristaAparelho.setEntrada(new Date());
 				 * motoristaAparelhoDAO.save(motoristaAparelho, em); }
 				 */
 				// Desativo qualquer outro registro deste motorista
 				/*
 				 * listaAparelho =
-				 * motoristaAparelhoDAO.obterOutrosAparelhosMotorista(motorista.getCodigo(),
-				 * idPush, em); List<String> listaParaNotificacao = new ArrayList<String>(); for
-				 * (MotoristaAparelho motoAp : listaAparelho) { // envio push para desativar a
-				 * sessão no aparelho registrado // anteriormente para este motorista if
-				 * (motoAp.getAtivo().equals("S")) { motoAp.setDesativacao(new Date());
-				 * listaParaNotificacao.add(motoAp.getIdPush()); } motoAp.setAtivo("N");
-				 * motoristaAparelhoDAO.save(motoAp, em); }
+				 * motoristaAparelhoDAO.obterOutrosAparelhosMotorista(motorista.
+				 * getCodigo(), idPush, em); List<String> listaParaNotificacao =
+				 * new ArrayList<String>(); for (MotoristaAparelho motoAp :
+				 * listaAparelho) { // envio push para desativar a sessão no
+				 * aparelho registrado // anteriormente para este motorista if
+				 * (motoAp.getAtivo().equals("S")) { motoAp.setDesativacao(new
+				 * Date()); listaParaNotificacao.add(motoAp.getIdPush()); }
+				 * motoAp.setAtivo("N"); motoristaAparelhoDAO.save(motoAp, em);
+				 * }
 				 */
 				/*
 				 * if (listaParaNotificacao.size() > 0)
 				 * PushNotificationUtil.enviarNotificacaoPlayerId(
-				 * FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(), em),
-				 * FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.getCodigo(), em),
-				 * listaParaNotificacao, "Login realizado em outro aparelho!", "logout",
-				 * "logout");
+				 * FuncoesUtil.getParam(ParametroEnum.CHAVE_REST_PUSH.getCodigo(
+				 * ), em),
+				 * FuncoesUtil.getParam(ParametroEnum.CHAVE_APP_ID_ONE_SIGNAL.
+				 * getCodigo(), em), listaParaNotificacao,
+				 * "Login realizado em outro aparelho!", "logout", "logout");
 				 */
 
 				// Chave de segurança para uso dos ws
@@ -483,22 +494,30 @@ public class MotoristaBO extends MotoRapidoBO {
 				String chaveGoogle = FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo(), em);
 				motorista.setChaveGoogle(chaveGoogle);
 
-				// Busca por veículos cadastrados do motorista
-				IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
-				List<Veiculo> listaVeiculos = veiculoDAO.obterVeiculosPorMotorista(motorista.getCodigo(), em);
-				motorista.setVeiculos(new ArrayList<RetornoVeiculosMotorista>());
-				for (Veiculo veiculo : listaVeiculos) {
-					RetornoVeiculosMotorista retornoVeiculo = new RetornoVeiculosMotorista();
-					retornoVeiculo.setModelo(veiculo.getModelo().getDescricao());
-					retornoVeiculo.setPlaca(veiculo.getPlaca());
-					retornoVeiculo.setTipoVeiculo(veiculo.getModelo().getTipoVeiculo().getDescricao());
-					retornoVeiculo.setCodVeiculo(veiculo.getCodigo());
-					motorista.getVeiculos().add(retornoVeiculo);
-				}
+				// Verifico se tinha alguma chamada aberta para o motorista
+				IChamadaVeiculoDAO chamadaVeiculoDAO = fabricaDAO.getPostgresChamadaVeiculoDAO();
+				List<ChamadaVeiculo> listaCV = chamadaVeiculoDAO.obterChamadaAtivaMotorista(motorista.getCodigo(), em);
+				if (listaCV != null && listaCV.size() > 0) {
 
-				// Inicia sempre como indisponível
-				motorista.setDisponivel("N");
-				motoristaDAO.save(motorista, em);
+				} else {
+
+					// Busca por veículos cadastrados do motorista
+					IVeiculoDAO veiculoDAO = fabricaDAO.getPostgresVeiculoDAO();
+					List<Veiculo> listaVeiculos = veiculoDAO.obterVeiculosPorMotorista(motorista.getCodigo(), em);
+					motorista.setVeiculos(new ArrayList<RetornoVeiculosMotorista>());
+					for (Veiculo veiculo : listaVeiculos) {
+						RetornoVeiculosMotorista retornoVeiculo = new RetornoVeiculosMotorista();
+						retornoVeiculo.setModelo(veiculo.getModelo().getDescricao());
+						retornoVeiculo.setPlaca(veiculo.getPlaca());
+						retornoVeiculo.setTipoVeiculo(veiculo.getModelo().getTipoVeiculo().getDescricao());
+						retornoVeiculo.setCodVeiculo(veiculo.getCodigo());
+						motorista.getVeiculos().add(retornoVeiculo);
+					}
+
+					// Inicia sempre como indisponível
+					motorista.setDisponivel("N");
+					motoristaDAO.save(motorista, em);
+				}
 
 				emUtil.commitTransaction(transaction);
 			} else
@@ -535,15 +554,15 @@ public class MotoristaBO extends MotoRapidoBO {
 
 			IBinarioMotoristaDAO binarioMotoristaDAO = fabricaDAO.getPostgresBinarioMotoristaDAO();
 			BinarioMotorista binarioMotorista = new BinarioMotorista();
-			if(documentoCriminal != null) {
+			if (documentoCriminal != null) {
 				binarioMotorista.setBinario(documentoCriminal);
 				motorista.setCodBinarioDocCriminal(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());
 			}
-			if(comprovanteResidencia != null) {
+			if (comprovanteResidencia != null) {
 				binarioMotorista.setBinario(comprovanteResidencia);
 				motorista.setCodBinarioCompResidencia(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());
 			}
-			
+
 			if (foto != null) {
 				binarioMotorista.setBinario(foto);
 				motorista.setCodBinarioFoto(binarioMotoristaDAO.save(binarioMotorista, em).getCodigo());
@@ -791,15 +810,16 @@ public class MotoristaBO extends MotoRapidoBO {
 			List<RetornoHistoricoMotorista> retorno = new ArrayList<RetornoHistoricoMotorista>();
 			for (ChamadaVeiculo chamadaVei : lista) {
 				RetornoHistoricoMotorista retHistorico = new RetornoHistoricoMotorista();
-				retHistorico.setDataChamada(chamadaVei.getChamada().getSituacaoChamada().getCodigo().equals(SituacaoChamadaEnum.CANCELADA.getCodigo())?
-						chamadaVei.getDataDecisao() : chamadaVei.getChamada().getDataInicioCorrida());
+				retHistorico.setDataChamada(chamadaVei.getChamada().getSituacaoChamada().getCodigo()
+						.equals(SituacaoChamadaEnum.CANCELADA.getCodigo()) ? chamadaVei.getDataDecisao()
+								: chamadaVei.getChamada().getDataInicioCorrida());
 				retHistorico.setPlaca(chamadaVei.getVeiculo().getPlaca());
 				retHistorico.setSituacao(chamadaVei.getChamada().getSituacaoChamada().getDescricao());
 				retHistorico.setTipoVeiculo(chamadaVei.getVeiculo().getModelo().getTipoVeiculo().getDescricao());
 				retHistorico.setDestino(chamadaVei.getChamada().getLogradouroDestino() + " - "
 						+ chamadaVei.getChamada().getBairroDestino());
-				retHistorico.setValor(chamadaVei.getChamada().getValorFinalFormatado() != null ?
-						"R$ " + chamadaVei.getChamada().getValorFinalFormatado() : "R$ 0,00");
+				retHistorico.setValor(chamadaVei.getChamada().getValorFinalFormatado() != null
+						? "R$ " + chamadaVei.getChamada().getValorFinalFormatado() : "R$ 0,00");
 				retorno.add(retHistorico);
 			}
 			emUtil.commitTransaction(transaction);

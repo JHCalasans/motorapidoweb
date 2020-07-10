@@ -26,15 +26,12 @@ import com.google.gson.Gson;
 import br.com.minhaLib.excecao.excecaonegocio.ExcecaoNegocio;
 import br.com.minhaLib.util.excecao.MsgUtil;
 import br.com.motorapido.bo.FuncionarioBO;
-import br.com.motorapido.bo.MotoristaBO;
 import br.com.motorapido.bo.PerfilBO;
 import br.com.motorapido.entity.BinarioFuncionario;
-import br.com.motorapido.entity.BinarioMotorista;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.Perfil;
 import br.com.motorapido.util.EnderecoCep;
 import br.com.motorapido.util.ExcecoesUtil;
-import br.com.motorapido.util.FuncoesUtil;
 
 @SuppressWarnings("deprecation")
 @ManagedBean(name = "funcionarioBean")
@@ -152,8 +149,8 @@ public class FuncionarioBean extends SimpleController {
 		try {
 			
 			
-			msgSalvar = FuncoesUtil.gerarSenha();
-			funcionario.setSenha(msgSalvar);
+			//msgSalvar = FuncoesUtil.gerarSenha();
+			//funcionario.setSenha(msgSalvar);
 			FuncionarioBO.getInstance().salvarFuncionario(funcionario, codPerfil, foto != null ? foto.getContents() : null);
 
 			enviarJavascript("PF('dlgSucesso').show();");

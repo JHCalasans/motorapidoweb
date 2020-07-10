@@ -157,6 +157,9 @@ public class Motorista  extends Entidade {
 	
 	@Transient
 	private List<RetornoVeiculosMotorista> veiculos;
+	
+	@Transient
+	private ChamadaVeiculo chamadaVeiculoAtiva;
 
 	@Override
 	public Serializable getIdentificador() {
@@ -513,6 +516,16 @@ public class Motorista  extends Entidade {
 
 	public void setiDMotorista(Integer iDMotorista) {
 		this.iDMotorista = iDMotorista;
+	}
+
+
+	public ChamadaVeiculo getChamadaVeiculoAtiva() {
+		return chamadaVeiculoAtiva;
+	}
+
+
+	public void setChamadaVeiculoAtiva(ChamadaVeiculo chamadaVeiculoAtiva) {
+		this.chamadaVeiculoAtiva = chamadaVeiculoAtiva;
 	}
 
 

@@ -298,6 +298,17 @@
 						value="#{funcionarioBean.funcionario.login}" />
 
 				</h:panelGroup>
+				
+				<br />
+				<div class="clear"></div>
+				<h:panelGroup id="pngSenha" styleClass="p_like">
+					<p:outputLabel value="Senha:" for="senha"
+						styleClass="OutputLabelCampo" style="width:120px;" />
+					<p:inputText id="senha" required="true" size="20"
+						requiredMessage="#{bundle.campoObrigatorio} : Senha"
+						value="#{funcionarioBean.funcionario.senha}" />
+
+				</h:panelGroup>
 
 				<br />
 				<div class="clear"></div>

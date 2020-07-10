@@ -20,5 +20,7 @@ public interface IChamadaVeiculoDAO extends GenericDAO<ChamadaVeiculo, Long> {
 	
 	public List<ChamadaVeiculo> obterChamadaVeiculoPorChamada(Long codChamada, EntityManager em) throws ExcecaoBanco,ExcecaoNegocio;
 	
+	public List<ChamadaVeiculo> obterChamadaAtivaMotorista(Integer codMotorista, EntityManager em) throws ExcecaoBanco,ExcecaoNegocio;
+	
 	
 }
