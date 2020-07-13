@@ -60,16 +60,17 @@
 
 
 							<h:panelGroup id="pngCel" styleClass="p_like">
-								<p:outputLabel value="#{bundle.funcionario_celular}:"
+								<p:outputLabel value="Telefone:"
 									for="celular" styleClass="OutputLabelCampo" style="width:80px;" />
 								<p:outputLabel value="(79)"
 									style="margin-left:-30px; margin-top: inherit"></p:outputLabel>
-								<p:inputMask id="celular" size="35" mask="99999-9999"
+								<p:inputNumber id="celular" size="35"  decimalSeparator="" thousandSeparator=""
+								    decimalPlaces="0"  placeholder="Somente Números"
 									value="#{chamadaBean.numCelPesquisa}"
 									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_celular}">
 									<p:ajax event="blur" update=":formConsulta"
 										listener="#{chamadaBean.pesquisarClientePorCelular}" />
-								</p:inputMask>
+								</p:inputNumber>
 
 
 							</h:panelGroup>
@@ -116,9 +117,9 @@
 							<div class="clear"></div>
 
 							<h:panelGroup id="pngNumero" styleClass="p_like">
-								<p:outputLabel value="#{bundle.cliente_numero}:"
+								<p:outputLabel value="Telefone:"
 									styleClass="OutputLabelCampo" style="width:80px;" />
-								<p:inputText id="numOrigem" size="15"
+								<p:inputText id="numOrigem" 
 									value="#{chamadaBean.chamada.numeroOrigem}" />
 
 							</h:panelGroup>
