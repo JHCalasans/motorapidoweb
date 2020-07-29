@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<f:facet name="first">
+
+		<meta http-equiv="Cache-Control"
+			content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+
+	</f:facet>
+
+	<f:facet name="last">
+
+		<link rel="shortcut icon" type="image/x-icon"
+			href="#{request.contextPath}/resources/moto_icon.ico" />
+
+	</f:facet>
+
+
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnSw7uj9P9oZIc_7c74peSmkmkYU1O5s"
+		defer="defer" type="text/javascript"></script>
+
+
+
+
+
+</h:head>
+<ui:composition template="/paginas/masterPageCliente.xhtml">
+
+
+	<ui:param name="tituloPagina" value="Nova Entrega" />
+	<ui:param name="headerConteudo" value="Nova Entrega" />
+	<ui:param name="bean" value="#{entregaBean}" />
+
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{entregaBean.verificaSessaoValida}" />
+	</f:metadata>
+
+
+	<ui:define name="conteudo">
+		<h:form prependId="false" id="formConsulta"
+			onkeypress="return event.keyCode != 13">
+			<p:panelGrid style="width:100%; " id="pngEsquerda">
+				<p:row style="border-color: transparent !important">
+					<p:column style="width:50%" id="colNovaChamada">
+						<!-- 	Filedset Origem    -->
+						<p:fieldset legend="Origem" id="fieldOrigem">
+							<h:panelGroup id="pngLogradouro" styleClass="p_like">
+								<p:outputLabel value="#{bundle.funcionario_logradouro}:"
+									for="logradouro" styleClass="OutputLabelCampo"
+									style="width:80px;" />
+								<p:autoComplete id="logradouro" cache="true"
+									cacheTimeout="30000" value="#{entregaBean.logradouro}"
+									var="logradouro" itemLabel="#{logradouro.logradouroComCidade}"
+									itemValue="#{logradouro}" converter="logradouroConverter"
+									size="55" completeMethod="#{entregaBean.completeText}"
+									maxResults="5">
+									<p:ajax event="query" global="false" />
+									<p:ajax event="itemSelect"
+										listener="#{entregaBean.logradouroSelecionado}"
+										update="fieldOrigem" />
+								</p:autoComplete>
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+
+							<h:panelGroup id="pngNumero" styleClass="p_like">
+								<p:outputLabel value="Número: " styleClass="OutputLabelCampo"
+									style="width:80px;" />
+								<p:inputText id="numOrigem"
+									value="#{entregaBean.chamada.numeroOrigem}" />
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngComplemento" styleClass="p_like">
+								<p:outputLabel value="#{bundle.funcionario_complemento}:"
+									for="complemento" styleClass="OutputLabelCampo"
+									style="width:80px;" />
+								<p:inputText id="complemento" size="55"
+									value="#{entregaBean.chamada.complementoOrigem}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_logradouro}" />
+
+							</h:panelGroup>
+
+
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngBairro" styleClass="p_like">
+
+								<p:outputLabel value="#{bundle.funcionario_bairro}:"
+									for="bairro" styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="bairro" size="55"
+									value="#{entregaBean.chamada.bairroOrigem}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_bairro}" />
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngReferencia" styleClass="p_like">
+
+								<p:outputLabel value="Referência:" for="referencia"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="referencia" size="55"
+									value="#{entregaBean.chamada.referenciaOrigem}" />
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+
+							<h:panelGroup id="pngCep" styleClass="p_like">
+								<p:outputLabel value="#{bundle.funcionario_cep}:" for="cep"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputMask mask="99999-999" id="cep"
+									value="#{entregaBean.chamada.cepOrigem}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cep}">
+
+								</p:inputMask>
+								<p:commandButton value="Outros Locais" style="margin-left:10px;"
+									id="btnPsqEnd"
+									actionListener="#{entregaBean.setComponenteOrigem()}"
+									icon="ui-icon ui-icon-search"
+									oncomplete="PF('varDlgPesqEndereco').show()" process="@this"
+									execute="@this"></p:commandButton>
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+
+							<h:panelGroup id="pngCidade" styleClass="p_like">
+
+								<p:outputLabel value="#{bundle.funcionario_cidade}:"
+									for="cidade" styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="cidade" size="55"
+									value="#{entregaBean.chamada.cidadeOrigem}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cidade}" />
+
+							</h:panelGroup>
+						</p:fieldset>
+					</p:column>
+					<p:column style="width:50%" id="colNovaChamada2">
+						<!-- 	Filedset Destino    -->
+						<p:fieldset legend="Destino" toggleable="false" id="fieldDestino">
+							<h:panelGroup id="pngLogradouroDestino" styleClass="p_like">
+								<p:outputLabel value="#{bundle.funcionario_logradouro}:"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:autoComplete id="logradouroDestino" cache="true"
+									cacheTimeout="30000" value="#{entregaBean.logradouroDestino}"
+									var="logradouro" itemLabel="#{logradouro.logradouroComCidade}"
+									itemValue="#{logradouro}" converter="logradouroConverter"
+									size="55" completeMethod="#{entregaBean.completeText}"
+									maxResults="5">
+									<p:ajax event="query" global="false" />
+									<p:ajax event="itemSelect"
+										listener="#{entregaBean.logradouroDestinoSelecionado}"
+										update="fieldDestino" />
+								</p:autoComplete>
+
+							</h:panelGroup>
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngNumeroDest" styleClass="p_like">
+								<p:outputLabel value="#{bundle.cliente_numero}:"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="numDestino" size="15"
+									binding="#{entregaBean.numeroOrigem}"
+									value="#{entregaBean.chamada.numeroDestino}" />
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngComplementoDestino" styleClass="p_like">
+								<p:outputLabel value="#{bundle.funcionario_complemento}:"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="complementoDestino" size="55"
+									value="#{entregaBean.chamada.complementoDestino}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_logradouro}" />
+
+							</h:panelGroup>
+
+							<h:panelGroup id="pngBairroDestino" styleClass="p_like">
+
+								<p:outputLabel value="#{bundle.funcionario_bairro}:"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="bairroDestino" size="55"
+									value="#{entregaBean.chamada.bairroDestino}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_bairro}" />
+
+							</h:panelGroup>
+							<br />
+							<div class="clear"></div>
+
+
+							<h:panelGroup id="pngCepDest" styleClass="p_like">
+								<p:outputLabel value="#{bundle.funcionario_cep}:"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputMask mask="99999-999" id="cepDest"
+									value="#{entregaBean.chamada.cepDestino}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cep}">
+
+								</p:inputMask>
+								<p:commandButton value="Outros Locais" style="margin-left:10px;"
+									actionListener="#{entregaBean.setComponenteDestino()}"
+									icon="ui-icon ui-icon-search"
+									oncomplete="PF('varDlgPesqEndereco').show()" process="@this"
+									execute="@this">
+
+								</p:commandButton>
+
+							</h:panelGroup>
+
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngCidadeDestino" styleClass="p_like">
+
+								<p:outputLabel value="#{bundle.funcionario_cidade}:"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="cidadeDestino" size="55"
+									value="#{entregaBean.chamada.cidadeDestino}"
+									requiredMessage="#{bundle.campoObrigatorio} : #{bundle.funcionario_cidade}" />
+
+
+							</h:panelGroup>
+							<br />
+							<div class="clear"></div>
+							<h:panelGroup id="pngReferenciaDest" styleClass="p_like">
+
+								<p:outputLabel value="Referência:" for="referenciaDest"
+									styleClass="OutputLabelCampo" style="width:80px;" />
+								<p:inputText id="referenciaDest" size="55"
+									value="#{entregaBean.chamada.referenciaOrigem}" />
+
+							</h:panelGroup>
+
+						</p:fieldset>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<br />
+			<div class="clear"></div>
+			<h:panelGroup styleClass="p_like buttonPosition">
+
+				<p:commandButton value="Adicionar" id="btnAdicionar"
+					style="margin-right:10px;">
+				</p:commandButton>
+
+				<p:commandButton value="Calcular preço" id="btnCalcular">
+
+				</p:commandButton>
+
+
+
+			</h:panelGroup>
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>
+</html>

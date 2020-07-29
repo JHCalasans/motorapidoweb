@@ -25,6 +25,7 @@ public class EnderecoClienteBO  extends MotoRapidoBO {
 		return instance;
 	}
 	
+	@SuppressWarnings("static-access")
 	public List<EnderecoCliente> obterEnderecosPorCliente(Cliente cliente) throws ExcecaoNegocio {
 		EntityManager em = emUtil.getEntityManager();
 		EntityTransaction transaction = em.getTransaction();
@@ -34,7 +35,7 @@ public class EnderecoClienteBO  extends MotoRapidoBO {
 			IEnderecoClienteDAO enderecoClienteDAO = fabricaDAO.getPostgresEnderecoClienteDAO();
 			EnderecoCliente enderecoCliente = new EnderecoCliente();
 			enderecoCliente.setCliente(cliente);			
-			lista = enderecoClienteDAO.findByExample(enderecoCliente, em);			
+			lista = enderecoClienteDAO.findByExample(enderecoCliente, em, enderecoClienteDAO.BY_COD_ASC);			
 			emUtil.commitTransaction(transaction);
 			return lista;
 		} catch (Exception e) {

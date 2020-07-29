@@ -47,6 +47,9 @@ public class LogErro extends Entidade {
 	@Column(name = "cod_funcionario", nullable = true)
 	private Integer codFuncionario;
 
+	
+	@Column(name = "cod_cliente", nullable = true)
+	private Integer codCliente;
 
 	public Long getCodLogErro() {
 		return codigo;
@@ -95,5 +98,13 @@ public class LogErro extends Entidade {
 
 	public void setCodFuncionario(Integer codFuncionario) {
 		this.codFuncionario = codFuncionario;
+	}
+
+	public Integer getCodCliente() {
+		return codCliente;
+	}
+
+	public void setCodCliente(Integer codCliente) {
+		this.codCliente = codCliente;
 	}
 }

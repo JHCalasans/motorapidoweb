@@ -20,13 +20,13 @@ import br.com.minhaLib.excecao.excecaobanco.ExcecaoBancoConexao;
 import br.com.minhaLib.util.EntityManagerUtil;
 import br.com.minhaLib.util.excecao.Log;
 import br.com.motorapido.dao.ILogErroDAO;
+import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.Funcionario;
 import br.com.motorapido.entity.LogErro;
 
-
 @PersistenceContext(unitName = "postgresPU")
 class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Long> implements ILogErroDAO, Log {
-	
+
 	private static final int MAX_SIZE = 32 * 1024 - 1;
 
 	protected PostgresLogErroDAOImpl() {
@@ -41,15 +41,22 @@ class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Long> implements IL
 		try {
 			transaction.begin();
 			FacesContext facesContext = FacesContext.getCurrentInstance();
-			
+
 			if (facesContext != null) {
 				Funcionario funcionarioLogado = null;
-				if (facesContext.getExternalContext().getSessionMap().containsKey("motoRapido.funcionario"))
-					funcionarioLogado = (Funcionario) facesContext.getExternalContext().getSessionMap().get("motoRapido.funcionario");
 				LogErro logErro = new LogErro();
+				if (facesContext.getExternalContext().getSessionMap().containsKey("motoRapido.funcionario")) {
+					funcionarioLogado = (Funcionario) facesContext.getExternalContext().getSessionMap()
+							.get("motoRapido.funcionario");
+					logErro.setCodFuncionario(funcionarioLogado.getCodigo());
+				} else if (facesContext.getExternalContext().getSessionMap().containsKey("motoRapido.cliente")) {
+					Cliente clienteLogado = (Cliente) facesContext.getExternalContext().getSessionMap()
+							.get("motoRapido.cliente");
+					logErro.setCodCliente(clienteLogado.getCodigo());
+				}
 				logErro.setDataHoraErro(new Date());
 				logErro.setErro(erro);
-				logErro.setCodFuncionario(funcionarioLogado.getCodigo());
+
 				this.save(logErro, em);
 			}
 			emUtil.commitTransaction(transaction);
@@ -60,7 +67,7 @@ class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Long> implements IL
 			emUtil.closeEntityManager(em);
 		}
 	}
-	
+
 	@Override
 	public void logarErro(final Exception ex) {
 		final Writer result = new StringWriter();
@@ -74,17 +81,13 @@ class PostgresLogErroDAOImpl extends GenericDAOImpl<LogErro, Long> implements IL
 	}
 
 	@Override
-	public List<LogErro> obterPorData(Date dtInicial, Date dtFinal, EntityManager em) throws ExcecaoBancoConexao, ExcecaoBanco {
+	public List<LogErro> obterPorData(Date dtInicial, Date dtFinal, EntityManager em)
+			throws ExcecaoBancoConexao, ExcecaoBanco {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("dtInicial", dtInicial);
 		params.put("dtFinal", dtFinal);
 		return findByNamedQueryAndNamedParams("LogErro.obterPorData", params, em);
-		
+
 	}
 
-
-
-	
-
-	
 }

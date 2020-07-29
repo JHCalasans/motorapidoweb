@@ -29,7 +29,6 @@ import br.com.motorapido.entity.Chamada;
 import br.com.motorapido.entity.ChamadaVeiculo;
 import br.com.motorapido.entity.EnderecoCliente;
 import br.com.motorapido.entity.Funcionario;
-import br.com.motorapido.entity.Motorista;
 import br.com.motorapido.entity.MotoristaAparelho;
 import br.com.motorapido.entity.MotoristaPosicaoArea;
 import br.com.motorapido.entity.SituacaoChamada;
@@ -43,10 +42,8 @@ import br.com.motorapido.util.CoordenadaPontoUtil;
 import br.com.motorapido.util.CoordenadasAreaUtil;
 import br.com.motorapido.util.FuncoesUtil;
 import br.com.motorapido.util.GoogleWSUtil;
-import br.com.motorapido.util.MotorapidoWebSocket;
 import br.com.motorapido.util.PushNotificationUtil;
 import br.com.motorapido.util.RetornoMatrixGoogleAPI;
-import br.com.motorapido.util.SessaoWS;
 import br.com.motorapido.util.ws.params.CalculoValorParam;
 import br.com.motorapido.util.ws.params.CancelarChamadaParam;
 import br.com.motorapido.util.ws.params.NovaChamadaParam;
@@ -165,6 +162,51 @@ public class ChamadaBO extends MotoRapidoBO {
 		} catch (Exception e) {
 			emUtil.rollbackTransaction(transaction);
 			throw new ExcecaoNegocio("Falha ao tentar iniciar chamada.", e);
+		} finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	public Chamada iniciarChamadaCliente(Chamada chamada)
+			throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		try {
+			transaction.begin();
+			IChamadaDAO chamadaDAO = fabricaDAO.getPostgresChamadaDAO();
+			
+
+			chamada.setArea(validarAreaDoChamado(Double.parseDouble(chamada.getLatitudeOrigem()),
+					Double.parseDouble(chamada.getLongitudeOrigem()), em));
+
+			// chamada.setDestino(destino.getCodigo() == null ? null : destino);
+			chamada.setDataCriacao(new Date());
+			SituacaoChamada situacaChamada = new SituacaoChamada();
+			ISituacaoChamadaDAO situacaoChamadaDAO = fabricaDAO.getPostgresSituacaoChamadaDAO();
+			situacaChamada = situacaoChamadaDAO.findById(SituacaoChamadaEnum.PENDENTE.getCodSituacao(), em);
+			chamada.setSituacaoChamada(situacaChamada);
+
+			RetornoMatrixGoogleAPI retornoMatrix = GoogleWSUtil.buscarDistanciaAPercorrer(
+					chamada.getLatitudeOrigem().toString() + "," + chamada.getLongitudeOrigem(),
+					chamada.getLatitudeDestino().toString() + "," + chamada.getLongitudeDestino(),
+					FuncoesUtil.getParam(ParametroEnum.CHAVE_MAPS.getCodigo(), em));
+
+			chamada.setDistanciaPrevista(retornoMatrix.getRows()[0].getElements()[0].getDistance().getText());
+
+			chamada.setValorPrevisto(FuncoesUtil.formatarBigDecimal(
+					calculoValorPrevisto(retornoMatrix.getRows()[0].getElements()[0].getDistance().getValue(), em)));
+
+			chamada.setValorFinal(chamada.getValorPrevisto().toString());
+			Chamada chamadaTemp = chamadaDAO.save(chamada, em);
+			chamada.setCodigo(chamadaTemp.getCodigo());
+
+			emUtil.commitTransaction(transaction);
+
+			SimpleController.getListaChamadasEmEspera().add(chamada);
+			return chamada;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar iniciar pedido.", e);
 		} finally {
 			emUtil.closeEntityManager(em);
 		}

@@ -14,6 +14,7 @@ import br.com.motorapido.dao.IClienteDAO;
 import br.com.motorapido.dao.IEnderecoClienteDAO;
 import br.com.motorapido.entity.Cliente;
 import br.com.motorapido.entity.EnderecoCliente;
+import br.com.motorapido.util.FuncoesUtil;
 
 public class ClienteBO extends MotoRapidoBO {
 
@@ -76,6 +77,29 @@ public class ClienteBO extends MotoRapidoBO {
 		}
 	}
 	
+	public Cliente obterClientePorLoginSenha(String login, String senha) throws ExcecaoNegocio {
+		EntityManager em = emUtil.getEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		Cliente result = null;
+		try {
+			transaction.begin();
+			IClienteDAO clienteDAO = fabricaDAO.getPostgresClienteDAO();
+
+			List<Cliente> lista = clienteDAO.obterporLoginSenha(login, FuncoesUtil.criptografarSenha(senha), em);
+			if (lista != null && lista.size() > 0)
+				result = lista.get(0);
+
+			emUtil.commitTransaction(transaction);
+			return result;
+		} catch (Exception e) {
+			emUtil.rollbackTransaction(transaction);
+			throw new ExcecaoNegocio("Falha ao tentar obter cliente pelo Login.", e);
+		}finally {
+			emUtil.closeEntityManager(em);
+		}
+	}
+	
+	
 
 	
 	
@@ -131,7 +155,10 @@ public class ClienteBO extends MotoRapidoBO {
 			IClienteDAO clienteDAO = fabricaDAO.getPostgresClienteDAO();
 			cliente.setDataCriacao(new Date());
 			cliente.setAtivo("S");
-
+			
+			if(cliente.getSenha() != null && !cliente.getSenha().isEmpty())
+				cliente.setSenha(FuncoesUtil.criptografarSenha(cliente.getSenha()));
+			
 			cliente = clienteDAO.save(cliente, em);
 			if (enderecoCliente != null) {
 				IEnderecoClienteDAO enderecoClienteDAO = fabricaDAO.getPostgresEnderecoClienteDAO();

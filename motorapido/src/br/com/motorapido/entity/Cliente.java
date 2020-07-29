@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,10 +20,10 @@ import br.com.minhaLib.dao.Entidade;
 @XmlRootElement
 @Entity
 @Table(name = Cliente.nomeTabela, schema = Cliente.esquema, catalog = "diego")
-//@NamedQueries(value = { 
-//		@NamedQuery(name = "Cliente.obterCientes", query = "select c from Cliente c where (:nome is null or c.nome like '%' || :nome || '%' ) and ( :ativo is null or p.ativo = :ativo) and"
-//				+ " ( :acesso is null or p.acessaSistema = :acesso )")
-//		})
+@NamedQueries(value = { 
+		@NamedQuery(name = "Cliente.obterPorLoginSenha", query = "select c from Cliente c where lower(c.login) like :login and c.senha like :senha"),
+		
+		})
 public class Cliente extends Entidade{
 
 
@@ -51,6 +53,15 @@ public class Cliente extends Entidade{
 	
 	@Column(name = "num_celular", nullable = true)
 	private String celular;
+	
+	@Column(name = "empresa", nullable = true)
+	private String empresa;
+	
+	@Column(name = "login", nullable = true)
+	private String login;
+	
+	@Column(name = "senha", nullable = true)
+	private String senha;
 	
 /*	@Column(name = "logradouro", nullable = false)
 	private String logradouro;
@@ -223,6 +234,42 @@ public class Cliente extends Entidade{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+
+
+	public String getEmpresa() {
+		return empresa;
+	}
+
+
+
+	public void setEmpresa(String empresa) {
+		this.empresa = empresa;
+	}
+
+
+
+	public String getLogin() {
+		return login;
+	}
+
+
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+
+
+	public String getSenha() {
+		return senha;
+	}
+
+
+
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 
 

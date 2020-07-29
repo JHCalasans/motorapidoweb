@@ -8,4 +8,6 @@ public interface Paginas {
 	public static final String PAG_LOGIN = "/paginas/login.xhtml";
 	public static final String PAG_HOME = "/paginas/home.xhtml";
 	public static final String PAG_CHAMADAS = "/paginas/chamadas/chamadasHome.xhtml";
+	public static final String PAG_NOVA_ENTREGA = "/paginas/entrega/novaEntrega.xhtml";
+	public static final String PAG_SESSAO_ENCERRADA_CLIENTE = "/paginas/erro/SessaoEncerradaCliente.xhtml";
 }
